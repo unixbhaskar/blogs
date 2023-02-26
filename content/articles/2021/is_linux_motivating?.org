@@ -1,0 +1,105 @@
+#+title: Is Linux Motivating?
+#+date: 2021-12-29
+#+tags: Technical
+
+The answer to the title is yes and no. Depends on the perspective and what you
+are up to. At times it is feel like, it is kind of panacea and yet other time it
+feels like riding on the rough mountain track. Complete paradoxical experience
+to use it day to day basis.
+
+First few years (I have personally started with it on year 2000) and following
+few years were horrendous. That specifically due to, I was learning the stuff and
+experimenting . Moreover the stuff on the Linux front was not smooth like
+today(compared to yesteryear's) .
+
+During that period brings so much of frustration but it exposed me so many
+things ,I wouldn't thought I would be doing today or few years later from that
+time. Anyway, one of right decision of life is that , in spite of every single
+day threatened to leave it for good and jump onto something more common and known
+platform and do exactly what others do. I am not trying to demean people who were
+involved or using other stuff , but certainly that never entice me to jump on.
+
+Time passed by and years go round and I toiled and learned the stuff bit by bit
+and it is taking times for two serious lacuna in me: one , I didn't have a sharp
+bend of mind like yours(let's face it) and my stupid ignorance to some specific
+but important things for long (I am not yet found out why was that).
+
+So,Linux brings all tools and scope to kill your time effectively , whether you
+think of good or bad way. There were many days sink into simple problem solving
+process ,again due to my fat head, but somehow I got over whatever the problem I
+was facing that particular time. Pre 2010 ,lack of internet connection forced me
+fall back on man pages more often than not. Sometimes, man pages were
+intimidating ,it is not man page's fault ,it was my lack of understanding ran
+havoc on me(and it is still true till to date in some cases). But, now, I have
+been exposed to Linux some years , things becomes comparatively easier. One of
+the height of trouble to find the right location of the help,nowadays(or may be
+the case in yesteryear's too)things are much more evident and importantly
+constant  connection with the internet entice to hop on known places to seek help.
+
+Lets face it,I am an awful programmer and very reluctant one,fueled by my
+pathetic epistemic background. But I was forced to and sometimes love to do
+thing differently I do apply my pathetic skill into practice.Open systems(read
+UNIX,Linux et al) encourage you to do your stuff in your way and seldom forces you
+to do otherwise . Open system is more about choices and that's where freedom comes into
+play.But...but a stern heads up that *FREEDOM IS COSTLY* and it demands
+considerable amount of personal time to think and implement the way you want
+things to be.To gain absolutely,the system play to your tune.
+
+Getting the benefit of having the environment set for work is time consuming but
+joyous , depends on how do you see it. I don't mind spending time what I want in
+an environment to be almost same almost all the time I operate on. But , having said that , it is
+not possible to build or stay in the same environment in all places and all the
+time. Paradox? Yes, it is . But , at least you can tweak some of the stuff
+according to your taste or bring things which were there for you. Well, I meant
+you probably have built some set of stuff and keep aside to include or fuse into
+whatever the work environment you get in to work. Not having that edge or
+ability might sincerely hinder your progress in that environment. As, you go
+along you keep adding stuff in your armory and also keep throwing away "no so
+relevant" stuff from kitty.
+
+Well, good things have flip side too. embrace yourself for rough ride too. It is
+not so uncommon that people whining or complaining about the things are not
+working as expected . Reason ,primarily being three(there could be more,if you want
+make out):One,you put an axe on your own leg by your sheer lack of understanding
+and by which I means , before playing with the intended stuff you haven't spend
+time with the required stuff to get familiar with. Two: not having enough faith
+on your own ability and blindly follow some random people's stuff on the internet
+to accomplish thing . That is huge red flag for gaining the long term benefit
+and insight about the product. You might end up in a circle if you skip looking
+at thing long term perspective,shot term view gets you A to B not more than
+that.Three:the creator of the product release the product half-cooked in a
+illusionary expectation that end user accustomed whatever you intending or let
+the end user do that that by themselves. That is sure fire way of spark lot of
+meh.
+
+
+Now, fixing stuff is not as easy as may sound or show in some experts proclaimed
+in various form. It takes way more than that and topmost thing to require is tenacity
+to solve the problem. Not everyone in the wild have that kind of inclination to go
+about it. And that is 70 percent of the user base of most of the product
+available.Sometimes to do simple thing, you need to take a long route , because
+that is the best way to get it or do it.That will certainly not fly with "ready made"
+mind stuff user base. Absolutely  not their fault.Especially,those who jump or
+came spending so much time on other platforms.
+
+
+Having an DYI mindset is absolutely "must have" to get along with the open
+system and importantly not afraid of asking questions. You questions should
+signify what have done before you come to that point to ask questions.People ,
+those who are putting effort or trying to solve your problem love to see that
+you put some effort and I mean real effort before asking for help.Chances will
+be getting high response(although nowadays due to some uncanny trouble between
+the ears ,people reply without reading the problem first..heck, and you can discover that
+by looking at the answer) if you show the crowd, what have you already done with
+it(please don't worry about the other things , we all learn by doing
+mistakes). That also gives more insight into what you are up to.
+
+About the response,well, you might get very different from different people. If
+something really bothers your,try to find out why that is happening (again you
+need to spend time to find out why) . And even so, sometimes it fails you
+too,keep on. Playing flames with flames is not sensible moves to get your
+solution ,you need to figure it out and that come from enough burning your hands
+on the things, not an easy road.
+
+
+Keep harping! Do not let it go.

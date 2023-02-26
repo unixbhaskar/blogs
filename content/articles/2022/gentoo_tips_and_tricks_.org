@@ -1,0 +1,381 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1018
+#+title: Gentoo Tips And Tricks
+#+date: 2022-05-20
+#+tags: Technical
+
+Well, sitting on a Linux distribution for a long (read as years) time and hovering
+your way through convenience is kind of attaining nirvana. Not necessary,
+everything has to be complicated(that is a general notion among the people),
+which is not true. Having been accustomed to something required careful study
+plus the ability to tab the potential to get the best out of it.
+
+Gentoo experts and developers have dished out so many little utilities and
+workarounds, which are mind-boggling. I have benefited and enjoyed every bit of
+it for a long time. Although,the blame is on me to contribute back nothing except
+using it rigorously for over decades and a half with much aplomb.
+
+In this post, I am going to highlight a few of the trick that helps me get along with
+some specific functionalities and bring out the best possible experience for
+me. To start with, /updating the system/ is a pretty common thing if you are used to or
+using a /rolling release/ distribution. It is required and mandatory, importantly
+the *ethos* behind using the kind of distribution. To brief, get on the edge and
+see and do and enjoy the stuff it brings along. I must say, the enjoyment
+sometimes banished in despair and it might be days of pondering and relentless
+hovering some specific places reading and asking people, then one fine day, you landed
+or got the solution, the joy can not be expressed in words.
+
+I am telling you things which were not so great back then, but if you look at
+them now, it is bewildering, to say the least. Everything moved on, but few
+things remain the same and the workarounds remain the same. So, that is the
+least commonality to savor.
+
+Here are handful of tricks or tips, which are using still to date:
+
+* Put the portage work and build directory on /tmpfs/
+
+The reason being, while putting those directories and have a *fstab* entry like this:
+
+#+begin_src bash
+bhaskar@Gentoo_06:27:17_Fri May 20: :~>grep tmpfs /etc/fstab
+tmpfs           /var/tmp                             tmpfs   rw,nosuid,noatime,nodev,size=6G,mode=1777             0 0
+tmpfs           /var/tmp/portage          tmpfs       rw,nosuid,noatime,nodev,size=6G,mode=775,uid=portage,gid=portage,x-mount.mkdir=775 0  0
+#+end_src
+
+You can clearly, see I have put those directories in tmpfs, that means,that
+means when portage build packages , it will build on /RAM/ , so it will be faster
+than disk access.
+
+* Workaround to build big/huge packages
+
+Well, building everything on memory is not a *panacea*. Why? Because,building
+huge/big software entirely on memory is serious kind of bottleneck. That
+activity can clogged the system and bring it halt. And you only allow certain
+portion of memory to be dedicated for portage operation. Big/huge software needs
+more space and more memory to build on. So, overcome this constrains, we need
+fall back on disk access, it is slow compared to memory, but it seems no other
+go.
+
+/Portage/ is smart enough to know, how much disk space require to build big
+software. If it found out that, that building space is not big enough to hold
+the software to build, it bails out. For that reason, Gentoo developers provides
+a mechanism to get along with the build just to put that */build location*/
+different way and make portage aware of the location, so it can use that
+space.To gain that facility, you need to do two things precisely, first you need
+to create a file with the content in it, like this:
+
+#+begin_src bash
+bhaskar@Gentoo_10:46:14_Fri May 20: :~>cat /etc/portage/env/notmpfs.conf
+───────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+       │ File: /etc/portage/env/notmpfs.conf
+       │ Size: 39 B
+───────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+   1   │ PORTAGE_TMPDIR="/home/bhaskar/notmpfs"
+
+#+end_src
+
+Declare that variable with the value, which is nothing but a designated place
+for the big software build. Essentially, a directory where enough space is
+available.
+
+Then, you also need to define this file :
+
+#+begin_src bash
+bhaskar@Gentoo_10:50:17_Fri May 20: :~>cat /etc/portage/package.env
+───────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+       │ File: /etc/portage/package.env
+       │ Size: 293 B
+───────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+   1   │ app-office/libreoffice      notmpfs.conf
+   2   │ dev-lang/ghc            notmpfs.conf
+   3   │ dev-lang/mono           notmpfs.conf
+   4   │ dev-lang/rust           notmpfs.conf
+   5   │ dev-lang/spidermonkey       notmpfs.conf
+   6   │ mail-client/thunderbird     notmpfs.conf
+   7   │ sys-devel/gcc           notmpfs.conf
+   8   │ www-client/chromium     notmpfs.conf
+   9   │ www-client/firefox      notmpfs.conf
+
+#+end_src
+
+In this file, you are supposed to enlist all the software , which requires lots of
+space and time. The structure of the file is very explicit and minimal. And you
+can see the location, where it is created.
+
+Once this is in place and then if you try to build any one of those packages to
+build, portage will be going to use that designated build space.
+
+
+From time to time, we are getting and building software on a recurrence
+basis. Sometimes, we need to know before that how much time it might take to
+build the entire stuff(it is especially true ,when you are planning to update
+the whole system). There is a tool, called /genlop/ that will help you schedule
+your activity during the process by letting you know beforehand, how much time it
+is going to take to finish the job. This tool takes into account machine
+power and connection speed. And it varies greatly from machine to machine and
+connection to connection. But, it is a good indicator to schedule.You can get a
+glimpse of the timing and date for the specific software you brought down to your
+machine or in the case of future updates(system update) . This tool simply
+consults the /emerge log file/ to assess the timing. Example like this :
+
+#+begin_src bash
+bhaskar@Gentoo_11:01:59_Fri May 20: :~>sudo genlop -t gcc
+Password:
+ * sys-devel/gcc
+
+     Sat Mar 13 21:36:11 2021 >>> sys-devel/gcc-10.2.0-r5
+       merge time: 3 hours, 57 minutes and 34 seconds.
+
+     Sun Mar 14 12:38:45 2021 >>> sys-devel/gcc-10.2.0-r5
+       merge time: 3 hours, 17 minutes and 18 seconds.
+
+     Tue Jun 29 18:27:53 2021 >>> sys-devel/gcc-10.3.0
+       merge time: 3 hours, 48 minutes and 53 seconds.
+
+     Tue Jul 13 15:48:27 2021 >>> sys-devel/gcc-10.3.0-r1
+       merge time: 3 hours, 35 minutes and 40 seconds.
+
+     Sun Aug  1 13:21:31 2021 >>> sys-devel/gcc-10.3.0-r2
+       merge time: 3 hours, 44 minutes and 56 seconds.
+
+     Tue Oct 19 18:08:15 2021 >>> sys-devel/gcc-11.2.0
+       merge time: 4 hours, 30 minutes and 49 seconds.
+
+     Mon Mar 14 13:14:23 2022 >>> sys-devel/gcc-11.2.1_p20220115
+       merge time: 4 hours, 13 minutes and 30 seconds.
+
+#+end_src
+
+All you have to do,is use the /-t/ flag of this tool to get the timing of the
+specific package. This becomes super helpful when you do a system update like
+this :
+
+#+begin_src bash
+sudo emerge  --verbose --update --deep --newuse --with-bdeps=y  --backtrack=30 --keep-going @world  | genlop -p
+#+end_src
+
+This command will tell you much time the system takes to finish the entire update
+process.
+
+
+* Quickly see any specific package information
+
+There is a tool, which will allow you to see the package information in quick
+time.
+
+*epkginfo*
+
+#+begin_src bash
+bhaskar@Gentoo_11:11:02_Fri May 20: :~>epkginfo gcc
+ * sys-devel/gcc [gentoo]
+Maintainer:  toolchain@gentoo.org (Gentoo Toolchain Project)
+Upstream:    Remote-ID:   cpe:/a:gnu:gcc ID: cpe
+             Remote-ID:   dgcc ID: sourceforge
+Homepage:    https://gcc.gnu.org/
+Location:    /var/db/repos/gentoo/sys-devel/gcc
+Keywords:    6.5.0-r4:6.5.0: ~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86
+Keywords:    7.5.0-r2:7.5.0: ~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc-macos ~ppc64 ~s390 ~sparc ~x86
+Keywords:    8.5.0-r1:8.5.0: amd64 arm arm64 hppa ppc ppc64 sparc x86 ~alpha ~ia64 ~m68k ~mips ~riscv ~s390
+Keywords:    9.4.0:9.4.0: amd64 arm arm64 hppa ppc ppc64 sparc x86 ~alpha ~ia64 ~m68k ~mips ~riscv ~s390
+Keywords:    9.4.1_pre9999:9.4.1:
+Keywords:    9.4.1_p20220317:9.4.1: ~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86
+Keywords:    10.3.0-r2:10:
+Keywords:    10.3.1_pre9999:10:
+Keywords:    10.3.1_p20211126:10: amd64 arm arm64 hppa ppc ppc64 sparc x86 ~alpha ~ia64 ~m68k ~mips ~riscv ~s390
+Keywords:    11.2.0:11: ppc64
+Keywords:    11.2.1_p20220115:11: amd64 arm arm64 hppa ppc sparc x86
+Keywords:    11.3.0:11: ~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86
+Keywords:    11.3.1_pre9999:11:
+Keywords:    12.0.0_pre9999:12:
+Keywords:    12.0.1_pre20220424:12:
+License:     GPL-3+ LGPL-3+ || ( GPL-3+ libgcc libstdc++ gcc-runtime-library-exception-3.1 ) FDL-1.3+
+
+#+end_src
+
+Another way to see it:
+
+*eix*
+
+#+begin_src bash
+bhaskar@Gentoo_11:13:54_Fri May 20: :~>eix gcc
+^  dev-util/colorgcc
+     Available versions:  1.3.2-r7
+     Homepage:            http://schlueters.de/colorgcc.html
+     Description:         Perl script to colorise the gcc output
+
+[I] sys-devel/gcc
+     Available versions:
+     (6.5.0) [M]~6.5.0-r4^t
+     (6.5.0) [M]~6.5.0-r4^t
+     (7.5.0) [M]~7.5.0-r2^t
+     (8.5.0) [M]8.5.0-r1^t
+     (9.4.0) 9.4.0^t
+     (9.4.1) **9.4.1_pre9999*l^t ~9.4.1_p20220317^t
+     (10)   10.3.0-r2^t **10.3.1_pre9999*l^t 10.3.1_p20211126^t
+     (11)   11.2.0^t 11.2.1_p20220115^t ~11.3.0^t **11.3.1_pre9999*l^t
+     (12)   **12.0.0_pre9999*l^t **12.0.1_pre20220424^t
+       {ada awt cet cilk custom-cflags +cxx d debug doc fixed-point +fortran gcj go graphite hardened jit libssp lto mpx multilib +nls +nptl objc objc++ objc-gc +openmp +pch pgo +pie +sanitize +ssp systemtap test valgrind vanilla vtv zstd}
+     Installed versions:  11.2.1_p20220115(11)^t(01:13:44 PM 03/14/2022)(cxx fortran multilib nls nptl openmp pie sanitize ssp -ada -cet -custom-cflags -d -debug -doc -fixed-point -go -graphite -hardened -jit -libssp -lto -objc -objc++ -objc-gc -pch -pgo -systemtap -test -valgrind -vanilla -vtv -zstd)
+     Homepage:            https://gcc.gnu.org/
+     Description:         The GNU Compiler Collection
+
+^ sys-devel/gcc-apple
+     Available versions:  (42) ~*4.2.1_p5666-r3^t
+       {bootstrap +cxx fortran (+)nls objc objc++ +openmp test vanilla}
+     Homepage:            https://gcc.gnu.org
+     Description:         Apple branch of the GNU Compiler Collection, Developer Tools 4.0
+
+[I] sys-devel/gcc-config
+     Available versions:  2.4 2.5-r1 **9999*l {+cc-wrappers +native-symlinks}
+     Installed versions:  2.5-r1(10:32:05 AM 01/13/2022)(cc-wrappers native-symlinks)
+     Homepage:            https://gitweb.gentoo.org/proj/gcc-config.git/
+     Description:         Utility to manage compilers
+
+^ sys-devel/kgcc64
+     Available versions:
+     (9.3.0) *9.3.0-r2^t
+     (9.4.0) ~*9.4.0^t
+     (10)   *10.3.0^t
+     (11)   *11.2.1_p20220115^t *11.3.0^t
+       {+nls test vanilla}
+     Homepage:            https://gcc.gnu.org/
+     Description:         64bit kernel compiler
+
+^ sys-devel/multilib-gcc-wrapper
+     Available versions:  0-r2
+     Homepage:            https://wiki.gentoo.org/wiki/No_homepage
+     Description:         Wrappers for gcc tools to be used on non-native CHOSTs
+
+^ x11-misc/gccmakedep
+     Available versions:  1.0.3-r1 **9999*l
+     Homepage:            https://www.x.org/wiki/ https://gitlab.freedesktop.org/xorg/util/gccmakedep
+     Description:         create dependencies in makefiles using 'gcc -M'
+
+Found 7 matches
+
+#+end_src
+
+Both the tool accepts an argument as the package name, so it is darn easy. There
+is a third way too, that is to use the package manager :
+
+#+begin_src bash
+bhaskar@Gentoo_11:19:36_Fri May 20: :~>sudo emerge -Ss gcc
+Password:
+
+[ Results for search key : gcc ]
+Searching...
+
+^  app-misc/resolve-march-native
+      Latest version available: 1.0.0
+      Latest version installed: [ Not Installed ]
+      Size of files: 10 KiB
+      Homepage:      https://github.com/hartwork/resolve-march-native
+      Description:   Resolve GCC flag -march=native
+      License:       GPL-2+
+
+^  dev-util/colorgcc
+      Latest version available: 1.3.2-r7
+      Latest version installed: [ Not Installed ]
+      Size of files: 11 KiB
+      Homepage:      http://schlueters.de/colorgcc.html
+      Description:   Perl script to colorise the gcc output
+      License:       GPL-2
+
+^  dev-util/lcov [ Masked ]
+      Latest version available: 9999
+      Latest version installed: [ Not Installed ]
+      Size of files: 0 KiB
+      Homepage:      http://ltp.sourceforge.net/coverage/lcov.php
+      Description:   A graphical front-end for GCC's coverage testing tool gcov
+      License:       GPL-2+
+
+^  dev-vcs/colorcvs
+      Latest version available: 1.4-r2
+      Latest version installed: [ Not Installed ]
+      Size of files: 9 KiB
+      Homepage:      https://packages.gentoo.org/package/dev-vcs/colorcvs
+      Description:   A tool based on colorgcc to beautify cvs output
+      License:       GPL-2
+
+#+end_src
+
+I have trimmed the output for the sake of brevity. But, in all the cases it is
+not so obtrusive.
+
+There is a handy tool called *equery* ,which takes a single later flag and a package
+name to provide information about that package.
+
+I have something in the shell initialization file, various equery entries :
+
+#+begin_src bash
+bhaskar@Gentoo_11:22:36_Fri May 20: :~>grep equery .bashrc
+alias eqf='equery f' #list all files installed by PKG
+alias equ='equery u' #display USE flags for PKG
+alias eqh='equery h' #list all packages that have USE flag
+alias eqa='equery a' #list all packages for matching ENVIRONMENT data stored in /var/db/pkg
+alias eqb='equery b' #list what package FILES belong to
+alias eql='equery l' #list package matching PKG
+alias eqd='equery d' #list all packages directly depending on ATOM
+alias eqg='equery g' #display a tree of all dependencies for PKG
+alias eqc='equery c' #list changelog entries for ATOM
+alias eqk='equery k' #verify checksums and timestamps for PKG
+alias eqm='equery m' #display metadata about PKG
+alias eqy='equery y' #display keywords for specified PKG
+alias eqs='equery s' #display total size of all files owned by PKG
+alias eqw='equery w' #print full path to ebuild for PKG
+#+end_src
+
+Now, let me give some examples of this tool to get information about a specific
+package. For the example purpose, I am choosing a random package to show where
+the files are, in this case, I choose a package called /*scrot*/
+
+#+begin_src bash
+bhaskar@Gentoo_11:31:21_Fri May 20: :~>equery f scrot
+ * Searching for scrot ...
+ * Contents of media-gfx/scrot-1.4:
+/usr
+/usr/bin
+/usr/bin/scrot
+/usr/share
+/usr/share/bash-completion
+/usr/share/bash-completion/completions
+/usr/share/bash-completion/completions/scrot
+/usr/share/doc
+/usr/share/doc/scrot-1.4
+/usr/share/doc/scrot-1.4/AUTHORS.bz2
+/usr/share/doc/scrot-1.4/CONTRIBUTING.md.bz2
+/usr/share/doc/scrot-1.4/ChangeLog.bz2
+/usr/share/doc/scrot-1.4/README.md.bz2
+/usr/share/doc/scrot-1.4/TODO
+/usr/share/man
+/usr/share/man/man1
+/usr/share/man/man1/scrot.1.bz2
+#+end_src
+
+To find out the *size* of the package :
+
+#+begin_src bash
+bhaskar@Gentoo_11:35:42_Fri May 20: :~>equery s scrot
+ * media-gfx/scrot-1.4
+         Total files : 17
+         Total size  : 245.82 KiB
+#+end_src
+
+
+To find the out the *meta data* about the package :
+
+#+begin_src bash
+bhaskar@Gentoo_11:36:24_Fri May 20: :~>equery m scrot
+ * media-gfx/scrot [gentoo]
+Maintainer:  None specified
+Upstream:    None specified
+Homepage:    https://github.com/resurrecting-open-source-projects/scrot
+Location:    /var/db/repos/gentoo/media-gfx/scrot
+Keywords:    1.4:0: amd64 arm ppc ppc64 sparc x86
+Keywords:    1.7-r2:0: ~alpha ~amd64 ~arm ~arm64 ~hppa ~ppc ~ppc64 ~riscv ~sparc ~x86
+Keywords:    9999:0:
+License:     feh LGPL-2+
+#+end_src
+
+Okay, I believe it is enough to get going. You can watch my video
+about all these command executions live on [[https://www.youtube.com/watch?v=b_btTQ0Vb3A][Youtube.]]

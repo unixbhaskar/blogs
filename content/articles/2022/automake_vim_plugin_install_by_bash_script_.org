@@ -1,0 +1,67 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1122
+#+title: Automate Vim Plugin Install By Bash Script
+#+date: 2022-12-31
+#+tags: Technical
+
+Well, when things need more than required attention, and it becomes a frequent
+activity for some reason, then doing things in an automated way gives many
+benefits.
+
+How so? First and foremost, steps are pretty predictable to perform and known,
+so no surprise is involved. Second, if you need some sort of mechanism to alert
+you about the not intended mishap, you can inject that too. Importantly, being
+done right can save you tons of time overdoing some repetitive tasks.
+
+So, here is a small function I wrote just a few minutes back, which does the
+same. Here it is entirety :
+
+#+BEGIN_SRC bash
+
+#!/usr/bin/env bash
+
+vimplugin_install ()
+{
+    cd $HOME/.vim/bundle && git clone "$1" && cd "$(basename $1 .git)"
+    repo=$1
+    usr1=$(echo ${repo} | cut -d '/' -f 4)
+    proj="$(basename ${repo} .git)"
+    sh -c "echo Plugin \'$usr1/$proj\' >> "$HOME/.vimrc""
+    printf "Plugin now has a entry in vimrc.Lets install it..\n"
+    sh -c "vim -c "PluginList" -c "PluginInstall" -c "wq""
+}
+
+#+END_SRC
+
+It might not be of good taste for the bash experts, but I can not help much to
+improve it with my very limited knowledge about it. But, this damn thing doing
+what exactly I wanted.
+
+Okay, here is a little explanation if you need so. The very first line is
+getting into the location where all my vim plugins reside and I have been a
+Vundle user for that. In the end, it essentially strips off the dot git
+extension and gets into the repository.
+
+The next line is holding a variable to accommodate the URL you have to pass with
+the function name.
+
+I have an alias in the dot bashrc file to call this function and which takes an
+argument as URL.
+
+In the line below, cut down the username from the GitHub URL and store it in the
+usr1 variable.
+
+The very next line strips off the dot git extension from the project name and
+stores it in proj variable.
+
+Next, there is a shell interpreter calling for the value of previously gathered
+values in variables to be appended to the dot vimrc file.
+
+The line underneath is just information letting the user know about the activity
+it performs. You can eliminate it if you need to.
+
+The last line again is a call to the shell interpreter to invoke vim's ex prompt
+command to execute for the plugin to list and install and then write and quit.
+
+And this function is inducted in my /bash initialization file i.e. .bashrc/ . You
+can easily look into that on [[https://github.com/unixbhaskar/dotfiles/blob/master/.bashrc][GitHub]].

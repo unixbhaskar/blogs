@@ -1,0 +1,197 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1013
+#+title: Arch Linux Custom Kernel Build
+#+date: 2022-05-17
+#+tags: Technical
+
+Well, in this post, I am gonna show you , how you can easily build a /custom kernel/ on
+*Arch Linux*. I have written a /bash/ script, which I am using for some years now,
+and thought to share it with you, so you can use it too.
+
+I shall explain chunk by chunk of the pretty ordinary script, so please pay
+attention :
+
+#+begin_src bash
+#!/usr/bin/env bash
+
+#Author : Bhaskar CHowdhury
+#LICENSE : GPL-2
+#This script information based on this wiki page : https://wiki.archlinux.org/index.php/Kernels/Arch_Build_System
+
+EFIBOOTDIR=/boot/efi/EFI/ArchLinux
+DT=$(date '+%d%m%Y')
+EFIBOOTENTRY=/boot/efi/loader/entries
+build_dir=/home/bhaskar/latest_kernel_$(hostname)_$DT
+TM="/usr/bin/time -f"
+KERNEL_PKG_DIR="/home/bhaskar/latest_kernel_build/linux/repos/core-x86_64/"
+#+end_src
+
+Alright, the above section is the head section of the script. And it contains
+nothing but a bunch of variables assignments. Feel free to change according to
+your environment.
+
+#+begin_src bash
+printf "Hostname: %s\nDate    : %s\nUptime  :%s\n\n"  "$(hostname -s)" "$(date)" "$(uptime)"
+#+end_src
+
+The above section is pure fancy stuff, it basically shows you /hostname/, /time/,
+/uptime/ on the machine this script run.
+
+#+begin_src bash
+kernel=$(arch_linux_latest_tag | sed -e 's/...$//' | tr -d "-" | tr -d "arch" | tr -d "v")
+printf '%s\n' "$kernel"
+#+end_src
+
+This section put a value of the kernel version in the /kernel/ variable. The first
+part of the command ran the script, which will look like this :
+
+#+begin_src bash
+#!/bin/bash
+
+w3m https://github.com/archlinux/linux/tags | grep "arch1" | head -1
+
+#+end_src
+
+And produce a tag form, which needs some change to use in the script, that the
+the second part of the command, which pipe together with //tr// commands.
+
+#+begin_src bash
+if [[ ! -d "$build_dir" ]];then
+   printf "Created it\n\n"
+    mkdir -p $build_dir
+else
+   printf "Already exists! \n\n"
+fi
+
+cd $build_dir
+pwd
+#+end_src
+
+This section check, if the build directory exits, if not, create it and then get into
+that newly-created directory.
+
+#+begin_src bash
+printf "Checking out latest linux \n\n\n\n"
+
+asp checkout linux
+
+if [[ $? == 0 ]];then
+   printf "Alright.. continue...\n\n\n"
+else
+  printf "Nope abort!\n\n\n"
+   exit 1
+fi
+#+end_src
+
+In this section, check the previous sections command status, if it is okay, then
+proceed or stop if failed.
+
+#+begin_src bash
+printf "*********Configuring PKGBUILD********** \n\n\n\n"
+
+arch_repo=linux/repos/core-x86_64/
+cd $arch_repo
+
+sudo zcat /proc/config.gz > config
+
+# Turning off like this help build kernel faster, but pose difficulty while debugging
+
+sed -i "s/"CONFIG_DEBUG_KERNEL=y"/"CONFIG_DEBUG_KERNEL=n"/" config
+grep DEBUG_KERNEL config
+sed -i "s/"CONFIG_DEBUG_INFO=y"/"CONFIG_DEBUG_INFO=n"/" config
+grep DEBUG_INFO config
+
+sed -i "s/pkgbase=linux/pkgbase=$(hostname)-$(echo $kernel) /"  PKGBUILD
+pkgver=$(grep "pkgver" PKGBUILD | head -1)
+sed -i "s/$(echo $pkgver)/pkgver=$(echo $kernel) /" PKGBUILD
+
+sed -i '7d' PKGBUILD
+sed -i '7i _srcver=${pkgver%%%.*}-arch1 '  PKGBUILD
+sed -i '17d' PKGBUILD
+sed -i '17i _srcname=${pkgver%%%.*}-arch1'  PKGBUILD
+
+sed -i '19d' PKGBUILD
+sed -i '19i \"$_srcname::https://github.com/archlinux/linux/archive/refs/tags/v$_srcname.tar.gz\"' PKGBUILD
+sed -i '31d' PKGBUILD
+sed -i '31i export KBUILD_BUILD_HOST=Bhaskar_ThinkPad_x250' PKGBUILD
+sed -i '32d' PKGBUILD
+sed -i '32i export KBUILD_BUILD_USER=Bhaskar' PKGBUILD
+sed -i '36d' PKGBUILD
+sed -i '36i cd src/linux-$_srcname' PKGBUILD
+sed -i 's/#make oldconfig/make olddefconfig/' PKGBUILD
+sed -i '62d' PKGBUILD
+sed -i '62i make V=1 ARCH=x86_64 -j4' PKGBUILD
+sed -i '63d' PKGBUILD
+sed -i '174,192 s/^/#/' PKGBUILD
+sed -i '193d' PKGBUILD
+sed -i '193i pkgname=("$pkgbase" "$pkgbase-headers")' PKGBUILD
+
+#+end_src
+
+In the above section, we have made quite a lot of changes to the default /PKGBUILD/
+file and infuse our own custom values into those variables.
+
+#+begin_src bash
+printf "As we have change the PKGBUILD file ,we need to generate the new CHECKSUM the file ....  \n\n\n"
+
+#makepkg -g
+
+updpkgsums
+#+end_src
+
+We are supposed to check the integrity of the file we have changed i.e. *PKGBUILD*
+Both the options can be used to check that.
+
+#+begin_src bash
+printf "\n\n\n Lets do the compiling now  ....\n\n\n"
+
+$TM "\t\n\n Elapsed Time : %E \n\n"  makepkg -s
+#+end_src
+
+We start the /build process/ by calling /makepkg/ with -s parameter.
+
+
+#+begin_src bash
+printf "Install the generated headers,kernel and doc packages with pacman .. \n\n\n"
+
+
+cd $KERNEL_PKG_DIR
+
+sudo pacman -U  --noconfirm $(hostname)-$kernel-$kernel-1-x86_64.pkg.tar.zst
+
+sudo pacman -U --noconfirm $(hostname)-$kernel-headers-$kernel-1-x86_64.pkg.tar.zst
+#+end_src
+
+Once the build process finished without error, it produced two packages (in this
+case, I am eliminating the documentation build). We need to get into this
+specific directory where the packages are found and install those by calling the
+package manager of this operating system.
+
+* The below sections are /Machine Specific/
+
+#+begin_src bash
+printf "\n\n\n Done..now copy over the image to ${Yellow}EFI dir..${NOCOLOR} \n\n\n\n"
+
+sudo cp -v /boot/vmlinuz-$(hostname)-$kernel $EFIBOOTDIR/$(hostname)/
+sudo cp -v /boot/initramfs-$(hostname)-$kernel.img $EFIBOOTDIR/$(hostname)/
+
+
+printf "Fixed the boot entry now ...\n\n\n\n"
+
+echo "title ArchLinux" | sudo tee  $EFIBOOTENTRY/ArchLinux.conf
+echo "linux /EFI/ArchLinux/vmlinuz-$(hostname)-$kernel" | sudo tee -a $EFIBOOTENTRY/ArchLinux.conf
+echo "initrd /EFI/ArchLinux/initramfs-$(hostname)-$kernel.img" | sudo tee -a $EFIBOOTENTRY/ArchLinux.conf
+echo "options root=PARTUUID=9e3d2f9a-4846-3049-97fc-b5e5c61820ae  loglevel=3  systemd.show_status=true rw" | sudo tee -a $EFIBOOTENTRY/ArchLinux.conf
+
+printf "\n\n\n Modified the UEFI script...  \n\n"
+
+echo "\EFI\ArchLinux\vmlinuz-$(hostname)-$kernel root=PARTUUID=9e3d2f9a-4846-3049-97fc-b5e5c61820ae  loglevel=3  systemd.show_status=true rw initrd=\EFI\ArchLinux\initramfs-$(hostname)-$kernel.img" | sudo tee  /boot/efi/EFI/archlinux.nsh
+exit 0
+#+end_src
+
+In the above section, we did some /manual/ adjustments to the specific
+files. Update the /nsh/ script for UEFI booting and fix the boot loader
+/systemd-boot/ entry, so that, next time we boot with proper kernel and initrd.
+
+
+You can check my video about this on [[https://www.youtube.com/watch?v=78v6J9x_G80][Youtube]] .

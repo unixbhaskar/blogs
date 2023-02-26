@@ -1,0 +1,156 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1015
+#+title: Debian Custom Kernel Build
+#+date: 2022-05-19
+#+tags: Technical
+
+Well, like my previous post, this time I am going to show you, how you can
+easily build a /custom kernel/ on *Debian* . I have written a small bash script
+that will do the thing automated way.
+
+Let me run you through chunk by chunk of the script for your sake ...
+
+#+begin_src bash
+#!/usr/bin/env bash
+
+# Author : Bhaskar Chowdhury
+# LICENSE : GPL-2
+# For kernel download helper script: https://git.kernel.org/pub/scm/linux/kernel/git/mricon/korg-helpers.git/tree/get-verified-tarball
+
+
+get_make=$(command -v make)
+get_elapsed_time="/usr/bin/time -f"
+untar_it="tar -xJvf"
+existing_config_file="/boot/config-$(uname -r)"
+build_dir=$HOME/latest_kernel_build
+get_it=$(command -v secure_kernel_tarball)
+NOTIFY=$(command -v notify-send)
+#+end_src
+
+In the above section, I have declared a few variables to hold the default values
+to operate on later in the script. And I believe, the variable names are pretty
+self-explanatory, as you can see the values explicit too.
+
+#+begin_src bash
+clear
+cat << "EOF"
+  _  __                    _
+ | |/ /___ _ __ _ __   ___| |
+ | ' // _ \ '__| '_ \ / _ \ |
+ | . \  __/ |  | | | |  __/ |
+ |_|\_\___|_|  |_| |_|\___|_|_ _       _   _
+  / ___|___  _ __ ___  _ __ (_) | __ _| |_(_) ___  _ __
+ | |   / _ \| '_ ` _ \| '_ \| | |/ _` | __| |/ _ \| '_ \
+ | |__| (_) | | | | | | |_) | | | (_| | |_| | (_) | | | |
+  \____\___/|_| |_| |_| .__/|_|_|\__,_|\__|_|\___/|_| |_|
+                      |_|
+EOF
+#+end_src
+
+In the above section this is a eye candy stuff , if you can ignore then ignore
+it.
+
+#+begin_src bash
+if [[ ! -d $build_dir ]];then
+	mkdir -p $build_dir
+fi
+
+cd $build_dir
+#+end_src
+
+In the above section, we are looking for an directory to be exists, if it is
+not, then create it and then enter into it .
+
+#+begin_src bash
+debian_kernel_build() {
+
+#Download the kernel and get into the download dir
+which_kernel
+
+eval ${get_it} ${kernel}
+
+#Untar it
+$untar_it linux-$kernel.tar.xz
+
+#Get into the kernel direcory
+cd linux-$kernel
+
+#Clean the dir
+$get_make clean && $get_make mrproper
+
+#Copying existing/running kernel config
+cp $existing_config_file .config
+
+#Disable this option to shorten the compile time
+scripts/config --disable DEBUG_KERNEL
+grep DEBUG_KERNEL .config
+
+#Disable this option to shorten the compile time
+scripts/config --disable DEBUG_INFO
+grep DEBUG_INFO .config
+
+#This is needed ,otherwise it won't allow you to build
+scripts/config --disable system_trusted_keys
+grep CONFIG_SYSTEM_TRUSTED_KEYS .config
+
+#Make sure the flags symbols are set correctly with an updated value
+$get_make  ARCH=x86_64 olddefconfig
+
+# Now build it
+$get_elapsed_time "\n\n\tTime Elapsed: %E\n\n" $get_make ARCH=x86_64 V=1 -j$(getconf _NPROCESSORS_ONLN) deb-pkg
+
+
+printf "\n\n\n Install the generated packages aka kernel,headers,modules et al\n\n\n"
+
+cd ..
+
+dpkg -i *.deb
+}
+#+end_src
+
+Okay, here is some explanation of the above function. First, we get the kernel
+according to our choice. Then we untar and get into that source directory. After
+that, we use a script called /config/ , which resides in linux source tree ,
+specifically in *scripts* directory. This allows us to change some configuration
+parameters via enabling and disabling. Debug info and debug kernel config value
+are turned off. This is done to /gain some build speed/ . It has its own downside
+too. Then we simply copied the running kernel config file to /.config/ file under
+the newly untarred linux source directory.
+
+We ran /make olddefconfig/ to keep our existing configuration and add the new
+one or required one only. Finally, we need to run /deb-pkg/, which does all the
+heavy lifting like, building make package et al.
+
+Once the build is successful, we move to one directory level up, where the build
+packages are deposited.And then run /dpkg with i option/  to install the package in the
+system. Of course that requires superuser privilege and it will prompt you for
+the password.
+
+#+begin_src bash
+which_kernel() {
+printf "\n\n Which kernel would be your base? Stable or Mainline or Longterm? [S/M/L]: %s"
+read response
+
+if [[ $response == "S" ]];then
+#Get the stable kernel from kernel.org
+kernel=$(curl -s https://www.kernel.org/ | grep -A1 'stable:' | grep -oP '(?<=strong>).*(?=</strong.*)' | grep 5.17)
+elif [[ $response == "M" ]];then
+#Get the mainline kernel from kernel.org
+kernel=$(curl -s https://www.kernel.org/ | grep -A1 'mainline:' | grep -oP '(?<=strong>).*(?=</strong.*)')
+elif [[ $response == "L" ]];then
+#Get the longterm kernel from kernel.org
+kernel=$(curl -s https://www.kernel.org/ | grep -A1 'longterm:' | grep -oP '(?<=strong>).*(?=</strong.*)')
+fi
+}
+#+end_src
+
+In the above section, we declare a function, called /which_kernel()/ , it
+basically, as you can see from the code provide you the option to choose the
+specific kernel you want to build.
+
+#+begin_src bash
+debian_kernel_build
+#+end_src
+
+Now, finally, we called up the function to do the actual work. That's it!!  Oh
+btw, you can watch and listen all the explanations on [[https://www.youtube.com/watch?v=xohcRmirI5Q][Youtube.]]

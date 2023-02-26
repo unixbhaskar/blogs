@@ -1,0 +1,223 @@
+#+title: Compile Linux Kernel With Chosen Compiler,Automated Way!
+#+date: 2022-01-23
+#+tags: Technical
+
+
+*But wait! Why do you want to build a custom kernel?*
+
+      * Doesn't the stock kernel satisfy your need ?
+      * What you are trying to achieve by doing?
+      * The feature you are looking for is not enabled by default?
+      * Are you experimenting new features(drivers,api) ?
+
+  If the above queries are playing in your mind,you are good to go ahead.Otherwise,
+  I am afraid ,it will be sheer waste of your time and computer time.
+
+  But having said that, I am no way discouraging you to experiment with it. In
+  early days of it people used to do that for "showing off" . I don't think that
+  is the case anymore.
+
+  It will certainly gives you the opportunity to see under the hood and come to
+  know so many things(but, again,is it really need to know all those,especially
+  if you are not kernel developer or living by the sword to do that to earn your
+  bread and butter?). Applying the exposing knowledge is useless ,if you do not
+  have the exposure to exploit those gained understanding or misunderstanding
+  somewhere.
+
+  Gaining knowledge or aware of the information is not a big deal these days, but
+  having the right or correct information and knowledge will certainly help
+  someone,who is inclined to excel in specific field. But, to gain right way,
+  you have to start living with it and it takes time(read years) to understand
+  and use it in effective way. Not only that, for instance , Linux kernel is
+  huge and consists of so many parts ,it is very tempting and chances are high
+  to get lost in quest for information .
+
+  Nobody knows the entire kernel properly,because people working highly
+  specialized section of it and make contribution to it. Very few out there, who
+  have the sense of where things are properly going.Anyway, lets not deviate from the
+  topic we are endeavoring here , which is build the kernel with the choice of our
+  compiler tool chains.
+
+  It used to be the case Linux kernel only compiled with [[https://gcc.gnu.org/][GCC,the GNU Compiler
+  Collection]] ,but of late another set of compiler and tool chains crops up and
+  getting into kernel, which is [[https://llvm.org/][The LLVM Compiler Infrastructure]] . So,having
+  options for doing the same task is all good ,provided it is not deviated big
+  way, which apparently not the case.
+
+  Please spend sometime try to gloss over those two tool chains , it will
+  certainly helps you understand or at least gives you impression ,how you can
+  utilize those stuff. Or, if you really inclined, it would be great, provided
+  it will inline to you progress path.Because , it would take some taking to get
+  acclimatized yourself with these tools, takes time too.
+
+  My understanding and expertise with those tools are very limited ,just enough
+  to use it . But, if you gain more of it, absolutely play vital role for your
+  progress.The more you come to know, the more method you find to use it better
+  way and try to constant in search of better utilization and implementations.
+
+  Well, once you getting the hang of it(I mean build custom kernel) , you tend to do it
+  for every possible situation and it is absolutely overkill. So, keep that
+  inclination to absolute need and the situation compel to do so. Then it will
+  justify the effort of it.
+
+  I am not sure about the "out in the wild" stuff for doing this things ,so here
+  is home grown stuff , which do the bare minimal . It devoid of so many other
+  things ,which could easily complicate thing and make look things "expertise-y"
+  , instead this damn ordinary script which will do the simplest task.
+
+  You might enhance, tweak and rewrite if you are inclined to.
+
+  #+begin_src bash
+#!/bin/bash
+
+# Check out: https://www.kernel.org/doc/html/latest/kbuild/index.html
+# For kernel download helper script: https://git.kernel.org/pub/scm/linux/kernel/git/mricon/korg-helpers.git/tree/get-verified-tarball
+
+
+get_make=$(command -v make)
+get_elapsed_time="/usr/bin/time -f"
+untar_it="tar -xJvf"
+existing_config_file="/boot/config-$(uname -r)"
+build_dir=/var/tmp/kernel/latest_kernel_build
+get_it=$(command -v secure_kernel_tarball)
+NOTIFY=$(command -v notify-send)
+clang="CC=clang"
+host_cc_clang="HOSTCC=clang"
+make_llvm="LLVM=1"
+llvm_assm="LLVM_IAS=1"
+tools_version_check="scripts/ver_linux"
+config_change="scripts/config"
+
+if [[ ! -d $build_dir ]];then
+	mkdir -p $build_dir
+fi
+
+cd $build_dir
+
+generic_kernel_build() {
+
+#Download the kernel
+
+which_kernel
+
+eval ${get_it} ${kernel}
+
+#Untar it
+$untar_it linux-$kernel.tar.xz
+
+#Get into the kernel direcory
+cd linux-$kernel
+
+#Check for required tools to build kernel
+$tools_version_check
+
+#Copying the existing system running kernel config
+cp $existing_config_file .config
+
+# Take away the DEBUG options for faster compile
+$config_change --disable DEBUG_KERNEL
+grep DEBUG_KERNEL .config
+
+#Similar vein like above, for faster compile time
+$config_change --disable DEBUG_INFO
+grep DEBUG_INFO .config
+
+#Choose a compiler to build
+which_compiler
+
+}
+
+
+#This is assuming that you have already installed "clang" and "llvm" in the system
+
+which_compiler() {
+printf "\n\t Which compiler do you want to use for build ,CLANG or GCC? [C/G] : %s"
+read compiler_chosen
+
+if [[ $compiler_chosen == "G" ]];then
+
+       gcc_compile
+
+elif [[ $compiler_chosen == "C" ]];then
+
+       clang_llvm_compile
+else
+                printf "\n\n You have to choose a compiler to build.\n"
+	        exit 1
+
+fi
+}
+
+which_kernel() {
+printf "\n\n Which kernel would be your base? Stable or Mainline or Longterm? [S/M/L]: %s"
+read response
+
+if [[ $response == "S" ]];then
+#Get the stable kernel from kernel.org
+kernel=$(curl -s https://www.kernel.org/ | grep -A1 'stable:' | grep -oP '(?<=strong>).*(?=</strong.*)' | grep 5.16)
+elif [[ $response == "M" ]];then
+#Get the mainline kernel from kernel.org
+kernel=$(curl -s https://www.kernel.org/ | grep -A1 'mainline:' | grep -oP '(?<=strong>).*(?=</strong.*)')
+elif [[ $response == "L" ]];then
+#Get the longterm kernel from kernel.org
+kernel=$(curl -s https://www.kernel.org/ | grep -A1 'longterm:' | grep -oP '(?<=strong>).*(?=</strong.*)' | head -1)
+fi
+}
+
+
+
+gcc_compile() {
+
+                printf "\n You have chosen to use GCC as the compiler to build.\n\n"
+
+		$get_make  ARCH=x86_64 olddefconfig
+
+		$get_elapsed_time "\t\n\n Elapsed Time : %E \n\n"  $get_make ARCH=x86_64 V=1 -j$(getconf _NPROCESSORS_ONLN) LOCALVERSION=-$(hostname)
+
+		$get_make cleandocs
+
+		$get_make modules_install
+
+		printf "\n\n Do you want to install it system wide?? [Y/N] : %s"
+		read choice
+
+		if $choice == Y; then
+
+			$get_make install
+
+	        else
+			printf "\n Nope , you declined to install the build kernel system wide. \n"
+
+		fi
+}
+
+clang_llvm_compile() {
+		printf "\n\t You have chosen to use CLANG as the compiler to build.\n\n"
+
+		$get_make $clang $host_clang_cc $llvm_make $llvm_assm  ARCH=x86_64 olddefconfig
+
+	        $get_elapsed_time "\n\t Elapsed Time: %E \n\n" $get_make $clang $host_clang_cc $llvm_make $llvm_assm  ARCH=x86_64 V=1 -j$(getconf _NPROCESSORS_ONLN)
+
+		$get_make cleandocs
+
+		$get_make $clang $llvm_make $llvm_assm modules_install
+
+		printf "\n\n Do you want to install it system wide?? [Y/N] : %s"
+		read choice
+
+		if $choice == Y; then
+
+			$get_make install
+
+	        else
+		        printf "\n Nope , you declined to install the build kernel system wide. \n"
+
+		fi
+}
+
+generic_kernel_build
+
+#+end_src
+
+
+Hope this help.

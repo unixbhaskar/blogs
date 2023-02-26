@@ -1,0 +1,279 @@
+#+title: Rambling about Git
+#+date: 2022-03-13
+#+tags: Technical
+
+
+Well, it is Sunday evening and I am absolutely bored ,so I thought to jot down some
+words and work about */source code revision system/* ,which is called *GIT*.
+
+I shall be surprised ,if I come to know that you haven't hard about it at
+least. I am expecting at least that you use it ,if you are not technical person
+.So, with that assumptions ,let me dish out something of my understanding about
+it from the very high level, so it will be easier for you to grasp the
+essence.
+
+Like every other software you have no other option but to spend time with it to
+get accustomed. Make not mistake , whatever the expert says , it is difficult to
+grasp thing at one go,so the more you use , the comfortable you will be. In this
+quest ,I am going to give you some sort of rudimentary stuff which might help.
+
+First and foremost thing , I am expecting you to using it as
+client(Surprise...surprise,it has a server model too)to manage your work, it can
+be anything you do,strictly NOT specific to source code. I am sure that majority
+of the article have given you the impression of using /git/ with source and that's
+true ,but you can use it to keep other works too. Like,I am keeping my blogs ,
+which is written in plain text files ,my pictures, my videos to name a few . It
+is essentially a **/revision control system/** that keeps track of your resources
+revisions.
+
+
+Then,once you installed it in your system by your OS's package manager(Again, I
+am assuming you are sitting on GNU/Linux and on different flavor of it , because
+no two people can use the same flavor, that is trend :) ) .Well, joke aside, you
+probably sitting on your favorite distribution and the package manager on that
+platform is smart enough to get you the software you wish.
+
+You are suppose to go through the basic steps of creating repositories by
+yourself in your machine and if you decided to publish your work exposed to the
+public or keep your work as private somewhere on the net, you can do so with
+ease. And I am not going to lecture you to do that thing here . Once you run
+that initial command to create the repo it suppose to look like this :
+
+#+begin_src sh
+ls -al ~/LaTeX_Workouts
+#+end_src
+#+begin_src sh
+#+RESULTS:
+| total      | 704 |         |         |        |     |    |       |                      |
+| drwxr-xr-x |   3 | bhaskar | bhaskar |   4096 | Oct | 16 | 02:57 | .                    |
+| drwxr-xr-x |  83 | bhaskar | bhaskar |  16384 | Mar | 13 | 19:59 | ..                   |
+| drwxr-xr-x |   8 | bhaskar | bhaskar |   4096 | Mar |  2 | 06:44 | .git                 |
+| -rw-r--r-- |   1 | bhaskar | bhaskar |    745 | Aug | 23 |  2020 | Bhaskar_Chowdhury.aux |
+| -rw-r--r-- |   1 | bhaskar | bhaskar |   5695 | Aug | 23 |  2020 | Bhaskar_Chowdhury.log |
+| -rw-r--r-- |   1 | bhaskar | bhaskar |  68563 | Aug | 23 |  2020 | Bhaskar_Chowdhury.pdf |
+| -rw------- |   1 | bhaskar | bhaskar |    666 | Aug | 23 |  2020 | Bhaskar_Chowdhury.tex |
+| -rw-r--r-- |   1 | bhaskar | bhaskar |     62 | Oct | 11 |  2020 | README.md            |
+| -rw-r--r-- |   1 | bhaskar | bhaskar |   2135 | Aug | 23 |  2020 | bhaskar.jpeg         |
+| -rw-r--r-- |   1 | bhaskar | bhaskar |  11242 | Aug | 23 |  2020 | cover_small.jpg       |
+| -rw-r--r-- |   1 | bhaskar | bhaskar |      8 | Sep |  7 |  2020 | document.aux         |
+| -rw-r--r-- |   1 | bhaskar | bhaskar |   2720 | Sep |  7 |  2020 | document.log         |
+| -rw-r--r-- |   1 | bhaskar | bhaskar |  12552 | Sep |  7 |  2020 | document.pdf         |
+| -rw-r--r-- |   1 | bhaskar | bhaskar |   1044 | Sep |  7 |  2020 | document.synctex     |
+| -rw-r--r-- |   1 | bhaskar | bhaskar |     75 | Sep |  7 |  2020 | document.tex         |
+| -rw-r--r-- |   1 | bhaskar | bhaskar |    120 | Aug | 23 |  2020 | graphics.aux         |
+| -rw-r--r-- |   1 | bhaskar | bhaskar |    636 | Aug | 23 |  2020 | graphics.dvi         |
+| -rw-r--r-- |   1 | bhaskar | bhaskar |   6618 | Aug | 23 |  2020 | graphics.log         |
+| -rw-r--r-- |   1 | bhaskar | bhaskar | 167116 | Aug | 23 |  2020 | graphics.pdf         |
+| -rw-r--r-- |   1 | bhaskar | bhaskar |  53339 | Aug | 23 |  2020 | graphics.synctex     |
+| -rw-r--r-- |   1 | bhaskar | bhaskar |    596 | Aug | 23 |  2020 | graphics.tex         |
+| -rw-r--r-- |   1 | bhaskar | bhaskar | 144257 | Aug | 23 |  2020 | kernel.compile.png   |
+| -rw-r--r-- |   1 | bhaskar | bhaskar |   3400 | Aug | 23 |  2020 | neomutt.png          |
+| -rw-r--r-- |   1 | bhaskar | bhaskar |   1910 | Aug | 23 |  2020 | presentation.aux     |
+| -rw-r--r-- |   1 | bhaskar | bhaskar |  33047 | Aug | 23 |  2020 | presentation.log     |
+| -rw-r--r-- |   1 | bhaskar | bhaskar |    805 | Aug | 23 |  2020 | presentation.nav     |
+| -rw-r--r-- |   1 | bhaskar | bhaskar |     99 | Aug | 23 |  2020 | presentation.out     |
+| -rw-r--r-- |   1 | bhaskar | bhaskar |  50616 | Aug | 23 |  2020 | presentation.pdf     |
+| -rw-r--r-- |   1 | bhaskar | bhaskar |      0 | Aug | 23 |  2020 | presentation.snm     |
+| -rw-r--r-- |   1 | bhaskar | bhaskar |  40697 | Aug | 23 |  2020 | presentation.synctex |
+| -rw-r--r-- |   1 | bhaskar | bhaskar |    609 | Aug | 23 |  2020 | presentation.tex     |
+| -rw-r--r-- |   1 | bhaskar | bhaskar |    101 | Aug | 23 |  2020 | presentation.toc     |
+| -rwxr-xr-x |   1 | bhaskar | bhaskar |    593 | Aug | 23 |  2020 | showmatch            |
+#+end_src
+
+
+This is just an example git repo directory structure in my /*home*/ folder. You
+probably noticed that there is a /.git/ directory created in the folder. That is
+holding the key.You might inspect at your leisure ,what that directory holds,
+but . but ..before start fiddling with it ,take backup of it , so in case you
+messed up , you can get back to the pristine state.
+
+Well, here is what /.git/ folder contains for your reference...
+
+#+begin_src sh
+ls -al ~/LaTeX_Workouts/.git/
+#+end_src
+#+begin_src sh
+#+RESULTS:
+| total      | 68 |         |         |      |     |    |       |                  |
+| drwxr-xr-x |  8 | bhaskar | bhaskar | 4096 | Mar |  2 | 06:44 | .                |
+| drwxr-xr-x |  3 | bhaskar | bhaskar | 4096 | Oct | 16 | 02:57 | ..               |
+| -rw-r--r-- |  1 | bhaskar | bhaskar | 1118 | Oct | 16 | 02:59 | COMMIT_EDITMSG    |
+| -rw-r--r-- |  1 | bhaskar | bhaskar |  121 | Oct | 11 |  2020 | COMMIT_EDITMSG.gz |
+| -rw-r--r-- |  1 | bhaskar | bhaskar |  132 | Sep | 27 | 15:21 | FETCH_HEAD.gz     |
+| -rw-r--r-- |  1 | bhaskar | bhaskar |   23 | Oct | 16 | 02:58 | HEAD             |
+| -rw-r--r-- |  1 | bhaskar | bhaskar |   48 | Oct | 11 |  2020 | HEAD.gz          |
+| -rw-r--r-- |  1 | bhaskar | bhaskar |    0 | Oct | 16 | 02:59 | MERGE_RR          |
+| -rw-r--r-- |  1 | bhaskar | bhaskar |   69 | Oct | 11 |  2020 | ORIG_HEAD.gz      |
+| -rw-r--r-- |  1 | bhaskar | bhaskar |   92 | Oct | 16 | 02:58 | config           |
+| -rw-r--r-- |  1 | bhaskar | bhaskar |  232 | Oct | 11 |  2020 | config.gz        |
+| -rw-r--r-- |  1 | bhaskar | bhaskar |   73 | Oct | 16 | 02:58 | description      |
+| -rw-r--r-- |  1 | bhaskar | bhaskar |   93 | Oct | 11 |  2020 | description.gz   |
+| drwxr-xr-x |  2 | bhaskar | bhaskar | 4096 | Oct | 16 | 02:58 | hooks            |
+| -rw-r--r-- |  1 | bhaskar | bhaskar | 2498 | Oct | 16 | 02:59 | index            |
+| -rw-r--r-- |  1 | bhaskar | bhaskar | 1288 | Jun |  8 |  2021 | index.gz         |
+| drwxr-xr-x |  2 | bhaskar | bhaskar |   39 | Oct | 16 | 02:58 | info             |
+| drwxr-xr-x |  3 | bhaskar | bhaskar |   45 | Oct | 16 | 02:59 | logs             |
+| drwxr-xr-x | 42 | bhaskar | bhaskar | 4096 | Oct | 16 | 02:59 | objects          |
+| drwxr-xr-x |  5 | bhaskar | bhaskar |   46 | Oct | 11 |  2020 | refs             |
+| drwxr-xr-x |  2 | bhaskar | bhaskar |    6 | Oct | 11 |  2020 | rr-cache         |
+#+end_src
+
+
+This directory contains the files and folders internal to /git/ and *is NOT*
+included in the repo.It is so very tempting to fiddle with this, but highly
+recommend you get accustomed with git user facing stuff first. I shall provide
+you the reference urls bottom of this post for you to inspect and use.Also, I
+might give you some link of my very old blog post about specific use cases of
+git to my benefit.
+
+But,git stores stuff inside it's database one top of another, that means every
+commit (think about it to save your work in specific location)chained with other
+commit.Nope, I am not going draw or provide another graphical representation of
+it, internet is littered with that kind images.In fact, the more I see picture
+in git , the confusion in arises high. And I absolutely despise it. Probably
+this is the single most case where graphical representation confuses more than
+solve the owes of the matter.
+
+
+Okay, there are two kinds of command sections , one is called */porcelain/* and
+other is called */plumbing/* . Most of the time , like me, you need the porcelain
+command to deal with git to manage stuff for your. But, hey, what those names
+suggest? Pretty arcane ..huh? Indeed. Let me decipher for you:
+
+*Porcelain Command* : These are command ,which use by user of git , generally on command
+ line or some other form.For instance, /git add/ , /git push/  et al.
+
+*Plumbing Command* : These are command are specifically designed to do some low
+level stuff related to git.Mostly use for trouble shooting and under the hood
+use by the user level commands(i.e porcelain command) . For instance, /git
+rev-parse/  , /git cat-file/ , et al.
+
+
+I am wildly hoping you are not getting confused,because this is very important
+to not get confused in order to use it in effective manner. Okay, I understand
+that people have inculcated the habit of searching on the internet like second
+nature, so I am giving you the pinpointed stuff ,so it will help you to travel
+less, [[https://git-scm.com/book/en/v2/Git-Internals-Plumbing-and-Porcelain][Difference between Plumbing and Porcelain]] .
+
+Now, you probably have realized, this is powerful enough to distinguish that two
+separate set of commands do different thing , so no point to mingle them. If you
+do,that means before that situation come , you have done something you are not
+suppose to do. Don't you think that is good enough hints to get back to the
+source of the problem. Well, it is not that simple always , that is why
+different layer of commands exists.
+
+One of the place where you might use ,although no necessary to use both level of
+command if you are inclined to have some sort automated thing in your view and
+wanted to script or program it do some work offload. To make things easy, git
+provided you some predefined sample script with *.smaple* extension script in the
+/.git/hooks// directory (look up the source code output above) . In fact, you can
+write these hooks to perform certain task at your will and in any of the
+language you like . And people do that kind stuff all the time especially when
+some repos are publicly exposed or in walled environment . You can think of this
+activity is a kind of administration related to git .
+
+
+You  can write hooks according to your project's need or your personal project's
+need but make sure that those hooks(checks) not overwhelm the git operation
+.So, to some external automation can be minimal , if you use the hooks
+properly.
+
+Sooner or later , you will discover that , there is pattern involve to deal with
+git.Certain procedure need to follow to get thing going . You can easily
+distinctly create your work and keep them separate in the same repositories Ala
+with the help of /branching/ . It is darn easy and extremely cheap, use it as much
+as you like . Throwing away is just a matter of discretion .
+
+You can temporarily keep aside your work for looking into other stuff in same
+repo ,with ease too Ala /stashing/ . Later, when come back to place before went
+off,by /popping the stash/ .
+
+What else? You can recover ...you can change commit message (before pushing it
+to the remote place) and in fact you can do so many thing until you pushed to
+the remote repositories. Locally , you are suppose to do whatever you like, but
+if you  have collaborator or part of the project , and your work might impact
+others,then it is not a good idea to change something without notifying everyone
+else involved or issue some notice publicly to make people aware of the changes
+about to happen.
+
+By letting people know about the forth coming changes to publicly exposed
+stuff ,you are mitigating the element of surprise in the operating and gain the
+collaborators confidence.
+
+In fact ,there is wonderful way to detect the exact problematic commit in your
+project by means of /bisection/ . As the name suggest ,it will bisect as per your
+discretion. Either you do it manually or provide some sort means to run it at
+certain point of bisection automatically to get the thing done . Likewise,
+seeing the difference of two version of the same file /locally as well  as
+comparing with remote location/ is darn easy . The commits or changes are at your
+mercy to get merged into future work as specifically as you want them to be.
+
+As I mentioned in the very beginning , you can keep several kind of files in a
+git repo,for instance , binary files, image files not to mentioned plain text
+files , source code files .
+
+Yes, you can keep books too, Oh, yes videos too...see the options are good
+enough to encourage you try it out, if and only if , haven't thought about it or
+give it a shot yet. Everything in git stored has a /hash value attach to it/ , you
+can think of it as /unique identifier/ .So, it makes  it easy to keep track of
+thing simplest possible way. You can see every part of it as transparently as
+possible  without much fuss.
+
+Automated way of creating GITHUB repositories :
+
+#+begin_src bash
+#!/usr/bin/env bash
+
+github-create() {
+ repo_name=$1
+
+ dir_name=$(basename $(pwd))
+
+ if [ "$repo_name" = "" ]; then
+ echo "Repo name (hit enter to use '$dir_name')?"
+ read repo_name
+ fi
+
+ if [ "$repo_name" = "" ]; then
+ repo_name=$dir_name
+ fi
+
+ username=$(git config github.user)
+ if [ "$username" = "" ]; then
+ echo "Could not find username, run 'git config --global github.user <username>'"
+ invalid_credentials=1
+ fi
+
+ token=$(git config github.token)
+ if [ "$token" = "" ]; then
+ echo "Could not find token, run 'git config --global github.token <token>'"
+ invalid_credentials=1
+ fi
+
+ if [ "$invalid_credentials" == "1" ]; then
+ return 1
+ fi
+
+ echo -n "Creating Github repository '$repo_name' ..."
+ curl -u "$username:$token" https://api.github.com/user/repos -d '{"name":"'$repo_name'"}' > /dev/null 2>&1
+ echo " done."
+
+ echo -n "Pushing local code to remote ..."
+ git remote add origin "git@github.com:$username/$repo_name.git"  # > /dev/null 2>&1
+ gitcompu  origin master   # > /dev/null 2>&1
+ echo " done."
+}
+
+github-create
+#+end_src
+
+Well, I am sleepy now, before I finished this , let me give you some piece of
+references ..
+
+Ref:
+
+1) [[https://git-scm.com/docs][This should be your "Go To" place on the Internet about GIT]]
+
+2) [[http://unixbhaskar.blogspot.com/2017/08/how-to-format-patch-and-send-patch-by.html][I have written a piece about specific work with GIT]]
+
+3) [[https://unixbhaskar.wordpress.com/2016/11/25/how-to-sign-your-git-commit/][Signing your git commit with GPG key]]

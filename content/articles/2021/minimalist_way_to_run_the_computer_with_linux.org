@@ -1,0 +1,125 @@
+>#+title: Minimalist way to run the computer with Linux
+#+date: 2021-11-01
+#+tags: Technical
+
+Well, my requirement to do with computer was/is always minimal. As, I have said
+it on other places, that I am NOT doing any rocket science or overly complicated
+stuff to use plethora of technologies together to achieve something rudimentary.
+
+So, I do mostly very predictive and deterministic work,as a result I can almost
+pinpoint what I need to accomplish my work, in other term "workflow".
+
+I do exclusively run GNU/Linux on my machines(Desktop/Laptop) for ages. No,
+second kind of OS reside in the machine from the day I have purchased my first
+machine.Of late, although I have been dabbling a bit with FreeBSD too and that's
+for different reason. At this moment , I do have five specific GNU/Linux distros
+in my machine , all in their respective physical partitions, namely,
+[[https://www.gentoo.org/][Gentoo]],[[http://www.slackware.com/][Slackware]],[[https://www.debian.org/][Debian]],[[https://get.opensuse.org/tumbleweed/][Opensuse-Tumbleweed]] and [[https://archlinux.org/][Arch]] . The only OTHER OS present
+is [[https://www.freebsd.org/][FreeBSD]] .
+
+I do not use any desktop environment but use one specific tiling window manager
+, i.e [[https://i3wm.org/][I3WM]] and I am sticking with it for past 6 years . There was/is temptation
+to use other "well circulated" tiling window manager , but I refused to port on
+and using what I have been using for sometimes. It saves time and energy.
+
+And,to do some real work I needed some tool to be installed in my system . To
+some extents below list of packages I have pulled in:
+
+vim
+vifm
+vimb
+git
+surf
+mpv
+cmus
+zathura
+i3
+i3blocks
+i3lock
+dmenu
+neofetch
+etckeeper
+lsof
+htop
+mutt
+postfix
+newsboat
+screen
+lynx
+w3m
+gpg2
+lvm2
+cronie
+isync
+calcurse
+kmon
+pass
+curl
+scrot
+wget
+rsync
+imgmagick
+psutils
+moreutils
+findutils
+compilers(gcc collections and llvm collections)
+emacs
+taskwarrior
+
+That's pretty much it! One or two interesting here and there but nothing
+permanent in system. Once I end dabble with the newly bring in stuff , then
+throw away those.But ,above packages are pretty much stagnated in my machine.
+
+I wanted my system to be lean but powerful and these packages helps me to
+achieve that almost 90 percent.
+
+But, having those packages not only one, it brings down some other packages as
+dependency. Fortunately except webkit2gtk every thing else are pretty small and
+negligible.This big packages has webkit2gtk is required by [[https://fanglingsu.github.io/vimb/][Vimb]] .
+
+I do not run and like virtual machines. But I do sometimes run [[https://www.qemu.org/][QEMU]] to test some
+kernel related stuff. Bare metal is fine and the best. I have tried and tested
+virtual machines and come to a conclusion that if the underlying machine is not
+fatty enough , then the performance of virtual machine will be horrific.
+
+The most stressful work I do is build the kernel with several config options and
+run some test with it on qemu. Every thing else very lightweight.
+
+Now, you can argue , that browsing or net surfing itself a heavy duty work and I
+would completely agree with you.But having said that, most of the places I visit
+have more text than visual in any other form. And those stuff will breeze through
+because lack of graphics component processing on the fly.
+
+Dealing with more text than other form of information gives me more joy and the
+fast processing of stuff elated me.Emacs probably only big GUI app on my system
+, otherwise most of the things are text base and few of them have TUI interface.
+
+Open source provide you the choice to live with the things you like and I grabbed
+it on both hands.Vendor lock in doesn't go well with me. But , wait , open
+source software too insists you to stick around with it , that means the
+"camping" or "lock in" too.So, you need to use your conscience to decide , which
+or what you want to live with , I do.
+
+On the other hand,I do love "bleeding edge" stuff only related to my liking ,
+for instance the Linux kernel. But, I have always keep myself distanced from the
+"trendy" and "hot" technology trend ,even it is promoted by the renowned and
+liked people. I have seen those hypes are very short-lived and had had bad
+consequences. Also, I have the lacuna to not run behind something where ten other
+people are mindlessly running to hog the limelight.
+
+Living with my choice of software and the blessings of open source software
+taught me that sticking with something for long time allows you to get more insight
+about the project and importantly to understand it. Expertise comes from doing the
+thing you like over and over again in various way to see and compare the result
+of it.Moreover, I don't have the bent of mind to grasp so many things at once.
+
+I do love minimalist system , which allow power and flexibility to adopt and do
+some heavy duty work under the hood without much ado.
+
+In other words,my life with computer is pretty boring. Why? Because, I am stuck
+with an OS for over 20 year (read GNU/Linux) and with one window manager for
+past 6 years (read i3 window manger) and the mentioned packages above. Machine
+changed, time changed but the crux remains the same.Few of the packages are
+comparatively recent addition but most stays long time.
+
+Muttering out my love! :)

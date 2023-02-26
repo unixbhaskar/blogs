@@ -1,0 +1,247 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1009
+#+title: Gentoo Custom Repository And Custom Ebuild Creation
+#+date: 2022-05-12
+#+tags: Technical
+
+Well, it is time to look into some of the gory details of a specific Linux
+distribution. In this case , I am learning to find out, how something can be
+customized in /Gentoo/.
+
+I am going to explain two things at once , how to build a /*customrepo*/ and how
+create /*custom ebuild*/ .
+
+First of all, we need to create some directory , which is required to make these
+operations possible.
+
+#+begin_src bash
+mkdir -p /var/db/repos/customrepo
+#+end_src
+
+Then we need to created more directories underneath that directory
+
+#+begin_src bash
+mkdir -p /var/db/repos/customrepo/{metadata,profiles}
+#+end_src
+
+The above command should create two specific directories mentioned. Now we need
+to fix the permission of these directories. Assuming we are already in
+"/var/db/repos" directory ....
+
+
+#+begin_src bash
+sudo chown -R portage:portage customrepo
+#+end_src
+
+Now, we need to create a specific file name /layout.conf/ under the /metadata/
+directory and that file should contain two specific lines ..
+
+#+begin_src bash
+vim /var/db/repos/customrepo/metadata/layout.conf
+#+end_src
+
+And in that file :
+
+#+begin_src bash
+masters = gentoo
+
+auto-sync = false
+#+end_src
+
+We are essentially creating a /local repo/ that doesn't need to be synced with
+other repo and main repo(i.e gentoo) too, that is why sync is assigned to
+false.
+
+Alright, we need to create one more file under the /profiles/ directory and the
+filename is /repo_name/
+
+#+begin_src bash
+vim /var/db/repos/customrepo/profiles/repo_name
+#+end_src
+
+And this file has only one line in it ...
+
+#+begin_src bash
+customrepo
+#+end_src
+
+Next, we need to create a file under /etc/ directory
+
+#+begin_src bash
+vim /etc/portage/repos.conf/customrepo.conf
+#+end_src
+
+And in that file we need to mention our custom repository name and the location
+of the customrepo path :
+
+#+begin_src bash
+[customrepo]
+
+location = /var/db/repos/customrepo
+#+end_src
+
+Okay, now we get back to our custom repository location and create some files aka
+ebuild files for specific software. I have chosen a random software to build with
+ebuild , which is called /vimb/, which is nothing but a browser-based on the /vim/
+mechanism. Let's create the required directories :
+
+
+#+begin_src bash
+mkdir -p /var/db/repos/customrepo/www-client/vimb
+#+end_src
+
+This is Gentoo convention to prefix app name with category, that is why it is
+under /www-client/ .
+
+You can quickly check whether the software you are trying to build customized
+application like this :
+
+#+begin_src bash
+eix vimb
+#+end_src
+
+Which should not output its existence. That means, it is not installed or
+missing.
+
+Now, we need to create an ebuild file by invoking the editor, in this case, I am
+using vim and we are supposed to be under the /vimb/ directory ..then ..
+
+#+begin_src bash
+vim ./vimb-3.6.0.ebuild
+#+end_src
+
+Invoking the above command should open a file with these texts in it, which are
+suppose to fill in ..
+
+#+begin_src bash
+# Copyright 2022 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+DESCRIPTION=""
+HOMEPAGE=""
+SRC_URI=""
+
+LICENSE=""
+SLOT="0"
+KEYWORDS="~amd64"
+
+DEPEND=""
+RDEPEND="${DEPEND}"
+BDEPEND=""
+#+end_src
+
+
+..and I have also infuse some piece of code into this file, which is like :
+
+
+#+begin_src bash
+DEPEND="x11-libs/gtk+:3 >=net-libs/webkit-gtk-2.20.0:4"
+src_prepare() {
+	default
+	restore_config config.def.h
+}
+
+src_compile() {
+	emake PREFIX="/usr"
+}
+
+src_install() {
+	emake PREFIX="/usr" DESTDIR="${D}" install
+	save_config src/config.def.h
+}
+#+end_src
+
+The above two stanzas of code should be in one file, I broke it because of easy
+readability.
+
+The details have to be filled in the variables of that ebuild file , which in
+entirety looks like this :
+
+#+begin_src bash
+# Copyright 2022 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+DESCRIPTION="vimb - the vim like browser"
+HOMEPAGE="https://fanglingsu.github.io/vimb/"
+SRC_URI="https://github.com/fanglingsu/vimb/archive/refs/tags/3.6.0.tar.gz"
+
+LICENSE="GNU General Public License v3.0"
+SLOT="0"
+KEYWORDS="~amd64"
+
+DEPEND="x11-libs/gtk+:3 >=net-libs/webkit-gtk-2.20.0:4"
+RDEPEND="${DEPEND}"
+BDEPEND=""
+
+
+src_prepare() {
+	default
+	restore_config config.def.h
+}
+
+src_compile() {
+	emake PREFIX="/usr"
+}
+
+src_install() {
+	emake PREFIX="/usr" DESTDIR="${D}" install
+	save_config src/config.def.h
+}
+#+end_src
+
+
+Okay, we are almost there. But few more things to accomplish. We need to get
+software called /repoman/ . if that is not yet installed in your system, then you
+should install it.
+
+#+begin_src bash
+emerge -av repoman
+#+end_src
+
+Once that software is installed in the system , we can use that software to
+generate */manifest/* file for the software we are targeting to install i.e vimb
+in this case. All you need to do (again, you need to under vimb directory)
+
+#+begin_src bash
+sudo repoman manifest
+#+end_src
+
+What it does,is basically creates a file in the name /Manifest/ and the content of
+the files look like this :
+
+#+begin_src bash
+DIST 3.6.0.tar.gz 144750 BLAKE2B bb5b3244198e657af6a2591f75bb44598d1fa384843aa948f15eb186cea526776a2f2ae00d20ae9a81bd634df1c980cf2017f22f99e062d22231dd2cb1c9f3b2 SHA512 0c1a131641c47ec0dd7a5346d5e7260f85293ecc105e04e6265680c53bbbdc8d98acc4f4e11443efc4e4148aa0b77c496cf7e5f59d44857e6e612c3d4a643c8f
+EBUILD vimb-3.6.0.ebuild 620 BLAKE2B d2e1efab1e8b47e2bfc4123550be269c2fcd792dfda16e0d6a736fb8f04cd696c10a30929927c8d40044acbc2bb647270e64bf621b4c93c8932b66dd45c5f95d SHA512 4d6cddfc444dc48f547dfd8d5d3b4f7021173864adfe60178015427e0614c177696708a5a24b0c0cf4251c7dd77d453097d2f69833a71463c2dc66e46d478b7e
+#+end_src
+
+This has the significance of that keeping the sanity of the software going to
+be installed in the system. As you can see, it contains hash generated for that
+software.
+
+Alright, we are done , now it is the time for truth ....we are supposed to install
+that package by Gentoo's package manager i.e emerge .
+
+#+begin_src bash
+emerge -p www-client/vimb::customrepo
+#+end_src
+
+And the result of the above command would be :
+
+#+begin_src bash
+#+RESULTS:
+These are the packages that would be merged, in order:
+
+Calculating dependencies  ...... done!
+[ebuild  N    ~] www-client/vimb-3.6.0
+#+end_src
+
+I have mentioned the custom repo name at the end of software, which is not
+mandatory, but I did it for the sake of clarity and to make sure the software should
+come from that repo only.
+
+So, it is working fine as expected. To see all the commands in action, you can
+watch my [[https://www.youtube.com/watch?v=cRyFGygeM2U][Youtube video.]]

@@ -1,0 +1,464 @@
+#+title: Rambling About Mutt
+#+date: 2022-03-29
+#+tags: Technical
+
+Well, *Mutt* is a email client. Which is predominantly text based, extremely
+efficient and blazing fast. I have developed a fondness about it by using it
+over a decade or so. The primary reason being, the kind of mail I am looking at
+most of the time are consists of plain text . And it runs on terminal, where I
+live most the time during work and play. :)
+
+Although, I have made some changes to the configuration, with the help of that I
+can view html stuff and other fancy thing with it. Of course, I have made
+integration with external tool dedicated for specific function to perform within
+mutt to respond to.
+
+I have also integrated GPG with mutt, so I can use my key to signing and encrypt
+my mail . Plus it will allow me to authenticate my client to prompt my gpg key
+to enter. I shall provide you some reference at the end of this blog for your
+reference to explore.
+
+Here is my entire /.muttrc/ file for your viewing pleasure :)
+
+#+begin_src bash
+# This is a Mutt Email Client config file.
+#Author : Bhaskar Chowdhury
+#Email: unixbhaskar@gmail.com
+
+# Basic settings about presentations
+source "gpg2 -dq $HOME/.mail.cred.gpg |"
+set imap_user = "unixbhaskar@gmail.com"
+set imap_pass =$my_pass
+set pager_context=1
+set pager_index_lines=6 #show a mini-index in pager
+set menu_scroll
+set pgp_verify_sig=yes #dont show pgp in pager
+#set status_on_top #put status line at top
+set sort=threads #sort by message threads in index
+set status_format=" %r %b %f %n Del %d Msgs %m %l %> (%P)"
+set pager_format="%-10.10i %[!%a %b %d %R]"
+set date_format="!%H:%M %a %d %b %Y"
+set index_format="%D  %Z  %[]  %-30.30F (%-4.4c) %s %?y?     %y?"
+set folder_format="%2C %t %8s %d %N %f"
+set text_flowed=yes
+set mbox_type=Maildir
+set charset=UTF-8
+set maildir_header_cache_verify=no
+set arrow_cursor = yes
+set alias_file=~/.mutt/aliases
+set check_new=yes
+set pager_stop=yes
+source $alias_file
+ignore *
+unignore ^from: ^date: ^subject: ^to: ^cc:
+
+#set to your from address
+set from="unixbhaskar@gmail.com"
+set realname="Bhaskar Chowdhury"
+
+# Few global settings
+# set record="$home/sent" #sent mail is saved here
+set delete=yes #delete without prompting
+set include=yes #quote msg in reply
+set fast_reply=yes #no prompting on reply
+set beep=no #no noise
+set markers=no #no + on wrapped lines
+set confirmappend=no #no prompt for save to =keep
+set to_chars=" +TCFL" #no L for mail_list
+set send_charset="us-ascii:utf-8"
+
+# Imaps ,headers, bodies
+set folder="imaps://imap.gmail.com:993"
+set spoolfile="+INBOX"
+set record ="+[Gmail]/Sent Mail"
+set header_cache=~/.mutt/cache/headers
+set message_cachedir=~/.mutt/cache/bodies
+#set mbox=$HOME/mail/received-`date +"%y%m"`
+
+#gpg
+set pgp_sign_as="9F017E9D66B07216543CEBB0B23A9DB7114B2915"
+set crypt_use_gpgme=yes
+set crypt_replysign=yes
+set crypt_replysignencrypted=yes
+set pgp_timeout=3600
+
+#This is to send mail in the background, but please set the log file for that
+
+#sendmail_wait = -1
+
+# GnuPG configuration, not using ,kept for self note
+#set pgp_decode_command="gpg2 --status-fd=2 %?p?--passphrase-fd 0? --no-verbose --quiet --batch --output - %f"
+#set pgp_verify_command="gpg2 --status-fd=2 --no-verbose --quiet --batch --output - --verify %s %f"
+#set pgp_decrypt_command="gpg2 --status-fd=2 %?p?--passphrase-fd 0? --no-verbose --quiet --batch --output - %f"
+#set pgp_sign_command="gpg2 --no-verbose --batch --quiet --output - %?p?--passphrase-fd 0? --armor --detach-sign --textmode %?a?-u %a? %f"
+#set pgp_clearsign_command="gpg2 --no-verbose --batch --quiet --output - %?p?--passphrase-fd 0? --armor --textmode --clearsign %?a?-u %a? %f"
+#set pgp_encrypt_only_command="/usr/lib/mutt/pgpewrap gpg2 --batch --quiet --no-verbose --output - --encrypt --textmode --armor --always-trust -- -r %r -- %f"
+#set pgp_encrypt_sign_command="/usr/lib/mutt/pgpewrap gpg2 %?p?--passphrase-fd 0? --batch --quiet --no-verbose --textmode --output - --encrypt --sign %?a?-u %a? --armor --always-trust -- -r %r -- %f"
+#set pgp_import_command="gpg2 --no-verbose --import %f"
+#set pgp_export_command="gpg2 --no-verbose --export --armor %r"
+#set pgp_verify_key_command="gpg2 --verbose --batch --fingerprint --check-sigs %r"
+#set pgp_list_pubring_command="gpg2 --no-verbose --batch --quiet --with-colons --list-keys %r"
+#set pgp_list_secring_command="gpg2 --no-verbose --batch --quiet --with-colons --list-secret-keys %r"
+#set pgp_good_sign="^\\[GNUPG:\\] GOODSIG"
+
+# Mailboxes
+mailboxes =inbox
+# mailboxes =Airtel_Mobile_Bill
+# mailboxes =Blackberry_Travel
+ #mailboxes =inbox/LWN
+ # mailboxes =sent
+ #mailboxes =Credit_Card
+mailboxes =Al_Viro
+ mailboxes =Linus
+ mailboxes =Greg(GKH)
+ mailboxes =Andrew_Morton
+ #mailboxes =Documents
+ mailboxes =Geek_Stuff
+ mailboxes =linux-kernel
+ mailboxes =unix_tips
+# mailboxes =Visa
+ #mailboxes =Electricity_Bills
+ #mailboxes =Income_Tax
+ #mailboxes =PrivateInternetAAccess
+ mailboxes ="[Gmail]/Sent Mail"
+ #mailboxes =Amazon_store
+ #mailboxes =Amazon_Web_Services
+ mailboxes =kernelci_bot
+ mailboxes =inbox/Google_Alert
+ mailboxes =tip-bot2
+ mailboxes =kernel_test_robot
+ mailboxes =Jonathan_Corbet
+ mailboxes =Paul_E_McKenney
+ mailboxes =David_Miller
+ mailboxes =Thomas_Gleixner
+
+# Sent backup
+set mbox=$HOME/.maildir/received-`date +"%y%m"`
+set record=$HOME/.maildir/sent-`date +"%y%m"`
+auto_view text/html
+
+# Mailcap settings
+set mailcap_path=~/.mutt/mailcap
+set smtp_url="smtp://unixbhaskar@smtp.gmail.com:587/"
+set smtp_pass=$my_pass
+
+
+# # simulate the old url menu
+macro index \cb |urlview\n 'call urlview to extract URLs out of a message'
+#macro pager \cb |urlview\n 'call urlview to extract URLs out of a message'
+
+
+# #run fetchmail by hitting key of G
+macro index G "!fetchmail -a -m 'procmail -d %T'\r"
+#macro pager G "!fetchmail -a -m 'procmail -d %T'\r"
+
+# # default list of header fields to weed out when displaying mail
+# #ignore them all and then unignore what you want to see
+# ignore *
+unignore Date To From: Subject X-Mailer Organization User-Agent
+hdr_order Date From To Subject X-Mailer User-Agent Organization
+
+# ##your Mutt has to have some colors
+# ##these are for four levels of quoted text
+# ##they override the system settings in /etc/mutt/Muttrc
+#source /home/bhaskar/.mutt/colors/mutt-colors-solarized-light-256.muttrc
+# #color quoted green default
+color quoted1 magenta black
+# #color quoted2 yellow default
+# #color quoted3 red default
+# #color signature cyan cyan
+
+#How to color individual mail id on index page
+
+color index brightcyan default '~f torvalds@linux-foundation.org'
+
+color index green default '~f akpm@linux-foundation.org'
+
+color index cyan default '~f viro@zeniv.linux.org.uk'
+
+color index brightyellow default '~f davem@davemloft.net'
+
+color index brightgreen default '~f paulmck@linux.ibm.com'
+
+color index brightgreen default '~f paulmck@kernel.org'
+
+color index brightred default '~f corbet@lwn.net'
+
+color index brightblue default  '~f tglx@linutronix.de'
+
+color index magenta default '~f tytso@mit.edu'
+
+color index blue default '~f hpa@zytor.com'
+
+color index blue default '~f gitster@pobox.com'
+
+color index brightcyan default '~f unixbhaskar@gmail.com'
+
+color index brightmagenta default '~f kevin@8t8.us'
+
+color index yellow default '~f gregkh@linuxfoundation.org'
+
+# Colors
+color hdrdefault brightcyan black
+color header brightwhite black "^from:"
+color header brightwhite black "^subject:"
+color quoted brightgreen black
+color signature brightwhite black
+color indicator blue green
+color error red black
+mono error bold
+color status brightgreen black
+mono status bold
+color tree yellow black
+color tilde brightmagenta black
+color body brightwhite black  "[-a-z_0-9.]+@[-a-z_0-9.]+"
+mono body bold "[-a-z_0-9.]+@[-a-z_0-9.]+"
+color body brightyellow black "^Good signature"
+mono body bold "^Good signature"
+color body brightwhite red "^Bad signature from.*"
+mono body bold "^Bad signature from.*"
+color normal white black
+color message green black
+color attachment brightgreen black
+
+# Sidebar settings
+set sidebar_visible
+set sidebar_format = "%B%?F? [%F]?%* %?N?%N/?%S"
+set mail_check_stats
+#set sidebar_component_depth = 1
+
+# Move the highlight to the previous mailbox
+bind index,pager \Cp sidebar-prev
+# Move the highlight to the next mailbox
+bind index,pager \Cn sidebar-next
+# Open the highlighted mailbox
+bind index,pager \Co sidebar-open
+# Move the highlight to the previous page
+# This is useful if you have a LOT of mailboxes.
+bind index,pager <F3> sidebar-page-up
+# Move the highlight to the next page
+# This is useful if you have a LOT of mailboxes.
+bind index,pager <F4> sidebar-page-down
+# Move the highlight to the previous mailbox containing new, or flagged,
+# mail.
+bind index,pager <F5> sidebar-prev-new
+# Move the highlight to the next mailbox containing new, or flagged, mail.
+bind index,pager <F6> sidebar-next-new
+# Toggle the visibility of the Sidebar.
+bind index,pager B sidebar-toggle-visible
+
+# Note: All color operations are of the form:
+#       color OBJECT FOREGROUND BACKGROUND
+# Color of the current, open, mailbox
+# Note: This is a general NeoMutt option which colors all selected items.
+color indicator cyan black
+# Color of the highlighted, but not open, mailbox.
+#color sidebar_highlight black color8
+# Color of the divider separating the Sidebar from NeoMutt panels
+#color sidebar_divider color8 black
+# Color to give mailboxes containing flagged mail
+color sidebar_flagged red black
+# Color to give mailboxes containing new mail
+color sidebar_new green black
+# Color to give mailboxes containing no new/flagged mail, etc.
+#color sidebar_ordinary color245 default
+
+# Selected mail for deletion Colors
+#color index blue black ~N      # New mail
+#color index brightwhite black ~O           # Old mail
+#color index red black ~F    # Forwared mail
+#color index brightwhite black  ~p   # Mail sent to me
+color index red black ~D   # Mail is marked as deleted
+
+# New mail arrival notification pop up
+set new_mail_command="notify-send --icon='/home/bhaskar/Pictures/neomutt.png' \
+'New Emails' '%n new messages, %u unread.' &"
+
+# Attachement related stuff
+macro attach O \
+"\
+<enter-command>unset wait_key<enter>\
+<shell-escape>rm -f /tmp/mutt-attach<enter>\
+<save-entry><kill-line>/tmp/mutt-attach<enter>\
+<shell-escape> /tmp/mutt-attach &^A\
+"
+
+#Mail attachement save to a specific directory
+#bind editor <space> noop
+#macro attach W <save-entry><kill-line>/home/bhaskar/attachments/
+macro attach E "<save-entry><kill-line>/home/bhaskar/attachments/<enter>"
+
+# Customized keys for convenience ,mostly change label folders
+macro index \Ci  "<change-folder> =inbox<enter>"
+macro index \Ck  "<change-folder> =linux-kernel<enter>"
+macro index \CG  "<change-folder> =Greg(GKH)<enter>"
+macro index  AL  "<change-folder> =Al_Viro<enter>"
+macro index  L  "<change-folder> =Linus<enter>"
+macro index  AN  "<change-folder> =Andrew_Morton<enter>"
+macro index,pager \Cf  "<search> ~p ~P<enter>"
+macro index \el  "<limit>Bhaskar<enter>"
+macro index \ea  "<limit>all<enter>"
+macro index,browser \Cr "<enter-command>source ~/.muttrc<enter>"
+macro index \sn "l ^a^k~N\n"
+
+# Mu : mail indexer and searcher settings
+macro index \emu "<shell-escape>/usr/bin/mu find  --clearlinks --format=links --linksdir=~/.maildir/search  date:today --fields=\" n l \""
+macro index \emr "<change-folder-readonly>~/.maildir/search"
+
+# url views
+macro pager \Cb "<pipe-entry>'urlview'<enter>"
+
+# Archive, but not yet using
+#macro index,pager A "<save-message>=Archive<enter>" "Archive Message"
+
+### BEGIN NOTMUCH-MUTT SETTINGS
+macro index \ens  "<enter-command>unset wait_key<enter><shell-escape>~/bin/mutt-notmuch --prompt search<enter><change-folder-readonly>~/.cache/notmuch/mutt/results/<enter>"  "search mail (using notmuch)"
+
+macro index \ent "<enter-command>unset wait_key<enter><pipe-message>~/bin/mutt-notmuch thread<enter><change-folder-readonly>~/.cache/notmuch/mutt/results/<enter><enter-command>set wait_key<enter>"  "search and reconstruct owning thread (using notmuch)"
+
+# Setting vim spell setting for mail compose
+set editor="vim -c 'set spell spelllang=en'"
+
+# Automated task for each folder for deletion of old mails
+folder-hook linux-kernel             'push <delete-pattern>~r>1w!~F<enter><sync>'
+
+folder-hook inbox/Google_Alert       'push <delete-pattern>~r>1w!~F<enter><sync>'
+
+folder-hook tip-bot2                 'push <delete-pattern>~r>1w!~F<enter><sync>'
+
+folder-hook kbuild_test_robot        'push <delete-pattern>~r>1w!~F<enter><sync>'
+
+folder-hook kernelci_bot             'push <delete-pattern>~r>1w!~F<enter><sync>'
+
+folder-hook kernel_test_robot        'push <delete-pattern>~r>1w!~F<enter><sync>'
+
+folder-hook David_Miller            'push <delete-pattern>~r>1w!~F<enter><sync>'
+
+folder-hook Thomas_Gleixner          'push <delete-pattern>~r>1w!~F<enter><sync>'
+
+folder-hook Greg                     'push <delete-pattern>~r>1w!~F<enter><sync>'
+
+folder-hook Jonathan_Corbet           'push <delete-pattern>~r>1w!~F<enter><sync>'
+
+folder-hook Andrew_Morton            'push <delete-pattern>~r>1w!~F<enter><sync>'
+
+folder-hook Al_Viro                 'push <delete-pattern>~r>1w!~F<enter><sync>'
+
+folder-hook Linus                  'push <delete-pattern>~r>1w!~F<enter><sync>'
+
+folder-hook Paul_E_McKenney        'push <delete-pattern>~r>1w!~F<enter><sync>'
+
+# Default views of various file types
+auto_view text/* application/* image/* audio/*
+
+# Mailing list related settings
+lists linux-kernel@vger.kernel.org
+subscribe [0-9]+.*@vger.kernel.org
+lists mutt-users@mutt.org
+subscribe [0-9]+.*@mutt.org
+
+#Status Bar
+set status_chars  = " *%A"
+set status_format = "[ Folder: %f ]───[%r%m messages%?n? (%n new)?%?d? (%d to delete)?%?t? (%t tagged)? ]───%>─%?p?( %p postponed )?"
+
+
+#+end_src
+
+
+Okay, it is quite big chunk and it is doing good to me. Also, I have one /macro/
+file ,which is like this :
+
+#+begin_src bash
+
+ pager \Cb <pipe-entry>'urlview'<enter> 'Follow links with urlview'
+
+  attach E <save-entry><kill-line>/home/bhaskar/attachments/<enter>
+   index \Ci  "<change-folder> =inbox<enter>"
+   index \Ck  "<change-folder> =linux-kernel<enter>"
+   index  G  "<change-folder> =Greg(GKH)<enter>"
+   index  AL  "<change-folder> =Al_Viro<enter>"
+   index  L  "<change-folder> =Linus<enter>"
+   index  AN  "<change-folder> =Andrew_Morton<enter>"
+   index,pager \Cf  "<search> ~p ~P <enter>"
+   index \el  "<limit>Bhaskar<enter>"
+   index \ea  "<limit>all<enter>"
+   index,browser \Cr "<enter-command>source ~/.muttrc<enter>"
+   index \sn "l ^a^k~N\n" #Shows only new messages
+   index \emu "<shell-escape>mu find  --clearlinks --format=links --linksdir=~/.maildir/search date:today   --fields=\" n l \""
+   index \emr "<change-folder-readonly>~/.maildir/search" "mu find results"
+#macro index,pager A "<save-message>=Archive<enter>" "Archive Message"
+
+### BEGIN NOTMUCH-MUTT SETTINGS
+ index \ens  "<enter-command>unset wait_key<enter><shell-escape>~/bin/mutt-notmuch --prompt search<enter><change-folder-readonly>~/.maildir/notmuch_search<enter>"  "search mail (using notmuch)"
+
+ index \ent "<enter-command>unset wait_key<enter><pipe-message>~/bin/mutt-notmuch thread<enter><change-folder-readonly>~/.maildir/notmuch_thread<enter><enter-command>set wait_key<enter>"  "search and reconstruct owning thread (using notmuch)"
+
+
+#+end_src
+
+
+I have /Notmuch/ and /Mu/ integration with it for searching and filtering mails ,
+which if you look at the mail configuration file you can find the details how I
+access it within mutt.
+
+/Vim/ is the default editor to compose mail inside mutt , so in essence it has
+integration with it. So, other utility of vim comes along with it , like /spell
+checking/  , which is super handy .
+
+Now, there is a file called *mailcap* , which is consisting of configuration to
+integrate with other tools to play with mutt. Here it is :
+
+#+begin_src bash
+# use "lynx" to render HTML files:
+#   # text/html; w3m -dump %s; nametemplate=%s.html; copiousoutput
+text/html       ; lynx -dump -force_html %s ; copiousoutput
+text/htm        ; lynx -dump -force_html %s ; copiousoutput
+message/html    ; lynx -dump -force_html %s ; copiousoutput
+message/htm     ; lynx -dump -force_html %s ; copiousoutput
+text/*;                           LESSQUIET=1 lesspipe.sh '%s'; copiousoutput
+#application/*;                    LESSQUIET=1 lesspipe.sh '%s'; copiousoutput
+image/*;                           sxiv %s; description="Images";
+#image/*;                          LESSQUIET=1 lesspipe.sh '%s'; copiousoutput
+audio/*;                           mpv %s; description="Audio";
+#audio/*;                          LESSQUIET=1 lesspipe.sh '%s'; copiousoutput
+video/*;                           mpv %s; description="Video";
+application/pdf;                  "${PDFVIEWER:-zathura}" %s; test=test -n "$DISPLAY"; nametemplate=%s.pdf; description="PDF Document"
+#Alternative from ArchWiki mutt page
+
+#text/html; xdg-open %s &> /dev/null &; nametemplate=%s.html
+#application/*; xdg-open %s &> /dev/null &;
+#image/*; xdg-open %s &> /dev/null &;
+#+end_src
+
+As you can see from the file that I am using a shell script called *lesspipe.sh*
+, which is popular script to show things properly in mutt , a better way. Also,
+You can see that I have assigned /mpv/ for audio and video play . /Sxiv/ is program to see
+the pictures . To see the /pdf,/ I am using a tool call *zathura*.
+
+Oh , by default the web page from mutt will open in a browser (If I decided to)
+in a browser called */Vimb/*.
+
+That's all about it. :)
+
+Refs:
+
+
+[[https://fanglingsu.github.io/vimb/][Vimb Browser]]
+
+[[http://www.mutt.org/][Mutt Email Client]]
+
+[[https://pwmt.org/projects/zathura/][Zathura Document Viewer]]
+
+[[https://mpv.io/][MPV Video Audio Player]]
+
+[[https://github.com/wofr06/lesspipe/blob/lesspipe/lesspipe.sh][Viewing mail with Lesspipe]]
+
+[[https://github.com/muennich/sxiv][SXIV for Image Viewing]]
+
+[[https://github.com/unixbhaskar/dotfiles/blob/master/.muttrc][My muttrc file in GITHUB]]
+
+[[https://notmuchmail.org/][Notmuch Mail Indexer and Searcher]]
+
+[[https://github.com/djcb/mu][Mu Mail Indexer and Searcher]]
+
+[[https://gnupg.org/][GNUPG for GPG Key]]

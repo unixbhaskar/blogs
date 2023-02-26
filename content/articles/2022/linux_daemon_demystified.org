@@ -1,0 +1,47 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1115
+#+title: Linux Daemon Demystified
+#+date: 2022-12-12
+#+tags: Technical
+
+
+Well, Linux Daemons are a bloody important piece of programs, those help the
+system to function properly and provide the required service to the user end
+when required.
+
+Confused?? Good ….then read on …
+
+*The actions taken by the system for creating any daemon process are enumerated below:*
+
+* It has to be run in the background. The init process has to be the parent of it. By calling fork().
+* All the file descriptors of the parent process inherited have to be closed.(i.e. 0,1,2).
+* Reset all signal handlers to their default.
+* Reset the signal mask by calling up the system call sigprocmask().
+* A new session should be started by calling setsid() system call to detach from any terminal.
+* Called up fork() again. This is the second time it has done so to make sure not to get the terminal signal.
+* Call up exit() in the first forked child, so that the second child stays around.
+* Change the current directory to root \/ directory, so it should not block mount points from being unmounted.
+* Some daemon creates a PID file (generally in /var/run), just to make sure the daemon should not be started twice.
+* Generally, the daemon process drops privileges to the designated user/group, if any.
+
+That's it! Generally the case, but if the daemon you are writing or designing
+has some special thing to do, then that has to be performed before it goes down
+to the background.
+
+Also, daemon script or programs takes various parameters for starting, stopping
+and restarting, and doing other things with the daemon. Those things have to be
+explicitly defined in the daemon programs.
+
+Heads up! *Daemon programs SHOULD NOT depend on specific environment variables.*
+
+Examples of known and popular daemons are httpd nfsd sshd crond, to name a few.
+
+
+
+*References:*
+
+[[https://www.commandlinux.com/man-page/man7/daemon.7.html][Daemon Manual Page]]
+
+[[https://refspecs.linuxbase.org/LSB_3.1.1/LSB-Core-generic/LSB-Core-generic/iniscrptact.html][LSB Core Specification]]
+
+[[https://www.makeuseof.com/create-daemons-on-linux/][Contains Minimal Daemon Implementation Example]]

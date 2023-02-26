@@ -1,0 +1,285 @@
+#+title: Essential Tools
+#+date: 2022-03-02
+#+tags: Technical
+
+
+In this article, I am going to write about few nifty tools,which are absolutely
+needed and use by some popular, giant and importantly, important project.
+
+There are bunch of tools which could be reside in developer arsenal for cutting
+the job they are involved in. I am picking out of those many tools only handful
+and mostly low level stuff. I hope this article will give you some sort of
+*heads up!* to get along with those tools. So, fasten the seat belt ,it might be
+bumpy, you never know. :)
+
+The first one I am picking up is called /*objcopy*/ and what it does is as
+follow,it basically copy the object file from one to another,as the name implies
+too. But, not only it does that ,it also does various other stuff , which I am
+going to enumerate below ,for your reference:
+
+* OBJCOPY
+
+# Simply copy object file from source to destination
+#+begin_src sh
+$ objcopy hello_world new_hello_world
+#+end_src
+
+# Copy the object file without providing the new file name
+
+If *no destination file name is supplied* then the objcopy command replaces the original file with the copied file.
+#+begin_src sh
+
+Before :
+stat hello_world
+
+$ objcopy hello_world
+
+After :
+
+$ stat hello_world
+#+end_src
+
+# Remove only a particular section from the copied file using -R option
+
+This option lets the objcopy command to *copy the complete source file except the sections specified along with this option.**
+#+begin_src sh
+$ objcopy -R.interp hello_world new_hello_world
+#+end_src
+
+Check to see if the interp section is available or not .
+
+# Copy only a particular section using -j option
+#+begin_src sh
+$ objcopy -j.interp hello_world new_hello_world
+#+end_src
+
+The above command will actually copy only /*.interp*/ section into the empty new_hello_world file. If we confirm it :
+#+begin_src sh
+$ objdump -s new_hello_world
+#+end_src
+
+# Preserve the access and modification dates using -p option
+#+begin_src sh
+$ objcopy -p hello_world new_hello_world
+
+$ stat hello_world
+
+$ stat new_hello_world
+
+#+end_src
+
+So we see that both access and modification time/date was preserved
+
+# Prefix symbols with a string using –prefix-symbols option
+
+A string can be prefixed, in this case, ‘KERN’ is desired to be prefixed before symbol names :
+#+begin_src sh
+$ objcopy --prefix-symbols="KERN" hello_world new_hello_world
+#+end_src
+
+Now check that :
+
+#+begin_src sh
+$ readelf -s new_hello_world
+#+end_src
+
+# Change all the global symbols to weak using –weaken option
+
+*This can be useful while building an object file that can be linked with other object files using the -R option to the linker.*
+#+begin_src sh
+readelf -s new_hello_world
+
+#+end_src
+
+Now apply the options:
+#+begin_src sh
+$ objcopy --weaken hello_world new_hello_world
+#+end_src
+
+Now check it again :
+#+begin_src sh
+$ readelf -s new_hello_world
+#+end_src
+
+# Strip off a particular symbols using the –strip-symbols option
+
+In case a some symbols need to be stripped then the option –strip-symbols can be
+used along with a file name.This file name contains the symbol names to be stripped (one in each line).
+ #+begin_src sh
+$ readelf -s new_hello_world
+#+end_src
+
+Now apply the option:
+#+begin_src sh
+$ objcopy --strip-symbols=symbolname hello_world new_hello_world
+#+end_src
+
+Check it again now:
+#+begin_src sh
+$ readelf -s new_hello_world
+#+end_src
+
+# Retain source file name symbol using –keep-file-symbols option
+#+begin_src sh
+$ objcopy --strip-debug hello_world new_hello_world
+#+end_src
+
+Check it now:
+#+begin_src sh
+$ readelf -s new_hello_world
+
+$  objcopy --strip-debug --keep-file-symbols hello_world new_hello_world
+
+$ readelf -s new_hello_world
+
+#+end_src
+
+In the above example, firstly the objcopy was run with –strip-debug option which
+(along with many other symbols)stripped off the symbol mentioning source file
+(hello_world.c) name. Next we re-run the objcopy command along with the
+–keep-file-symbols option and observe that symbol for source file name was not stripped off.
+
+* OBJDUMP
+
+The second tool is called /*objdump*/ ,it main purpose to dump the object file
+contents in various way.Below is one example shown ,how to get the specific stuff. Let
+me explain,
+
+That /-d/ option is for *disassembled* and /M/  option is for get the machine specific
+instruction stuff  and the last one /-S/ is basically *source file aka object file* .
+
+# Objdump for object file internals ,disassembled the assembly code
+#+begin_src sh
+$ objdump -d -M intel -S linux_is_fun.o
+#+end_src
+
+
+* READELF
+
+The third tool is called /readelf/ ,as you can guess from the , its main purpose
+is to read from *ELF* file content in various way.Let me give you some example, so
+it will help you to understand....
+
+# Readelf options check , it is a utility to check **ELF** file
+
+To check the **header section** of an elf file ,use :
+#+begin_src sh
+$ readelf -h hello_world
+#+end_src
+
+To check the **relocation section** of an elf file, use:
+#+begin_src sh
+$ readelf -r hello_world
+#+end_src
+
+To check the **dynamic section** of an elf file, use :
+#+begin_src sh
+$ readelf -d hello_world
+#+end_src
+
+To check the **process address space** of an elf file, use:
+#+begin_src sh
+$ readelf -S hello_world
+#+end_src
+
+To check the **symbol table** of an elf file, use :
+#+begin_src sh
+$ readelf -s hello_world
+#+end_src
+
+
+* NM
+The fourth tool is called /nm/
+
+# Nm is tool to use to check the symbols use in object file or executable.
+
+** What it does
+-- Virtual address of the symbol
+
+-- A character which depicts the symbol type.
+
+-- If the character is in lower case then the symbol is local but if the
+   character is in upper case then the symbol is external
+
+-- Name of the symbol
+
+** The characters that identify symbol type describe :
+
+A : Global absolute symbol.
+
+a : Local absolute symbol.
+
+B : Global bss symbol.
+
+b : Local bss symbol.
+
+D : Global data symbol.
+
+d : Local data symbol.
+
+f : Source file name symbol.
+
+L : Global thread-local symbol (TLS)
+
+l : Static thread-local symbol (TLS).
+
+T : Global text symbol.
+
+t : Local text symbol.
+
+U : Undefined symbol.
+
+** Display all Undefined Symbols in an Executable
+#+begin_src sh
+$ nm -u hello_world
+#+end_src
+
+** Display all Symbols in an Executable
+#+begin_src sh
+$ nm -n hello_world
+#+end_src
+
+** Search for a Symbols and Display its Size
+#+begin_src sh
+$ nm -S hello_world | grep __gmon_start__
+#+end_src
+
+** Display Dynamic Symbols in an Executable
+#+begin_src sh
+$ nm -D hello_world
+#+end_src
+
+** Change the Format of the nm Output
+
+-- Default format is BSD type.Below we output it in posix format.
+#+begin_src sh
+$ nm -u -f posix hello_world
+#+end_src
+
+** Display Only the External Symbols of an Executable
+#+begin_src sh
+$ nm -g hello_world
+#+end_src
+
+** Sort the nm Output by the Symbol Size
+#+begin_src sh
+$ nm -g --size-sort hello_world
+#+end_src
+
+** Specify nm Options in a File, use "at" symbol before filename
+#+begin_src sh
+$ nm "at_create_file_with_nm_options"
+#+end_src
+
+All the mentioned tools have their specific manual and you can access it like this:
+#+begin_src sh
+$ man objcopy
+$ man objdump
+$ man readelf
+$ man nm
+#+end_src
+Well, I hope this will help some people.Learning these tools have upside in long run.
+
+Ref : [[https://sourceware.org/binutils/docs/binutils/objcopy.html][objcopy]] ,[[https://sourceware.org/binutils/docs/binutils/nm.html][nm]] , [[https://sourceware.org/binutils/docs/binutils/objdump.html#objdump][objdump]] , [[https://sourceware.org/binutils/docs/binutils/readelf.html#readelf][readelf]]
+
+Or might watch the video form of it at [[https://youtu.be/ErUnjagMjVU][Youtube Video For These Command Executions]]

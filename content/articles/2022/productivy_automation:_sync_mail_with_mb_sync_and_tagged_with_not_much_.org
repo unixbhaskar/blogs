@@ -1,0 +1,164 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1097
+#+title: Productivity Automation Sync Mail With MbSync And Tagged With NotMuch
+#+date: 2022-11-11
+#+tags: Technical
+
+Well, while waiting for my system to get synced with updated software on
+specific Linux distribution (Gentoo), where I am sitting right now, so thought
+to share one of the productivity and kinda primary ones to get over the
+overhaul.
+
+My productivity heavily relies on the mail and keeping them the proper way to
+enhance my knowledge of information on the right track. I do use various tools
+to keep them in a proper way, as you can see in the title itself I have
+mentioned two. Plus, I might be sitting in a specific editor then I could be
+using several other pieces of software to get it a more streamlined way.
+
+
+I have a little bash script that does the job for the entire process, in fact,
+two. One is dedicated to syncing with the IMAP server and the other one tags as
+per the rule I specify. And I combine them both in the same script.
+
+Here is the script in its entirety :
+
+#+BEGIN_SRC bash
+#!/bin/bash
+
+source ~/.bashrc >/dev/null  2>&1
+
+mail_backup=/home/bhaskar/gmail-backup/
+
+# Clean up the old backup dirs
+cd $mail_backup
+
+echo Cleaning old backup dirs ......
+find $PWD -type d -name  ".notmuch" -prune -o -name ".notmuch*"  -ls
+
+find $PWD -type d -name ".notmuch" -prune -o -name ".notmuch*"  -exec rm -rf {} \; >/dev/null  2>&1
+
+# Take backup of the existing database
+echo Taking backup of the existing database.....
+
+mv /home/bhaskar/gmail-backup/.notmuch{,$(date +'%F_%T')}
+find $mail_backup -type d -name ".notmuch*" -newermt $(date '+%F') -ls
+
+# Fetch mails from remote IMAP server to local mail directory
+printf "\n\n Getting sync with remote imap server and pull down new mails...\n\n"
+
+mbsync gmail
+
+# Start indexing the fetched mails
+printf "\n\n Hang on! It is building the database with new mails.......\n\n"
+notmuch new
+#> /dev/null 2>&1
+
+
+# Various tags for refinement
+printf "\n\n Wait....building tags based inboxes for easy searchability.....\n"
+
+notmuch tag -inbox from:"googlealerts-noreply@google.com" and subject:"Google Alert"
+notmuch tag -inbox from:"lwn@lwn.net" and subject:"LWN.net"
+notmuch tag +linux-kernel -inbox -kernel-patch -xfs -ext4 to:"linux-kernel@vger.kernel.org" or cc:"linux-kernel@vger.kernel.org" and not subject:"[PATCH]"
+notmuch tag +EmacsDiffBugs -inbox -attachment from:"emacs-diffs-request@gnu.org" or from:"bug-gnu-emacs-request@gnu.org"
+notmuch tag +emacs_orgmode -inbox to:"emacs-orgmode@gnu.org"
+notmuch tag +geek-stuff -inbox subject:"The Geek Stuff"
+notmuch tag +git-pull -inbox subject:"[GIT PULL]"
+notmuch tag +kernel-patch -inbox -linux-kernel subject:"[PATCH]" or from:"bhaskarlinux73@gmail.com"
+notmuch tag +mutt -inbox -attachment  to:"mutt-users@mutt.org"
+notmuch tag +git -inbox -attachment to:"git-users@googlegroups.com"
+notmuch tag +vim -inbox -attachment to:"vim_use@googlegroups.com"
+notmuch tag +i3 -inbox -attachment  to:"i3-discuss@freelists.org"
+notmuch tag +mutt-dev -inbox -attachment to:"mutt-dev@mutt.org"
+notmuch tag +Junio -inbox -attachment -kernel-patch from:"gitster@pobox.com"
+notmuch tag +git-dev -inbox to:"git@vger.kernel.org"
+notmuch tag +ext4 -inbox -kernel-patch to:"linux-ext4@vger.kernel.org" and cc:"linux-fsdevel@vger.kernel.org"
+notmuch tag +xfs -inbox -kernel-patch  to:"djwong@kernel.org" and cc:"linux-xfs@vger.kernel.org" and cc:"linux-fsdevel@vger.kernel.org"
+notmuch tag +kernel-build -inbox -kernel-patch to"linux-kbuild@vger.kernel.org"
+notmuch tag +llvm-clang -inbox -kernel-patch to:"llvm@lists.linux.dev"
+notmuch tag +linux-firmware to:"linux-firmware@kernel.org"
+notmuch tag +gentoo -inbox -attachment to:"gentoo-user@lists.gentoo.org"
+notmuch tag +wireguard -inbox -attachment to"wireguard@lists.zx2c4.com"
+notmuch tag +nyxt -inbox -attachment  subject:"[atlas-engineer/nyxt]"
+notmuch tag +gcc -inbox -attachment  to:"gcc-patches@gcc.gnu.org"
+notmuch tag +gcc -inbox -attachment  to:"gcc@gcc.gnu.org"
+notmuch tag +gcc -inbox -attachment to:"gcc-help@gcc.gnu.org"
+notmuch tag +UNIX_Tips -inbox subject:"Unix Tip:"
+notmuch tag +Al_Viro -inbox -attachment  to:"viro@zeniv.linux.org.uk"
+notmuch tag +Linus  -inbox -attachment   to:"torvalds@linux-foundation.org"
+notmuch tag +Andrew  -inbox -attachment  from:"akpm@linux-foundation.org" and to:"akpm@linux-foundation.org"
+notmuch tag +Paul_E_McKenney -inbox -attachment  from:"paulmck@kernel.org"
+notmuch tag +Greg -inbox -attachment   from:"gregkh@linuxfoundation.org" and to:"gregkh@linuxfoundation.org"
+notmuch tag +David_Millar -inbox -attachment   to:"davem@davemloft.net"
+notmuch tag +Jonathan_Corbet -inbox -attachment to:"corbet@lwn.net"
+notmuch tag +Thomas_Gleixner -inbox -attachment to:"tglx@linutronix.de"
+notmuch tag +syzbot -inbox subject:"[syzbot]"
+notmuch tag +gentoo -inbox subject:"[gentoo-kernel]" and from:"mpagano@gentoo.org"
+notmuch tag +github-linux-repo -inbox subject:"[unixbhaskar/linux]"
+notmuch tag +Ted_Tso -inbox -attachment to:"tytso@mit.edu"
+
+
+# Print the message only if everything above went well.
+
+if [[ $? != 0 ]];then
+	echo not done.
+else
+notify-send --expire-time=50000 --urgency=normal "Mailboxes have synced at $(date +'%R')"
+fi
+
+#+END_SRC
+It is run by the cron after certain intervals automatically and that too in a
+dedicated workspace allotted to it. I only run it by hand, when I want to debug
+something in it. I have put a mechanism in it to inform me when it is done., if
+I am working in a different workspace, I can see the popup.
+
+This script gives what I want from my mail folders, as you can, I am using
+*NotMuch* for tagging various people from my mail.
+
+Here is the *mail syncing script* for entirety :
+
+#+BEGIN_SRC bash
+IMAPAccount      gmail
+Host             imap.gmail.com
+User             your_mail
+Pass             PassCmd "gpg2 --quiet --for-your-eyes-only --no-tty --decrypt ~/.password-store/mbsynccred.gpg"
+#UseIMAPS         yes
+CertificateFile  ~/gmail-backup/gmail.crt
+CertificateFile  ~/gmail-backup/google.crt
+#CertificateFile  /usr/share/ca-certificates/mozilla/Equifax_Secure_CA.crt
+SSLType IMAPS
+SSLVersion TLSv1.2
+
+IMAPStore  gmail-remote
+Account    gmail
+
+MaildirStore  gmail-backup
+Path          ~/gmail-backup/
+Inbox         ~/gmail-backup/Inbox
+
+Channel   gmail
+Master    :gmail-remote:
+Slave     :gmail-backup:
+Create    Slave
+Expunge   Slave
+SyncState *
+Sync All
+#Sync      Pull
+# Exclude everything under the internal [Gmail] folder, except archived mails
+Patterns  * ![Gmail]*  INBOX ARCHIVED
+
+#+END_SRC
+
+What it does, that it sync my Gmail account with a local store directory in my
+system and keep all the mails.The above script should be reside in the home
+directory and named as *.mbsync* .
+
+Pretty simple, right? It should be. My requirements are pretty ordinary, so the
+process should adhere to that.
+
+
+*Reference Tools:*
+
+NotMuch : https://notmuchmail.org/
+
+MbSync : https://isync.sourceforge.io/mbsync.html

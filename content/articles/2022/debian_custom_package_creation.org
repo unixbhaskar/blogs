@@ -1,0 +1,173 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1007
+#+title: Debian Custom Package Creation
+#+date: 2022-05-12
+#+tags: Technical
+
+From time to time the need arrives to do something out of the way to enhance the
+experience of using the system you are sitting on. In this case, I am sitting on
+*Debian* box and for some reason, I thought it would be a good idea to share the stuff I
+did for my convenience with people. Precisely, showing the process of creating
+a custom /Debian/ package.
+
+First of all, we need to have some sort of directory structure in place to
+conforms the /Debian packaging standard/ .So, we need to create some directories:
+
+#+begin_src bash
+mkdir -p debian-pkg-demo/debpkgdemo/{DEBIAN,usr/bin,usr/share/man/man1,usr/share/doc/debpkgdemo}
+#+end_src
+
+And I have created a small C file for the demonstration purpose , which is look
+like this :
+
+#+begin_src C
+#include<stdio.h>
+
+int main() {
+	puts("This is a demonstration of debian package making.");
+	return 0;
+}
+#+end_src
+
+Then I compiled it with /gcc/ like this :
+
+#+begin_src bash
+gcc -Wall -o debpkgdemo debpkgdemo.c
+#+end_src
+
+Now, I am moving this generated /binary/ to it designated location in the
+directory structure; under bin
+
+#+begin_src bash
+mv debian-pkg-demo/debpkgdemo/debpkgdemo debian-pkg-demo/debpkgdemo/usr/bin/
+#+end_src
+
+Then we need to create a */control/* file for package metadata :
+
+#+begin_src bash
+vim debian-pkg-demo/debpkgdemo/DEBIAN/control
+#+end_src
+
+And in that file ,we need to write these things,
+
+#+begin_src bash
+Package:debpkgdemo
+Version:1.1-0
+Section:misc
+Architecture:amd64
+Depend:libc6
+Maintainer:Bhaskar Chowdhury<unixbhaskar@gmail.com>
+Description: It spit out a string of text.
+#+end_src
+
+Let me create a /man page/ for it by doing this :
+
+#+begin_src bash
+vim debian-pkg-demo/debpkgdemo/usr/share/man/man1/debpkgdemo.1
+#+end_src
+
+And write inside that file :
+
+#+begin_src bash
+.TH depkgdemo 1 "10 of May 2022" "It spit out a string of characters"
+.SH NAME
+debpkgdemo \- It spit out a string.
+.SH SYNOPSYS
+debpkgdemo It doesn't do much just spit some charater.
+.SH DESCRIPTION
+It is meant for demostration.
+.SH SEE ALSO
+ puts(3) printf(3)
+.SH AUTHOR
+ Bhaskar Chowdhury (unixbhaskar@gmail.com)
+#+end_src
+
+
+I can test the created man page like this :
+
+#+begin_src bash
+man debian-pkg-demo/debpkgdemo/usr/share/man/man1/debpkgdemo.1
+#+end_src
+
+And it should show you the man page.
+
+Then ,every man page has to be zipped for shipping , so we it :
+
+#+begin_src bash
+gzip -9 debian-pkg-demo/debpkgdemo/usr/share/man/man1/debpkgdemo.1
+#+end_src
+
+And it produced a gizpped version of the man page.
+
+
+Okay, now we need to create a /copyright/ file for the package we are building, I
+am going with default /GPL version 2/  ...for that, we need to copy the content of
+that file into the copyright file we create below :
+
+Search and select the appropriate file :
+
+#+begin_src bash
+find /usr/share -iname *GPL-2*
+#+end_src
+
+Then create a file like this :
+
+#+begin_src bash
+vim debian-pkg-demo/debpkgdemo/usr/share/doc/debpkgdemo/copyright
+#+end_src
+
+Once you are inside of the file , go to the /Ex/ prompt and run :
+
+#+begin_src bash
+: r /usr/share/common-liceses/GPL-2
+#+end_src
+
+That should paste the content of that file info this copyright file.
+
+We are almost done with the basic structure for debian package build ...lets
+look at the directory structure :
+
+#+begin_src bash
+tree debian-pkg-demo/debpkgdemo/
+
+debian-pkg-demo/
+└── debpkgdemo
+    ├── DEBIAN
+    │   └── control
+    ├── debpkgdemo.c
+    └── usr
+        ├── bin
+        │   └── debpkgdemo
+        └── share
+            ├── doc
+            │   └── debpkgdemo
+            │       └── copyright
+            └── man
+                └── man1
+                    └── debpkgdemo.1.gz
+
+9 directories, 5 files
+
+#+end_src
+
+Okay, we are ready to make the package now , for that we need to run this :
+
+#+begin_src bash
+dpkg-deb --build debian-pkg-demo/debpkgdemo/  debpkgdemo-1.1-0.amd64.deb
+#+end_src
+
+Once, the package is created with the /.deb/ extension in the same directory,from where
+you ran the above command, it is now a matter of fact to install it by
+running :
+
+#+begin_src bash
+sudo dpkg -i debpkgdemo-1.1-0.amd64.deb
+#+end_src
+
+Now, you can run the embedded binary, from the location "/usr/bin/debpkgdemo" to
+see the result and you can run /man debpkgdemo/ to see the manual page.
+
+See, this is darn easy to do that if you following along with their packaging
+guideline.I hope this will be useful for some people.
+
+And, you should watch the [[https://www.youtube.com/watch?v=6KViyfAJQmY][Youtube Video to see all the command in action.]]

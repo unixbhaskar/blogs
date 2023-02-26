@@ -1,0 +1,112 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1216
+#+title: Gentoo How To Fix Missing LVM Binaries
+#+date: 2023-01-22
+#+tags: Technical
+
+
+Well, today I boot into Gentoo and get surprised by looking at the booting
+screen that it is failing to scan my two lvm partitions and mount
+
+Irks.  :(
+
+So, I went hunting and after some rudimentary search in the system by doing this
+using one of the portage tools :
+
+#+BEGIN_SRC bash
+bhaskar@Gentoo_10:15:32_Sun Jan 22: :~>quse -Dvp lvm2
+sys-fs/lvm2-2.03.17-r2
+  lvm                 Build all of LVM2 including daemons and tools like lvchange, not just the device-mapper library (for other packages to use). If your system uses LVM2 for managing disks and
+                      partitions, enable this flag.
+  lvm2create-initrd   Install lvm2create_initrd script and pull in sys-apps/makedev for the /sbin/MAKEDEV command
+  readline            Enable support for libreadline, a GNU line-editing library that almost everyone wants
+  sanlock             Enable lvmlockd with support for sanlock
+  selinux             !!internal use only!! Security Enhanced Linux support, this must be set by the selinux profile or breakage will occur
+  static              !!do not set this during bootstrap!! Causes binaries to be statically linked instead of dynamically
+  static-libs         Build static versions of dynamic libraries as well
+  systemd             Enable use of systemd-specific libraries and features like socket activation or session tracking
+  thin                Support for thin volumes
+ +udev                Enable virtual/udev integration (device discovery, power and storage device support, etc)
+
+#+END_SRC
+
+But, the fix was merely ordinary. First of all, as an intuition, I went ahead
+with the reinstall of the lvm2 package and I did. But, it missed my eye that the
+specific use flag has to be enabled, which is turned off for some unknown
+reason.
+
+
+So, first I ran ,as usual :
+
+#+BEGIN_SRC bash
+bhaskar@Gentoo_10:19:16_Sun Jan 22: :~>sudo emerge -av lvm2
+Password:
+
+These are the packages that would be merged, in order:
+
+Calculating dependencies... done!
+[ebuild   R    ] sys-fs/lvm2-2.03.17-r1::gentoo  USE="-lvm -lvm2create-initrd readline -sanlock (-selinux) -static -static-libs -systemd -thin udev" 0 KiB
+
+Total: 1 package (1 reinstall), Size of downloads: 0 KiB
+
+Would you like to merge these packages? [Yes/No]
+
+#+END_SRC
+
+Alright, see the -lvm flag in the flags. That means that flag is turned off for
+some reason and the lvm binaries only are installed if the flag has to be set
+while installing LVM2 two package. This is what I gathered from the wiki page I
+have mentioned in one of the above vignettes.  So, I went ahead and created a
+file in the standard location for future use too and it is like this :
+
+#+BEGIN_SRC bash
+bhaskar@Gentoo_10:20:49_Sun Jan 22: :~>touch /etc/portage/package.use/lvm2
+#+END_SRC
+
+..and the content of that file will be like this :
+
+#+BEGIN_SRC bash
+bhaskar@Gentoo_10:27:22_Sun Jan 22: :~>cat /etc/portage/package.use/lvm2
+───────┬──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+       │ File: /etc/portage/package.use/lvm2
+       │ Size: 15 B
+───────┼──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+   1   │ sys-fs/lvm2 lvm
+#+END_SRC
+
+See, it is just one line. I have to mention the deactivated flag along the line
+with the package name. That's it.  Now, I went ahead and re-emerge the LVM2
+package with that flag turned on, all the binaries came back and the system
+started normally. Here is how it looks like with the flag turned on, basically,
+taking away the minus in front of it(see above and compare with the below
+output).
+
+#+BEGIN_SRC bash
+bhaskar@Gentoo_10:31:29_Sun Jan 22: :~>sudo emerge -av lvm2
+Password:
+
+These are the packages that would be merged, in order:
+
+Calculating dependencies... done!
+[ebuild   R    ] sys-fs/lvm2-2.03.17-r1::gentoo  USE="lvm -lvm2create-initrd readline -sanlock (-selinux) -static -static-libs -systemd -thin udev" 0 KiB
+
+Total: 1 package (1 reinstall), Size of downloads: 0 KiB
+
+Would you like to merge these packages? [Yes/No]
+#+END_SRC
+
+So, I am still wondering, why the heck, in the first place, that essential flag has been taken away?
+It seems, it has changed in the last update I ran on the January 9th update :
+
+#+BEGIN_SRC bash
+bhaskar@Gentoo_10:33:51_Sun Jan 22: :~>sudo genlop -t lvm2 | tail -n10
+
+     Mon Jan  9 09:14:27 2023 >>> sys-fs/lvm2-2.03.17-r1
+       merge time: 1 minute and 27 seconds.
+
+     Sun Jan 22 09:54:06 2023 >>> sys-fs/lvm2-2.03.17-r1
+       merge time: 1 minute and 38 seconds.
+
+     Sun Jan 22 10:00:16 2023 >>> sys-fs/lvm2-2.03.17-r1
+       merge time: 1 minute and 15 seconds.
+#+END_SRC

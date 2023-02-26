@@ -1,0 +1,40 @@
+#+title: Browsers galore! Few I do use
+#+date: 2021-12-27
+#+tags: Technical
+
+Well, browsers are become quite indispensable  in modern day computing. It
+is one of the important tool if not the "most" important tool people use
+everyday.
+
+I do personally use ,at this moment , specifically three....which are:
+
+[[https://fanglingsu.github.io/vimb/][VIMB]]  ,It is a browser based on the editor vi/vim . So, you can do almost
+everything with what you can do in vi/vim . This browser is powered by Webkitgtk
+engine.It has some rough edges but very fast and productive. Although , I have
+made an effort to make it smoother for day to day operation with it. I made
+some effort to create few rudimentary scripts to manipulate the environment it
+produce .
+
+You can check out my dot [[https://github.com/unixbhaskar/dotfiles/blob/master/vimb_config][Vimb Config]] file and the [[https://github.com/unixbhaskar/dotfiles/blob/master/vimb_style_config][Vimb Style Sheet]] related to that on Github.
+
+
+[[https://github.com/atlas-engineer/nyxt][NYXT]] , This is browser is completely written in lisp and has three mode to
+operate on ,namely, *CUA,VI and Emacs* .Personally, I do run it on Emacs mode.This
+browser comparatively newer than others . It very intuitive and useful. I am
+still experimenting with it . I haven't tweaked it considerable way,so
+refraining to share the tweaked file. To pass on command to the browser it
+provides you an interface to execute commands. And that interface has some sort
+of fuzzy searching facility.
+
+
+[[https://www.mozilla.org/en-US/firefox/new/?redirect_source=getfirefox-com][FIREFOX]] , This is ,for my case , heavily tweaked one. I have stripped off so
+many thing from it. Just to make sure that it consumed less memory. But,alas! in
+spite of that effort ,it still gobbles up considerable memory.It is a
+complete browser compared to other two.
+
+Time to time I fall back on text browser like lynx,elink
+or inside emacs Eww .
+
+Browser ,itself is very large and complicated piece of software. We , as an user
+barely using the UI provided by it ,underneath so many things going on to
+provide that interface we are seeing.

@@ -1,0 +1,71 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1091
+#+title: How To Manage Multiple Email Accounts With Mutt Email Client
+#+date: 2022-09-19
+#+tags: Technical
+
+Well, I am sure and have seen the internet is flooding with that kind of
+content. Few of them are really good. Then what's the point of writing "yet
+another same stuff"?? The reason being, "it is my way of doing thing", probably
+not so radical judgment, but that's the way it is.
+
+So, first thing fist, you are supposed to have two different /email accounts/ and
+importantly, you want to access them both from the same interface without
+falling each other over.
+
+I do use /*Mutt*/ as my primary mail client for long time, almost decade and half
+...quite long time. So, I am sticking with it and do little manipulation to get
+it going with it.
+
+If you haven't looked into my [[https://raw.githubusercontent.com/unixbhaskar/dotfiles/master/.muttrc][*Muttrc*]] then, I highly recommend you to do so,
+solely, because of the familiarity reason. I shall be using /exact/ two
+configuration for two different mail account, with only few details altered,
+nothing much.
+
+The changes you need to make, are :
+
+1) smtp__url variable ,which should point to mail isp url .
+
+2) mailboxes : Exactly which mail box you want to access or the entire account.
+
+3) my__pass variable to hold the *gpg encrypted* password for the account.
+
+
+So, this is pretty darn simple. Probably, driven by the idea of the same look
+and feel about the both the accounts. I used to access two different account in
+different way, just to make sure it should not collide with each other, until, I
+discover that, I can easily use the same interface to access both the mail's
+specific mailbox if the name is not collide.
+
+Say, for instance both the mail account have /inbox/ and just to avoid the same
+mailbox name, we can use the mutt's *label* feature to distinguish one from
+another.
+
+In fact, this is what I did with my one of the mailbox's inbox, to label it as
+*Patches* and, now I can easily access the specified mailbox without getting
+confused what I am accessing. It might sound nothing much, but believe me it
+helps a lot when you deal with mail from different sources and clearly want to
+get sane view of those.
+
+Of course, it has to do with /filtering/, which what I did in the mail specific
+way to eliminate other possibilities.
+
+I have bounded a macro with a key to access the other account mailbox in the
+same mutt interface, which should be found in my muttrc file linked above. But
+for the lazy user here is the piece of code :
+
+#+BEGIN_SRC sh
+# Folder hooks
+folder-hook 'gmail1' 'source ~/.muttrc'
+folder-hook 'gmail2' 'source ~/.muttrc.gmail2'
+
+# Macros for switching accounts
+macro index <f2> '<sync-mailbox><enter-command>source ~/.muttrc<enter><change-folder>!<enter>'
+macro index <f7> '<sync-mailbox><enter-command>source ~/.muttrc.gmail2<enter><change-folder>!<enter>'
+
+#+END_SRC
+
+I think is exceptionally easy to grasp. Two distinct mail configs bounded by a
+macro with different keys. Now I do not have to open two different instances of
+mutt to handle separate mail account. Sheer convenience, this is what people
+thrive for when they lean on something indispensable.

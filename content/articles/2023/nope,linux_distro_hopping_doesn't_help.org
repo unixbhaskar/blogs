@@ -1,0 +1,142 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1126
+#+title: Nope,Linux Distro Hopping Doesn't Help
+#+date: 2023-01-05
+#+tags: Technical
+
+
+TL;DR and I am not responsible for your lack of patience to read till the end.
+
+Well, whatever the claim is/was and whoever is/was it, that claim is(i.e. Linux
+distro hopping helps) so feeble to stand on its knees. To say the least, it
+entices utter confusion in ordinary mortal's mind and creates havoc, mostly in a
+bad sense or unproductive way.
+
+Yup, you might or victim, who are enticed into it may get a grandiose feeling
+about "knowing" stuff, actually, it is not. See, I have written the word knowing
+within the quotation, which means it nullified its actual meaning.
+
+So, this is all coming from a person who has been suffering this injury from the
+delusion of having a grandiose feeling of knowing about Linux. My delusion gets
+busted quick time when I discovered that hopping between different distributions
+brings nothing good at all, but lots of overhead of remembering the intricacies
+of distribution-specific stuff. Which actually not helping to learn Linux at
+all.
+
+What to do then? Turn your attention to the core and try to stick with it. Look,
+at the different varieties out there are much ado good-for-nothing kinda
+stuff. How come? They are so popular, there must be something very
+enticing. True, very true, the way those are packaged and provided to casual
+users, is good enough to get the attention of similar mindset people to fall for
+it.
+
+One can simply look at the business model of the popular and yet very restricted
+model of the Linux Operating System in the business or commercial world. There
+are predominantly backed up by the big corporates and primarily provide support
+and stick to their own homegrown things. They were/are not jumpy about several
+things,
+
+You can argue, business needs stability and some sort of predicting behavior to
+get on, so these enterprises have figured it out and stuck with it. And it
+produces revenue. But on the personal front, people like to experiment with
+various things with their time(not getting into how precious that time is) and
+spare machines.
+
+Sure, it is very alluring to try out stuff at your disposal and importantly
+free. But the cost it brings with it is quite invisible and has a long-lasting
+effect on you. I am personally so pissed off by hearing these people claiming
+their fascination about specific distribution and that is the best thing too.
+
+But, if you really want to learn and use Linux as a main operating system then
+you have to take a different route and that route is not very attractive,
+certainly not by doing cheap way, like distribution hopping. If your attention
+span is less and today's tech world is flooded with so much glitz and useless
+crap that easily sway you to opt for them. I am not blaming you, it is indeed
+hard to curve the instinct. Especially, when you see renowned personalities
+preaching their preferences without giving much context and background, it is so
+easy to suck into it and that is exactly happening for a long time.
+
+Mostly, people failed to recognize what is their need for an operating system to
+live within their computer. Partly because non-technical or ordinary users don't
+care what is underneath. They are only concerned about their application running
+smoothly and doing things for them. Importantly, they do use their computer in
+that fashion from the moment they decided or are forced to use one. But, most
+problems are created by semi-technical users. Who picks things here and there
+and tries to explore without properly preparing or understanding the implication
+of that experiment. They whine a lot and most of them are quite baseless and
+useless clamor, which adds to already shadowed understanding. The situation
+becomes pretty bleak in a quick time.
+
+Having more options never ever solve a specific problem in a proper way in the
+first place. Which is a big hammer in the open-source world. Using one option in
+the correct manner will certainly do the job.
+
+Familiarity is a big thing and it can not be replaced with something else in
+quick time. Why? Because it is the thing people thrive on the most. And for that
+reason, one has to spend a considerable chunk of their life to spend behind it
+get absolutely familiarized with the thing one uses day-to-day basis. It
+certainly takes some taking to stick with things for a long time in today's
+world because of so many distractions.
+
+Let's be honest, we only need a handful of stuff to get along with our
+day-to-day computing needs. So sticking with certain things will certainly help
+to gain familiarity and in turn, enhance knowledge about the underlying things.,
+sticking to one Linux distribution will certainly help to gain more
+understanding of the underlying operating system. And that is an important
+undertaking to use the machine/computer in a better way or more efficient way.
+
+I am NOT counting the kernel developers and power users in this mix, because,
+they are the kind of people, who knows more than we ordinary people can fathom
+about the underlying system.
+
+An ordinary user is by no means an inferior one, but they have a different set
+of goals and activities than the two different groups mentioned in the previous
+paragraph. We are more concerned about the application we use, which should run
+flawlessly every single time(although that is a Utopian understanding) and do
+the job for us efficiently.
+
+Now, you see if you start using one specific thing for a long time, say, one
+particular distribution, then you started to discover that a specific operating
+system was built and found the intricacies of it by virtue of curiosity and the
+hindrance it provides from time to time. So, you elevate yourself to become a
+system administrator of your choice of the operating system. It helps a lot to
+fix a lot of owes and save a huge amount of time fruitlessly hovering over the
+internet for searching the answer(yeah, I know you can say there are websites
+assisting millions of people to fix their trouble. But boy! That is a bombshell,
+believe me, if you don't have minimal understanding and riding on somebody else
+understanding, then good luck to you. A lot of people are getting away with it,
+and they should consider themselves lucky). Developing an understanding of your
+own system takes time, and it requires patience to deal with it. Something just
+can not be achieved overnight.
+
+The more you are getting involved in your quest for finding out the nuts and
+bolts of your system(if you stick with one for a long time) the more you become
+proficient in the things you do. Again, familiarity with the environment allows
+you to enhance and tweak as per your precise requirements rather than jumping
+here and there searching for the silver bullet, which never exists in the first
+place. You have to make it for your sake. And the effort will only use if you
+discover enough of your underlying system well.
+
+This method could be applied to your favorite applications too and certainly not
+restricted only to operating systems.
+
+Hopping is not a good activity, it will pollute your understanding very
+badly. How so? Because think about it, different environment brings different
+stuff with them and most of them are absolutely useless things to get on. I have
+mentioned before that, we ordinary people deal with computers in a very specific
+way and our requirements are limited. No, you do not need a hundred applications
+to do your job, I mean, the way we use the computer on a day-to-day basis. Then
+what's the point of immersing into a pile of stuff, which only brings the
+overhead of learning and remembering things?
+
+All I am trying to convey is that our requirement has to have a limit, and it
+has, but we often ignore it. Why? Because we are too lean on what others are
+doing and what the experts are saying. I have given a heads-up about it before,
+judge your actual requirement, not other people's comforts.
+
+I have been sticking with some specific set of computing programs for ages, and
+it provides great help to me. I am still discovering a thing or two about
+whatever I have in my kitty.
+
+Fortunately, I don't have to show it to the whole world but to enhance my own
+understanding and usability.

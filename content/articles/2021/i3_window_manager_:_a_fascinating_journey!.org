@@ -1,0 +1,62 @@
+#+title: I3 Window Manager : A fascinating journey!
+#+date: 2021-11-02
+#+tags: Technical
+
+It all begun in the year 2016 ,when I was up to trim down my system after
+realizing how bloated that is with all the stuff I had that time in my
+system.After hovering sometime ,I stumbled across [[https://i3wm.org/][I3WM]] and fall in love with it
+and since then I have stick with it. Every now and then,I got temptation to move
+or try something else but somehow I manage to stick around with what I have
+opted for.
+
+So, the fondness grew as I started to use it more and more. One thing might have
+triggered more is that , I had no other options to fall back on other
+DE. Because ,I didn't have one nor I have now. So, it was kinda situation, where I
+have to make way to use it effectively, otherwise everything come to a
+halt. Fortunately, I didn't have to sweat much , almost all the stuff I wanted from
+it was there. Only, few tweaking here and there make life easy and the operation
+on it much smoother.
+
+It is a [[https://en.wikipedia.org/wiki/Tiling_window_manager][tiling window manager]]  so it is all about managing window on the screen
+real estate.In turns , it gives you the control to choose the layout you wanted it
+to be presented on the screen.
+
+The config file is a absolute blast. Very simple to understand and manipulate.It
+is even better now with latest release(i.e 4.20) and you can modularize config
+components in different file and then import all of then in one file.It was not
+the case ,previously, all the config were cramped into one big file.
+
+Although I haven't started to manipulate the new features ,still having an old
+config file , but will certainly do or convert to new method sometime soon.You
+can have a look at my [[https://github.com/unixbhaskar/dotfiles/blob/master/.ithreeconfig][i3 config file]] .
+
+I do use [[https://github.com/vivien/i3blocks][i3blocks]] as my status bar program. You can find my configuration for
+that application [[https://github.com/unixbhaskar/dotfiles/blob/master/.ithreeblocksconfig][i3blocks config file]] .And the related scripts can found [[https://github.com/unixbhaskar/AdminScripts/tree/master/i3-scripts][i3
+blokcs status bar item scripts]] .
+
+It is very lightweight and extensible /tiling window manger/  and the portability
+is very optimum. I have recently used it on FreeBSD too.And it works there seamlessly.
+
+It is a general trend to use a window manager with a DE(gnome,kde...etc) ,but I
+never felt the need to use those, once I discovered the power of running alone
+the window manager. You do not need any underlying DE to support it. Okay, it
+needs little more work to get your favorite application to work with WM, but its
+okay to put that effort to get the best out of it. At least that drives me to
+have my present setup and I am enjoying every bit of it.
+
+As I have wrote in other article that , I was seeking minimalist approach to use
+computer with Linux and I3 fits right into it.I have never give a thought of
+using other variant of it , namely, i3-gaps .
+
+My entire operation based on keyboard driven and getting comfortable with it.
+Almost all of keys are bounded to some function to perform. And the
+combination are growing. The downside of it ,as I found out sometimes back ,a wrong
+key press can ruin something good . But that is a rare scenario, importantly
+that can happen with other stuff too.
+
+It has fantastic documentation online ,which clearly explains everything in
+clear cut manner.The best place look into whenever you are in doubt or lost.Most
+often than not , you can find your owes get solved by looking hard at it.
+
+Hope the journey continues with this lovely piece of software as daily
+driver. :)

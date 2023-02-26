@@ -1,0 +1,111 @@
+#+title: How do I run screencast with ffmpeg
+#+date: 2021-12-27
+#+tags: Technical
+
+Well, few months back do realize that I can make and use the free open source
+software for video screencast. Since,I have made several of them and uploaded it
+on [[https://www.youtube.com/channel/UCgAygg3kD5x9jqqiWuZ3NVQ][My Youtube Channel]] for public consumption.
+
+It takes very little amount of time to set it and importantly ,when my knowledge
+fails ,did a little search and get plethora of suggestion by simply looking at
+them.
+
+
+It is absolutely simple and basically one line command , which does the tricks
+for me. Here is the code for at your disposal :
+
+#+begin_src bash
+ffmpeg -f alsa -ac 2 -i pulse  -f x11grab  -r 25   -i :0   -vcodec libx264 -acodec pcm_s16le ~/Videos/screencast_$(date +'%F_%T').mkv
+#+end_src
+
+
+That's it! I put inside a scripts and make it executable and voila!
+
+If you watch my YT videos ,in most of those , you can see the screen how it
+looks like when invoke the above code.
+
+I have make a keybind on window manager(i.e i3) to invoke it with few key stroke
+and in a designated workspace, so it won't messed up the other running
+workspaces with it's own output.
+
+You can get *ffmpeg* from your OS package manager , otherwise you might have to
+get the source and compile it yourself, which is a bit more involved process.
+
+[[https://ffmpeg.org/][FFMpeg Web Site]]
+
+
+If run the ffmpeg binary on the shell ,it might spit out this info  :
+
+#+begin_src bash
+bhaskar@Slackware_15:10:10_Mon Dec 27: :~>ffmpeg -V
+ffmpeg version 4.4.1 Copyright (c) 2000-2021 the FFmpeg developers
+  built with gcc 11.2.0 (GCC)
+  configuration: --prefix=/usr --libdir=/usr/lib64 --shlibdir=/usr/lib64 --docdir=/usr/doc/ffmpeg-4.4.1/html --mandir=/usr/man --disable-debug --enable-shared --disable-static --enable-gpl --enable-version3 --enable-avresample --arch=x86_64 --disable-encoder=aac --enable-libfontconfig --enable-libfreetype --enable-libfribidi --enable-gnutls --enable-libbluray --enable-libcaca --enable-libcdio --enable-frei0r --enable-openal --enable-libopus --enable-libspeex --enable-libssh --enable-libtheora --enable-libv4l2 --enable-libvidstab --enable-libvorbis --enable-libvpx --enable-libwebp --enable-libx264 --enable-libmp3lame --enable-opencl --enable-opengl --enable-libopenjpeg --enable-libpulse --enable-libsmbclient --enable-libxml2 --enable-librsvg --enable-libdrm
+  libavutil      56. 70.100 / 56. 70.100
+  libavcodec     58.134.100 / 58.134.100
+  libavformat    58. 76.100 / 58. 76.100
+  libavdevice    58. 13.100 / 58. 13.100
+  libavfilter     7.110.100 /  7.110.100
+  libavresample   4.  0.  0 /  4.  0.  0
+  libswscale      5.  9.100 /  5.  9.100
+  libswresample   3.  9.100 /  3.  9.100
+  libpostproc    55.  9.100 / 55.  9.100
+#+end_src
+
+
+You might also interested to find out codecs which are supported by it :
+
+#+begin_src bash
+bhaskar@Slackware_15:14:31_Mon Dec 27: :~>ffmpeg -codecs | less
+Codecs:
+ D..... = Decoding supported
+ .E.... = Encoding supported
+ ..V... = Video codec
+ ..A... = Audio codec
+ ..S... = Subtitle codec
+ ...I.. = Intra frame-only codec
+ ....L. = Lossy compression
+ .....S = Lossless compression
+ -------
+ D.VI.S 012v                 Uncompressed 4:2:2 10-bit
+ D.V.L. 4xm                  4X Movie
+ D.VI.S 8bps                 QuickTime 8BPS video
+ .EVIL. a64_multi            Multicolor charset for Commodore 64 (encoders: a64multi )
+ .EVIL. a64_multi5           Multicolor charset for Commodore 64, extended with 5th color (colram) (encoders: a64multi5 )
+ D.V..S aasc                 Autodesk RLE
+ D.V.L. agm                  Amuse Graphics Movie
+ D.VIL. aic                  Apple Intermediate Codec
+ DEVI.S alias_pix            Alias/Wavefront PIX image
+ DEVIL. amv                  AMV Video
+ D.V.L. anm                  Deluxe Paint Animation
+ D.V.L. ansi                 ASCII/ANSI art
+ DEV..S apng                 APNG (Animated Portable Network Graphics) image
+ D.V.L. arbc                 Gryphon's Anim Compressor
+ D.V.L. argo                 Argonaut Games Video
+ DEVIL. asv1                 ASUS V1
+ DEVIL. asv2                 ASUS V2
+ D.VIL. aura                 Auravision AURA
+ D.VIL. aura2                Auravision Aura 2
+ D.V.L. av1                  Alliance for Open Media AV1
+ D.V... avrn                 Avid AVI Codec
+ DEVI.S avrp                 Avid 1:1 10-bit RGB Packer
+ D.V.L. avs                  AVS (Audio Video Standard) video
+ ..V.L. avs2                 AVS2-P2/IEEE1857.4
+ ..V.L. avs3                 AVS3-P2/IEEE1857.10
+ DEVI.S avui                 Avid Meridien Uncompressed
+ DEVI.S ayuv                 Uncompressed packed MS 4:4:4:4
+ D.V.L. bethsoftvid          Bethesda VID video
+ D.V.L. bfi                  Brute Force & Ignorance
+ D.V.L. binkvideo            Bink video
+ D.VI.. bintext              Binary text
+ D.VI.S bitpacked            Bitpacked
+#+end_src
+
+...well, I have stripped out the output for the brevity's sake :)
+
+
+This is wonderful tool,and importantly have less overhead than others . In fact,
+few of the heavyweights are using it underneath.
+
+
+Please give it a try.

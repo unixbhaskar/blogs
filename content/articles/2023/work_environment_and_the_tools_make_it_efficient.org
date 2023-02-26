@@ -1,0 +1,180 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1227
+#+title: Work Environment And The Tools Make It Efficient
+#+date: 2023-02-11
+#+tags: Technical
+
+TL;DR and Loooooooooooooooooooong essay.....your call :)
+
+
+Well, as the title of this post suggests, exactly I am gonna let you know about
+my work environment and the tools which make it possible. Whether you like it or
+not, that is pretty irrespective. :)
+
+So, to start with, I have been using Linux on desktop/laptop since 2000, January
+15th(see, I am bragging! meh) and it is exclusively the only OS of choice from
+the moment I installed it on a new machine that day and that specific
+year. Never look back or give something else the attention they might have
+deserved.
+
+Then having a choice of OS installed was  50% of the work environment of my
+choice but another 50% left for the software I suppose to use on it. And I
+was/am very moderate in selecting them. Initially, lots of stuff gets into the
+environment without me being noticed or aware(let's be honest, my lack of
+understanding played a huge role to bloat the environment I was building and
+operating on), not the case anymore. Why? Because I become more aware and
+learned lots of good stuff from better people I interact with almost day to day
+basis.
+
+Along the line, the machines I do purchase get powerful, but the requirement of
+my daily operations gets shrink. Also, I have taken a few steps to find out the
+stuff I hardly use or need, so to eliminate the environment and make the system
+lean and fast to operate.
+
+The unfortunate thing is that some of the software I do lean on or use for a
+number of years and getting worse. So, from time to time, I have to make some
+sort of dirty hack to make it work efficiently on the machine.
+
+Depending on age-old proven stuff is an absolute lifesaver on the operating
+system front but not so with the so-called "modern environment". So, I need to
+make an adjustment to my beloved existing environment to induct some "new
+things" for the get in touch feel.
+
+Most of my daily workflow(huh! yet another modern term to describe how you
+operate on your beloved machine) still heavily depends on what I was having
+decades back. The core of the system remains the same only a few rudimentary
+add-ons for the sake of adding more functionality or probably having some
+eye-candy stuff.
+
+Nope, not always the case, where I do bring in something for the sake of having
+it, rather I probably spend considerable time on it to evaluate how that damn
+thing might provide me enhancement to my already sufficiently oiled environment.
+
+Two things dictate the choice of the work environment(obviously in personal space), those are :
+
+a) I do make sure, do I absolutely need it for enhancement? (Little research)
+
+b) My head is not as exploded as yours, so it restricts me to choose.
+
+Is that a limiting factor?? Probably. But who cares? I know what I am doing and
+for that what I precisely needed. Knowing about your requirement in tech and
+life is the very first and very important step of all. This decision certainly
+makes or breaks you from thriving further. I haven't been restricted yet for my
+choice of tools I have opted for and too, time and again.
+
+My requirements are always very limiting in a sense, an absolute must to have
+for the job to be done. Having some fancy stuff for momentary reasons is alright
+and I had some, which I promptly get rid of once I have done with it. Those were
+bought in for a specific purpose and when the purpose was fulfilled, then no
+point in having them in the system lying around. Getting rid of those makes the
+system light and efficient to operate on. And, less headache to maintain it for
+the sake of nothing.
+
+Keeping the machine slim is a kinda paranoia I have over the ages and I do try
+my level best to keep things that way. The external dependencies are pretty
+minimal and mainly to connect to the internet.
+
+Whatever the selected pieces of software I have, trying to use it in the best
+possible way and not to lean on other fancy and so-called better stuff and be
+engulfed into a hell of dependency.
+
+The environment is mostly command line-driven, not because, I am efficient in it
+but because it most work and takes fewer system resources to operate on and
+produce results. Knowing the tools is not enough, knowing how to use those in
+the best possible way makes things better.
+
+Selecting tools for the job or for your daily drive is absolutely crucial. The
+Internet is littered with expert people's choice of tool kinda posts and people
+generally fall for it without giving too much thought to their own requirements
+and environment. I have seen, people adopting somebody else workflow just to
+impress others around them not to solve their own lack of efficiency. And, the
+outcome is pretty inevitable, sooner or later they will realize porting or
+adopting others' work environment not doing any good to their own
+productivity. This cycle will continue until they have realized their own need.
+
+Not having a better understanding than others often led me to think more about
+my limitation and find a way to cope with them. As a result, find things that
+certainly will boost my lack of intelligence and aptitude to deliver better. It
+takes monumental time for me to get some of the things to my system (mentally)
+to get on with those. I did/do refrain from stuff with a spur-of-a-moment thing
+for the job to be done.
+
+One good thing about sticking with the age-old time-tested tools is that the
+chances of breaking something are minuscule. (let's be honest, it does, from
+time to time for a different reason, mostly for applicability of the wrong
+notion). Having those tools plus building some of my own with the help of those
+renowned tools helps me to get along. If I broke something, it was just a matter
+of min to find out the culprit.
+
+Alright, I have heard the other reason for having big and more tools is just to
+accomplish the trivial piece job. Wondering how their understanding work and
+where they draw the line for using that stuff to justify their
+understanding. Especially, when the dependency so much resides outside of your
+control and importantly outside of the machine or environment you are
+in. Bewildering! Where they find the efficiency in it.
+
+Not necessary for everyone should have similar kinds of requirements for their
+daily life with technology. I have very limited and importantly, I am happy to
+be limited in that way. Because, it allows me to do, what I wanted to do and it
+is been a long time.
+
+I heavily rely on mostly UNIX Linux Commandline Utilities and my frivolous work
+gets done with those.
+
+Some of the tools I am using have a modern flavor and do mostly fancy stuff when
+I wanted to have them. But, the choice of opting for comparatively new and not
+necessarily bad kind of hit, when I found out some black-and-white stuff written
+about them plus the rigorous experiments mine to make it a part of my arsenal
+for use, and this process takes time and sometimes more than required time.
+
+I have learned from better people to get the best out of anything (speaking
+technology-wise), one has to have the endurance to get along with specific
+things for longer periods of time. This attachment is having great benefit of
+discovering, what suppose to be done with those, barred the obvious plus what
+should not be tried out. Normal people call that trait, experience.
+
+I often wonder thinking that not adopting suggestions from experts gives me a
+hell of a chance to constantly re-evaluate my shortcoming or strength and
+measure what could be done to get better. I do practice, that is all I can do
+for myself.
+
+Also, when it is not your own tool, interpreting the output properly makes a
+hell of a lot of difference to use the tool best possible way. So, put an
+extended effort to learn that certainly enhance the probability of doing
+right. Oftentimes, misinterpretation of the output of a tool can lead to a false
+notion, and decision-based on that notion lead to disaster.
+
+I am in the field of cognitive science(i.e. overall Computer Science and
+Information Technology space) and the constant process of learning is the only
+way to survive.
+
+What do I exactly use? Here is a little rundown, which misses a few,
+
+GNU/Linux(Gentoo, Slackware, Debian, Arch) and FreeBSD as Operating Systems with
+their own physical slice.
+
+I3 as my sole choice of the window manager, which I run barebone, means, directly on xorg.
+
+Editors play a huge role and I am sticking to Vim and Emacs for a long.
+
+*Git* for version control and backup.
+
+Browsers are important tools, precisely Firefox, Vimb, and Nyxt.
+
+Pdf viewers are necessary for various reasons, so, Zathura
+
+Shell is the de-facto standard and the place where I spend most of my time, I use Bash
+
+Terminals are a way to get into the shell, and I have my own built St from suckless.
+
+Entertained me and a very important part of life is music, I do use CMUS and MPV
+
+Extensive use of FFmpeg to create Youtube videos.
+
+Tools are a mix of compilers and debuggers and of course kernel related tools
+
+Plus, a lot of scripts were written by me, and get them from the internet and
+people, modified to suit my needs.
+
+What else? Nothing much outside of those, some special cases stuff, and a few
+other not-so-important tools.

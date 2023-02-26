@@ -1,0 +1,155 @@
+#+title: Information Collection And Process To Keep Abreast
+#+date: 2022-04-11
+#+tags: Technical Informational
+
+Well, it is important to have the relevant information at your disposal in
+timely manner and get the essence out of it to utilize in best possible way to
+enhance the own knowledge and disseminate the correct one to others. While doing
+so,people generally sometimes missed the important stuff from those consumed
+content and, in essence, missed the purpose of it. I have been doing/trying to
+disseminate the information correct way for a long long time , while doing that ,I
+throw away lots of /noisy/ stuff from the information pool I look at for the
+information.
+
+Now,the proliferation of the internet allows people to get or look in the nook and
+corner ,which were difficult to reach or probably restricted to reach to some
+extent ,now can be reached so very easily. But ....but be aware that there is
+always */noise to signal/* ratio is pretty high,so you have to be judicious enough
+to embrace what is needed and discard what is irrelevant. Having said all this, it is
+not so /easy/ thing to do without the help of some sort of tools(read as software) to
+achieve or narrowed down the stuff you are interested in or love to process to
+gain more knowledge.
+
+*RSS feeds* is a one damn good mechanism to get the interesting stuff at your
+disposal with minimal fuss. *Mailing list* for some projects ,especially
+technically inclined one. But, there are other ways to get information
+delivered to you, and that can be /en masse/ . So, filtering out
+the required information needs some careful observation to deduce what to look
+for and what not to look out.
+
+And these mechanisms are available for some +years+ decades now. So, having
+something at your disposal can be very beneficial,provided you know how to use
+those tools properly. Plus, it is a kind of training to the mind, to get the pattern
+it is providing or operating on.The sooner you capture the theme, the better it
+will be. Plus looking at the sources (yes, you can find out that pretty easily these
+days) also determined whether you want to get the information from the source or
+not.It is not about rudeness but about the limited capacity you have between the
+ears to hold on to information and process. So, to restrict to some sort of periphery
+to not get swayed by /unneeded/ stuff.
+
+I do use [[https://newsboat.org/][Newsboat RSS Feeder]]  and [[https://github.com/skeeto/elfeed][Elfeed]] as my prime news feeder. The news items
+are delivered in mostly /text/ form . But, it might contain /link/ to other
+resources to consume. And for the /technical/ stuff there are /mailing list/ to aid the
+information.*Email* is one of the oldest form of information exchange mechanism
+and I still do bend on it,most of the time. :)
+
+Here is how those specific tools with information flow look like :
+
+#+ATTR_HTML: :class wp-block-image size-full
+#+ATTR_HTML: :alt Newsboat picture.
+#+ATTR_HTML: :align center
+[[file:~/Pictures/Screenshots/2022-04-11-101229_1366x768_scrot.png][Newsboat]]
+
+[[file:~/Pictures/Screenshots/2022-04-11-101707_1366x768_scrot.png][Elfeed]]
+
+[[file:~/Pictures/Screenshots/2022-04-11-102251_1366x768_scrot.png][Mailing list of Linux Kernel]]
+
+OR
+
+[[file:~/Pictures/Screenshots/2022-04-11-104147_1366x768_scrot.png][Linux Kernel Mailing List Archive]]
+
+These are not /fancy/ tool which produce eye candy stuff, but are well decorated
+pieces of software which deliver what it supposed to build for. Mostly text, but
+can be configured to show fancy graphical thing. Tools are important and it is
+ever more important to know about the tool ,which you are supposed to use for
+long term and daily basis. The more you know about the tool , which you are
+using day to day to get your information , the better you can manipulate them to
+filter it tight to get only the /absolute required/ stuff. Hence , mitigate the
+distraction .
+
+Sometimes,flurry of information stream might boggle you and might be fall for
+some */click-bait/* stuff which leads you to consume /red herring/
+information. While on the internet , one has to be extremely cautious about what
+to consume and, importantly from where. This /decisiveness/ of having stuff /only
+from these places/ comes from by being judicious.
+
+It is extremely important to get connected with people who can only feed you with
+*/Black and White/* stuff ,in other words ,the truth without much fuss It
+saves time for both the parties. Stories don't get well with my system nor I
+can stand babbling too much. My eardrums get shut when I sense, if fact I might
+present right in front of the babbler. Sounds rude?? Can't help much regarding
+that , who the f*** want to hear that?? The habit of listening is considered
+invaluable, but you need to make sure , what you listen and whom do you listen and
+how much you listen, those parameters decide when my eardrum gets shut.
+
+
+Awareness is something ,which could be developed over the years of a person's
+lifetime and is applicable to every damn human being out there. I don't believe
+nor I want to convince myself that someone out there developed it to the
+end,YMMV.
+
+
+Reading can greatly benefit one ,provided they know what needs to be
+read. Reading for the sake of reading doesn't make much of a sense ,moreover it
+crowded your mind with information which might be completely useless for your
+understanding or use case in life. We all have limited time on this earth , why
+bother investing in something which only /fill in garbage/ . Plus ,it will consume
+your invaluable time of life to whatever you are reading . Because, if you are
+not able to practice,whatever you have read/reading or get a chance to do
+so,then it might become a burden to carry that essence with you. I am not
+rooting for getting /immediate benefit/ but the essence should or must enhance the
+experience of life being lived properly by doing something meaningful.
+
+Alright,I have had inculcate a habit of reading and hence writing for the sake
+of my enhancement. It is a conscious effort to get better and help others to get
+better at it by NOT annoying or poking.(I have seen people , who are extremely
+inclined to bestow their understanding on others by some frivolous act) ...not
+good though.Stirring the interest on other,regarding anything needs lots of
+background check and understanding of the targeted person's inclination. And it
+is certainly not a trivial act.
+
+But in today's /pseudo busy/ world ,where people are having an unprecedented
+inclination towards getting or achieving everything in very short or less
+required time force people to do so many stuff,which they are not suppose do in first
+place. Anyway, to make sure you are not fall in trap by looking at /glitz/ of some
+furious act or words ,cautious and mindful approach can help. Again , it
+developed by when people watch/practice/act/think in the similar manner. That
+essentially means, the thought process should synchronize with the act in
+mind.
+
+Modern world is flooded with /orators/ . Alas! there is and was always a gulf
+between the /effective communicator/ with the previous. If a person not able to
+communicate */effective/* way for long, then the chances are pretty bleak to go
+forward in any matter. It is a consistent act of doing something very basic, but
+very important. On the other hand,/orators/ are full of babbling( I am not
+denying that they get a chunk of their share and sometimes the meat of it these
+days),but those are not so lasting stuff. It will wipe out quicker than might
+have thought.I can sense that form,probably listing to garbage over again and
+again make my system to recognize that kind of thing almost /instantly/. And it
+probably the case with other people, too.
+
+Information processing is as important as consuming it . Until you process the
+consumed information in correct way ,you are not in a position to deal with it
+or share in a meaningful way. So, people do not do it right all the time , I
+certainly not do it all the time, but I am in quest for improving upon it. In
+other words, /the quest is on/  :) Learning from sources you trust and rely can
+give you some sort of assurance,as it did to me. I am and was very very
+selective about something matters, as I mentioned it early ,some people tag it
+as */inhibition/* ,how poor that can be? Extremely poor. As a human being , we
+have the right to select what we want and importantly, how we want. Period. But ,
+when that conflict with others /preconceived dogma/ then people /judge/ than
+evaluate. Again, not good enough.
+
+To reinstate your understanding(or what I do) , I do make sure that I should not
+deviate from the topic of thing which I am trying to convey or share with
+others.While you are at it,sharing something on that should be considered good
+if you add something more meaningful to the already existed context without
+reiterating the matter in some /tongue twisted/ wards. That will certainly not
+appreciated by the sensible people.
+
+Why bother with the proper information exchange? Because , it is a vicious loop
+and if you haven't done it so , it might come back and bite on your arse
+someday. It is some sort of /untold/ responsibility to take the ownership of doing
+right for the sake of doing it good for yourself.
+
+Flame me with your thought.

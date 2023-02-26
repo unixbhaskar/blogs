@@ -1,0 +1,216 @@
+#+title: My Profile
+#+date: 2021-10-28
+#+tags: Information
+
+#                                                  Bhaskar Chowdhury
+
+#                                               https://about.me/unixbhaskar
+
+#                                         PGP : 9F017E9D66B07216543CEBB0B23A9DB7114B2915
+
+
+#                                            GitHub ==> https://github.com/unixbhaskar
+
+#                                            GitLab ==> https/gitlab.com/unixbhaskar
+
+#                                            Keybase ==> https://keybase.io/bhaskarchowdhury
+
+#                                            LinkedIN ==> linkedin.com/in/unixbhaskar
+
+#                                            Twitter ==> @unixbhaskar
+
+
+#                                             unixbhaskar{at}gmail{dot}com
+
+#                                             unixbhaskar{at}protonmail{dot}com
+
+#                                       Contact No: 9940290893     Passport No: J8737279
+
+
+
+**GNU/Linux SME/Architect/Consultant participate in planning,administer,analysis of Linux server farm and internet based application solutions in direct support of business objectives. I havehad hands on experience to manage production server for different job assignment and manage infrastructure of Linux servers.**
+
+
+#Technical Skills:
+
+**Operating Systems: GNU/Linux( Slackware,Gentoo,Arch,CentOS,RHEL,SLES,Debian,OpenSUSE,Ubuntu,Fedora)**
+
+**Systems : Intel x86 Architecture, Itanium, HP BladeDell PowerEdge 2850, HP z6000 workstationIBM x3550 series ,IBM x336 series,AWS spinups**
+
+**Web Servers : Apache, Zope, Tomcat,Mongrel,Nginx**
+
+**Database : MySQL**
+
+**Revision Control :Subversion,Git**
+
+**Virtualization : OpenVZ,KVM**
+
+**Monitoring Tools : Nagios,Cacti,Ganglia,Tripwire**
+
+**Cloud Platforms : AWS ,GCP**
+
+**CI/CD Tools : Jenkins,Capistrano**
+
+**Orchestration : Puppet**
+
+**Scripting : Bash,sh**
+
+
+
+#Experiences:
+
+**@Freelancing!**
+
+Duration : Jan 2017 ...till date
+
+I have been doing it for the past 4 years to keep myself abreast with
+the latest technology.
+
+Skills using Linux and open source. Kernel Development (Upstream)..Linux
+Infrastructure Management
+
+**@Cloudyuga Technologies Private Limited.(Bangalore)**
+
+Designation : GNU/Linux Consultant
+
+Duration : Jun 1st 16 to Oct 31st 16
+
+Job Profile: Guide and provide(hands on) technical reviews on container
+technologies ,namely, Docker, Kubernetes and Rkt.
+
+**@Sankhyaa Learning (P) Ltd. - HeyMath! (Chennai)**
+
+Designation : Consultant GNU/Linux and Infrastructure
+
+Duration : Oct 05 2015 to Feb 5th
+
+Job Profile : Provide best practices about GNU/Linux and implementation
+of it in the infrastructure. Helping them to move to the new platform(Cloud).
+
+**@CSS Corp (Chennai)**
+
+Designation :Sr.Domain Specialist
+
+Duration :May 18th to 7th Nov 2014
+
+Job Profile : To mentor,to provide best practices about GNU/Linux to the
+team and architect/design new thing for the infrastructure best practices.
+
+**@Ivesia Solutions,Inc.(Chennai)**
+
+Designation: GNU/Linux Architect
+
+Duration: 2011 24th Jan to 2014 January
+
+Job Profile: Maintain remote infrastructure for an US media company(A&E
+Television Network).
+
+Which includes:
+
+Server hardening running GNU/Linux OS . Nagios implementation and
+scaling. Apache tuning and scaling. Suggesting and providing solution to
+the external customers related to GNU/Linux OS and hosted application on
+it. Run doc for the GNU/Linux OS for the servers.
+
+Personal implementation and experimentation of Puppet and SaltStack.
+Deployment and monitoring automation . Script and code tools for
+automation and efficient management of sites/products. Cacti and Ganglia
+implementation,scaling . Release process look up and deployment.
+Contribute to the operations handbook.
+
+Release and deployment on production servers and QA servers. New server
+build,LAMP stack.Server config tweak. Contribute to the operations
+handbook. Deployment and monitoring automation. Script and code tools
+for automation and efficient management of sites/products.
+
+**@AthenaNet India Private Limited(Chennai)**
+
+Designation: Linux Administrator/IT Support Analyst
+
+Duration:19th May 2008 to 30th September 2008
+
+Job Profile: I was one of the open system administrator to maintain
+production systems. I did carry out day to day administration on those
+related to production servers. Support web application system .
+Primarily to maintain those production box healthy and useful. I was
+involve in automating lots of thing in the production
+
+servers as well as development servers .I found myself most of the time
+on-call . Troubleshoot tickets which is in my queue is one of the
+primary job. Looking at the Nagios alert and take action on those
+problem. Prepare the documentation related to the task and put it into
+the internal Wiki of the company.
+
+**@Naturesoft Creative Solutions Pvt.Ltd (Chennai)**
+
+Designation: Sr.Consultant Linux and Networking
+
+Duration: 15th Oct 2007 to 30thApril 2008 (Contractual)
+
+Job Profile: I had been given the onus to carry out and enhance the existing infrastructure Naturesoft has. I did maintained and enhanced servers according the internal and as well as external clients requirements. I have had built quite a few Gentoo servers from the scrach. The job involve to guide them to right open source technology to choose for the required projects. And of course day to day system administration along with my subordinates. We have deployed many utilities into server. Just to show them how best they can utilize Linux in the server and their projects. This organization main focus in Ruby on Rails development as well Java and LAMP related technologies. I had configure Mongrel cluster with Apache to serve web pages. Managed Subversion server and LDAP server.
+
+**@INTEL Technologies India Pvt. Limited (Bangalore)**
+
+Designation: Linux Server Support/Administration
+
+Duration: Oct 30, 2006 to 29th June 2007(Contractual)
+
+Job Profile: I was one of the members of EC division (Linux Engineering
+Team) of the open system server team to manage open system servers. The
+onus, I had to maintain the integrity in the OS level and administer
+them.I had the responsibility to troubleshoot the user problem through
+the ticketing system INTEL have internally.One of the primary job
+functionality is to install the server OS through DHCP and kickstart
+file. My job also involves configuring the rack console for the servers
+in the DC. Server monitoring remotely and physically,through GANGLIA and
+NAGIOS, is an integral part of my job. I was managing huge pool of Linux
+Servers at the Intel DC with others. Sometime I have to interact with
+Hp-ux and Solaris OS too. I wrote scripts according to my need and the
+companies need to perform certain task to automate some activities.
+
+**@TTK Healthcare Solution Private Limited(Bangalore)**
+
+Designation : Linux System Administrator
+
+Duration: 14th August 06 to 29th October 06(Contractual)
+
+Job Profile: I was given the responsibility to manage and install and
+configure Linux( RHEL) Dell 2650servers and bring it into the production
+parallel with the other proprietary servers, as they were moving from
+closed software to open software platform. This was short job assignment
+for me and I did play my part.
+
+**@Tripod Computing Service Pvt. Limited (Calcutta)**
+
+Designation: Linux Administrator/Web Developer
+
+Duration:1st Nov 05 to July \`06
+
+Job Profile: I was appointed as a Linux Administrator, later they gave
+me the added onus of web development also. I have made few website with
+the help of LAMP technology. I was responsible to look after the Linux
+server to serve different clients. I had to administer the Linux boxes
+remotely ,as the servers are located in the US and UK. I had the scope
+of doing remote Linux administration through WHM/Cpanel.
+
+**@Intrasoft Technologies Limited (Calcutta)**
+
+Duration : Feb 04 to May 04
+
+Designation : Open Source Programmer
+
+Job Profile: I was involved in web development. One of the team members
+of open source team. Also design and code in PHP and Python. I was being
+involved in various web site developments with LAMP technology. My work
+also involved Linux administration. I had configured Apache, MySql, PHP,
+Python from source andconfigured the web server also. I have done Tomcat
+configuration on Linux .Zope configuration was one of my job and I did
+it successfully.
+
+#Academic Qualification:
+
+1)RHEL certified
+
+2)Diploma on Advance Software Technology from UPTRON-ACL(New Delhi)
+
+                                                        BHASKAR CHOWDHURY

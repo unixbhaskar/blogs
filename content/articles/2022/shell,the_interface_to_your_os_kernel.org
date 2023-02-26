@@ -1,0 +1,239 @@
+#+title: Shell,the interface to your OS kernel
+#+date: 2022-02-17
+#+tags: Technical
+
+Well,[[https://en.wikipedia.org/wiki/Shell_(computing)][Shell]] is the /[[https://en.wikipedia.org/wiki/Lingua_franca][lingua franca]]/ of accessing the underlying operating
+system resources. Most of the people using computer in various form (mostly
+those are technically inclined) to know the underlying mechanism or tap the
+potentials of the operating system capability offering using the shell to
+accessing those facility.
+
+Most of us , who are living with it for long ,get into it by second nature.No
+invitation is required :) whenever we are in doubt of doing "not so straight
+forward" stuff , we just lean onto it ,get the damn thing straighten out .
+
+Its primary job is to translate and convey the words(in the form of commands) you
+provide on it and pass on the instruction to underlying layer to fetch the
+information from OS and return back the results to you on the terminal
+itself,provided you haven't directed that output(you can do that with minimum
+fuss) somewhere else.
+
+*Some Terminal lingo*
+
+0 is designated as stdin, i.e standard input
+1 is designated as stdout, i.e standard output
+2 is designated as stderr , i.e standard error
+
+So, having it around is the norm for certain section of the people involved in
+computing work. Nowadays, people ,who are not so deep into it also time to time
+lean on it to find out ,what is going on or the opacity of the GUI not allowing
+to see through.
+
+Honestly, I haven't sit or use proprietary OS for long long time ,due to lack of
+inclination and need.That have a shell interface too.Not surprising though. Most
+,in fact all of the [[https://en.wikipedia.org/wiki/Unix][UNIX]] like system or variant of it have to have a shell
+shipped with it . Sometimes, more then one . You can find out easily ,show many
+shell has been shipped with your OS, like this :
+
+#+begin_src sh
+cat /etc/shells
+#+end_src
+
+#+RESULTS:
+| /bin/bash |
+| /bin/tcsh |
+| /bin/csh  |
+| /bin/ash  |
+| /bin/ksh  |
+| /bin/zsh  |
+| /bin/dash |
+
+
+See, it has support these many shells out of the box. I am sitting on [[https://en.wikipedia.org/wiki/Slackware][Slackware]]
+, but it could be true and similar to most the [[https://en.wikipedia.org/wiki/Linux][Linux]] distributions, whatever
+your flavor is.
+
+Now, there is a distinction and disparity between the shells enlisted above but
+the underlying mechanism or use will be same i.e to fetch information from the
+underlying OS and presented in human readable format(not always true ,sometimes
+really arcane and esoteric,there are reason for that.
+
+It is not the question of why bother learning or understanding it ,but it is fact
+,once you get familiar with it , you can expand the horizon of your search or
+quest for information , most of the time ,very esoteric and technical details of
+specific things.So, sooner you can accustomed with it , the better it is for you
+to delve in the system and manipulate and extract information,not available or
+accessing by normal means.
+
+For instance, I am going to show you a very very rudimentary script's(program
+written in different shell's language or interpreted language) output to make
+you aware that some of the *built-in* variables output might come in handy to know
+the environment the shell is using.
+
+#+begin_src bash
+#!/bin/bash
+
+printf "This is the name of the file \$\_ $_ \n"
+
+printf "This is the name of the script \$\0 $0 \n"
+
+
+printf "This is process id of the current script \$\$ $$ \n"
+
+printf "This is how you evaluate the status of last command run \$\? $? \n"
+
+if [[ $? == 0 ]];then
+	echo it is sucessful
+else
+	echo it is not
+fi
+
+printf "This is how you check number of argument by cross checking against \$\# $# \n"
+
+if [[ $# -ne 2 ]];then
+
+	echo The number of argument is not maching
+else
+	echo it should operate normally
+fi
+
+
+echo "$USER  -->username"
+
+echo "$LOGNAME  ---> loginname"
+
+echo "$HOSTNAME -----> machine name"
+
+echo "$LINENO  ----> line number"
+
+echo "$RANDOM  ----> Random number"
+
+echo "$SECONDS   ---> Seconds till the script run"
+#+end_src
+
+#+RESULTS:
+This is the name of the file $_ ./demo
+This is the name of the script $0 ./demo
+This is process id of the current script $$ 8168
+This is how you evaluate the status of last command run $? 0
+it is successful
+This is how you check number of argument by cross checking against $# 0
+The number of argument is not machine
+bhaskar  -->username
+bhaskar  ---> loginname
+Slackware -----> machine name
+34  ----> line number
+8930  ----> Random number
+0   ---> Seconds till the script run
+
+
+So, you can see from the output(I have made the output curated for you,so it
+doesn't distract you with other thing) that ,how it is interpolated(that is the term used
+by the programmers to mean,translate)and provides results.This is probably the
+most simplest script ever written beside "hello world". :)
+
+I have written that piece in *bash shell* scripting language. As I have mentioned
+,every other shell has of its own language and you can write script with it. It
+is absolutely upto you ,which shell you chose, which mainly govern by two
+facts,one , what is your OS providing by default and the second is the
+familiarity of your understanding of that shell. There is binary comes along
+,which allow you to switch between the shell, aptly name, /chsh/  , which in
+abbreviated form of /change shell/ . But,most the naming of command is not so
+obvious like this one,in fact the space is flooded with misnomers. Naming is
+hard.
+
+I hope,you are not having difficulty picking what I am showing here ,am trying
+to make thing as simple as possible for you , so you can later use your
+intelligence to do more important thing with it.In the above,script , I just
+print out the default value holds by those individual variables.
+
+Likewise,if you are on a shell and do some rudimentary stuff on it get the
+required information like ,listing directory,disk space ,process information et
+al.But that interface is not limited to run some predefined binary but to
+provide you an interface to play with it interactively.Which is what most the
+seasoned people(who's bread and butter depend on it aka job to produce some
+meaningful results) for the sake of build something. here are few interaction
+with it:
+
+#+begin_src sh
+bhaskar@Slackware_10:05:04_Thu Feb 17: :~>iostat
+Linux 5.16.1-Slackware (Slackware)      02/17/2022      _x86_64_        (4 CPU)
+
+avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+          56.83    1.09   27.01    0.26    0.00   14.80
+
+Device             tps    kB_read/s    kB_wrtn/s    kB_dscd/s    kB_read    kB_wrtn    kB_dscd
+dm-0              0.05         0.76         0.10         0.00      15748       2136          0
+dm-1              8.13       136.12       115.16         0.00    2819660    2385504          0
+sda              12.07       201.38       277.18         0.00    4171488    5741597          0
+#+end_src
+
+
+...and some more ..
+
+#+begin_src sh
+bhaskar@Slackware_10:06:47_Thu Feb 17: :~>cat /proc/version
+───────┬───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+       │ File: /proc/version
+───────┼───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+   1   │ Linux version 5.16.1-Slackware (root@Slackware) (gcc (GCC) 11.2.0, GNU ld version 2.37-slack15) #1 SMP PREEMPT Tue Jan
+       │  18 03:24:37 IST 2022
+
+#+end_src
+
+Or may be ..
+
+#+begin_src sh
+bhaskar@Slackware_10:07:56_Thu Feb 17: :~>w
+ 10:08:35 up  5:48,  2 users,  load average: 4.23, 4.31, 4.40
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+root     tty1     -                04:21    5:47m  4:11   2:11  /opt/piavpn/bin/pia-wireguard-go --foreground wgpia0
+bhaskar  tty2     -                04:21    2:17m 39:13   0.00s xinit /usr/bin/i3 -- /usr/bin/X :0 vt2 -keeptty -auth /home/bhaskar/.serverauth.1538
+#+end_src
+
+And probably more esoteric but important information ,disk layout
+
+#+begin_src sh
+bhaskar@Slackware_10:10:52_Thu Feb 17: :~>lsblk
+NAME              MAJ:MIN RM   SIZE RO TYPE MOUNTPOINTS
+sda                 8:0    0 931.5G  0 disk
+├─sda1              8:1    0     1G  0 part /boot/efi
+├─sda2              8:2    0    20G  0 part
+├─sda3              8:3    0    20G  0 part
+├─sda4              8:4    0    25G  0 part /
+├─sda5              8:5    0   300G  0 part
+│ └─vghome-lvhome 252:1    0 299.5G  0 lvm  /home
+├─sda6              8:6    0   400G  0 part
+│ └─vgdata-lvdata 252:0    0 399.7G  0 lvm  /data
+├─sda7              8:7    0    20G  0 part
+├─sda8              8:8    0    20G  0 part
+└─sda9              8:9    0    30G  0 part
+#+end_src
+
+
+I have been referring to /OS/ quite a bit in the above ,which is basically this
+[[https://en.wikipedia.org/wiki/Operating_system][Operating System]]. And making it clear that ,we are in the same page,so the
+article produce some sense to everyone alike.
+
+/Shell/ is kinda bed , where some kind of people sleep,twist ,live and love for
+their life to do something meaningful.Moreover, the overhead of [[https://en.wikipedia.org/wiki/Graphical_user_interface][GUI]] to bring in
+action is quite fold more than something accessing on the [[https://en.wikipedia.org/wiki/Command-line_interface][CLI]] . It is
+comparatively faster to produce the result than other form.
+
+There are clear distinction between *[[https://en.wikipedia.org/wiki/Shell_(computing)][Shell]]* , *[[https://en.wikipedia.org/wiki/Command-line_interface][Command Line]]* and *[[https://en.wikipedia.org/wiki/System_console][System Console]]*
+,but one of the thing is very common is their interface look like almost same
+with a little varied way of operating on them.
+
+Well, every shell can be configured to the taste of its user. I predominately use
+/bash shell/ and configured it according to my need. You can find my configuration
+in the [[https://github.com/unixbhaskar/dotfiles/blob/master/.bashrc][GITHUB dotfiles repo .bashrc]] .
+
+Here are some references for curious minds :)
+
+- [[https://multicians.org/shell.html][The Origin Of The Shell]]
+
+- [[https://cfajohnson.com/shell/StevenBourne-shell.html][An Introduction To UNIX Shell]]
+
+- [[http://shellhaters.org/][POSIX Shell And Utilities AKA Shell Hater's Handbook]]
+
+I hope this will give some sort of heads up!

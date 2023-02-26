@@ -1,0 +1,104 @@
+#+title: Muttering ...cloud...Gosh! cloud
+#+date: 2021-11-10
+#+tags: Technical
+
+Well, this is a kinda expression(the title) I give when people talk about it . My exposure to
+the cloud is very limited number of years actively but very enriching . Mostly ,
+finding out the do's and don't of it.
+
+At first, it was absolute alien to operate on. Plus, I have a lacuna to grasp
+thing quite late because lack of understanding of underlying stuff.Then, once the
+momentary struggle is over ,it gets into another level of upheaval denial
+. Anyway, to get here (i,e in the cloud) ,you have to have the internet
+connection (I am specifically talking about the public cloud,which resides on
+the wild and hosted by some other company than of your own).There are something
+called "intra-company cloud" which you can access freely, if you work for that
+company.
+
+Coming from an exposure to on-perm stuff to cloud is a quite a big shift
+,especially mental shift takes time to getting used to it. Part of that to train
+your muscle memory and fingers to do with it. Which is radically different than
+we used to.
+
+Every new technology brings baggage with it , cloud is not exception of that
+line.So, without your will there are stuff you need to consume to operate
+efficiently on it.Why it is a deal to operate on cloud efficiently
+matters? Primarily most of the shops moved on to it and they are looking for
+personnel to manage those.
+
+**Cloud costs money.Period**. All of the shops moved on to it, has rescheduled their
+budget or already refactor their budget from moment they conceived the idea to
+get on it. Otherwise , it would be extremely difficult for them to survive in long
+run.Likewise,those shops are flooded with personnel(at least in some lvel) with very little know how
+about the history . Why is it so important to know the history operate on new
+technology? First of all, if you missed out, why that damn thing come about ,
+then you miss out of so many thing.
+
+There are plenty of cloud provider these days, mostly all big shops. But , each
+and every shop's offering varies greatly, price wise and feature wise too.
+
+Well, it certainly made life easy for certain section of tech crowd and I do
+understand why.But, does it really enhance the performance? I have little doubt
+about that.It also brings up complexity to the new heights and it is surprise to
+see people are thriving with that. Probably, a undercurrent ,which sway human
+mind , if you deal with complexity(whether it is necessary or completely
+unnecessary) ,you will bestowed with accolades for dealing with it and others
+don't have to deal with that. What a pathetic way of judging good stuff.
+
+Not all bad,if you lived on it yesteryears tech. But wait, is it suppose to have
+some sort of advantage of having new tech? Otherwise , people wouldn't have
+bother to give a f... about it.Adaption is the key, and for some it takes more
+time than other. Partly because of reluctance to leave the "comfort zone" and
+put serious kind of effort to learn something radically new and challenging.
+
+I must say, I was pissed off discovering that when some renowned big shops
+offering cloud service every second day with some arcane name of the service ,
+which I used to know for different reason. Naming is hard and that reflected
+their service names. And the dependency hell of each other(it was there in other
+form before the cloud arrive), but it was much easier to deal with then to deal
+with those now. Everything seems pretty far reaching , so distance, so somebody
+else stuff. Probably , my lack of understanding causing this stigma.
+
+For instance, if you are on a big shop's baby(i.e cloud) and wanted to achieve
+something or access something , it takes real route of ploy to get there. Don't
+believe me? Try your luck there and be honest to confess.
+
+Few things becomes super smooth though. One of the significant thing is,if you ever
+encounter a "real server" and I mean physical server on perm ,and some reason
+need to reboot,boy! it is time for a fag, coffee and other thing from 15 mins to
+40 mins for the server to come up, depend what the server suppose to brings uo
+with it.Now, in the era of cloud, that thing looks and feel real smooth. So, no
+magic, the images has been built in such a way plus the underlyng hardware get more
+efficient and powerful. So , lot of thing to count on , especially time save,
+the lagging was a part of the process, interestingly many other activity used to
+perform  during that period.
+
+Replication becomes easy.High availability become easy and confusing too. Why? I
+was there in shop , one of their project was heavily relied on cloud and I used
+to hear the word HA constantly from the folks who managed that infrastructure. I
+was initially thinking , what the heck is going on , because , building an HA
+on physical box is demanding and needs so many thing and not everyone doing
+that.But, soon, I discover the method they are using on the cloud platform to do
+that or in the cloud lingo "spin off" an instance with some rudimentary logic
+placed on the account. Well, that certainly help, lot of stuff have so much easy
+interface , people with little understanding can do havoc. Boon or bane , that
+you need to decide!
+
+Cloud is certainly helpful but it also certainly and surely not an panacea. You
+need to put more effort to get something simple out of it.I think the way it is
+designed ,it bound to be like that, because of its exposure to normal
+people.Restriction has various forms and cloud impose all those explicitly.
+
+I don't care about the hosing of this shop and that shop, it happend on on-perm
+too, and it was less known(really?) compared to nowadays.
+
+I think ,apart from some very distinctive advantage , it allows more not tech
+saavy people to hook into technology as user , as the cloud is soaring high and
+so called "services" are few clicks away. It just a matter of time people
+discover the benefit of it.
+
+Last but not the least, every good thing has dark corner, I am wildly hoping you
+are the one who discover that.
+
+Enjoy the journey,because it is enriching but for haven's sake use your
+conscience to decide what is good for you.

@@ -1,0 +1,68 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1072
+#+title: How To Solve Perl Module And Binary Mismatch Error
+#+date: 2022-08-24
+#+tags: Technical
+
+Well, I was playing with a specific software written in /Perl/ and while doing so
+,I have corrupted the modules' files. As a result, I was denied to do some normal
+operation in /Perl/ as well as in other software which is dependent on it.
+
+Here is some context that might enlighten or clear the picture. As I have
+mentioned in the past in many places that I do have several partitions on my
+HDD?SSD to accommodate various distribution to host physically. I am not a fan
+or have a great taste in virtualization. While /the specific software/ I was plying
+with worked well with three of the OSes I have, out of four. That means , one of the
+OS is having trouble with it and that is */Slackware/* .
+
+It was entirely my fault to get into trouble,because, I didn't take the
+precaution to protect the stuff in the system beforehand, I should have. From time to
+time my lack of sense comes to the fore. While building some modules, which I did
+as /superuser/ and that activity hose the system /Perl/ stuff. Due to that, I
+started getting this exact error below :
+
+#+BEGIN_SRC bash
+bhaskar@Slackware_17:52:57_Tue Aug 23: :~>cpan
+
+ListUtil.c: loadable library and perl binaries are mismatched (got first handshake key 0xeb00080, needed 0xeb80080)
+#+END_SRC
+
+Quite perplexing. So, to follow my intuition, I have started to post it on
+know places on the internet and people come up with some suggestions. At last, in some
+place , where *Slackware* related help is mostly found , which is /linuxquestion.org/
+,someone suggests the option to move the corrupted library module containing
+directory to /rename/ it , which is what I did and it started to work as
+expected now. It is alright now :
+
+#+BEGIN_SRC bash
+bhaskar@Slackware_15:43:49_Wed Aug 24: :~>sudo mv /usr/local/lib64/perl5{,.BAD}
+#+END_SRC
+
+Then I tried to get into the *cpan* shell and I can!
+
+#+BEGIN_SRC bash
+bhaskar@Slackware_15:45:02_Wed Aug 24: :~>cpan
+Loading internal logger. Log::Log4perl recommended for better logging
+
+Starting with version 2.29 of the cpan shell, a new download mechanism
+is the default which exclusively uses cpan.org as the host to download
+from. The configuration variable pushy_https can be used to (de)select
+the new mechanism. Please read more about it and make your choice
+between the old and the new mechanism by running
+
+    o conf init pushy_https
+
+Once you have done that and stored the config variable this dialog
+will disappear.
+
+cpan shell -- CPAN exploration and modules installation (v2.34)
+Enter 'h' for help.
+
+cpan[1]>
+
+#+END_SRC
+
+So,I was also having trouble while /*sending mail from git*/ too, which is also
+resolved.
+
+I hope, this article will help someone who messed up like me.

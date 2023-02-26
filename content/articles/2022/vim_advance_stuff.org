@@ -1,0 +1,350 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1020
+#+title: Vim Advance Stuff
+#+date: 2022-06-04
+#+tags: Technical
+
+Well, It occurs to me and it is coming a long time that I should have dished out
+some of my /vim/ stuff or workaround with the public. Most of them are kinda /in-built/
+and I don't like to reinvent the wheel if the software provides the mechanism
+itself. And the software I do use, in this case, *vim* is pretty fulfilling and
+needs a minimal tweak to get the best out of it. Now, here is the catch, it is solely my
+understanding and requirement, you probably love to make things complicated or
+operate in such an environment where complexity is the norm. I have been
+deprived of it due to my lack of bend of mind, strictly no pun intended.
+
+I am gonna show you some bits and pieces in this post and wildly hoping that
+will gonna stir some brain cells. So, here we go ..
+
+The first thing, while you are inside of vim, say, you need to /change the
+sentence/ and that will put you in /insert/ mode, to achieve that,
+
+#+BEGIN_SRC bash
+c)
+#+END_SRC
+
+That's right , you need to press *C and right bracket* ,while your cursor at the
+beginning of the sentence.
+
+Now, if you want to /delete the current and previous line/ at once,then you need
+to do
+
+#+BEGIN_SRC bash
+d-
+#+END_SRC
+
+Okay, that is *d and hyphen* and voila!
+
+Alright, spawning up several windows inside vim is a pretty normal thing, but
+handling those efficiently takes some taking to get accustomed to. Here are a
+few things you might try to get it going for ya...
+
+#+BEGIN_SRC bash
+CTRL-W o --> Kill the OTHER buffer after saving it
+
+CTRL-W x  --> Exchange Buffer position
+
+CTRL-W | --> Make One particular buffer ENLARGE than other
+
+CTRL-W = --> Make all the buffer EQUAL size
+
+#+END_SRC
+
+
+Pretty darn easy, isn't it? *Control W is the default built-in to handle windows
+in vim* and the latter beside that signify which action has to be performed,
+that takes some time, but it is worthwhile to spend time on it.
+
+Then, /searching on vim command line/ is a bloody intuitive task, and every one of us
+does it ever so frequently without giving it much thought. Here is something
+which will allow you to hover through your search without leaning on the
+command line
+
+#+BEGIN_SRC bash
+Ctrl-g ---> To move thorugh your search FORWARD
+Ctrl-t ---> To move backward to your search
+#+END_SRC
+
+Super handy! And importantly if the /highlight/ is ON then it can show you the
+color changes as it moves between the items, so it is easily distinguishable.
+
+Ever realized that you can fill up an quickfix window with the external shell
+command result for your inspection inside vim? Here is how you can do so..
+
+#+BEGIN_SRC bash
+:cex system("<cmd>") - Populate your quickfix list with any shell command
+#+END_SRC
+
+Yes, you need be at commandline and type /cex system/ then the command name ,
+think about that situation and you can come up with plenty of this.
+
+From time to time, we try to or probe to /evaluate/ something related to vim and
+the easiest method to do that is
+
+#+BEGIN_SRC bash
+C-r =
+#+END_SRC
+
+That's right, you need to press that keybind and you will be prompted to enter
+any /vim expression/ to evaluate it. You have to be in *insert mode* to use this.
+
+* Quick tips on /Deleting and Inserting/
+
+Here are series of commands which might come handy:
+
+#+BEGIN_SRC bash
+CTRL+a  # Insert the last content inserted.
+
+CTRL+@  # Insert the last content inserted and quit INSERT mode.
+
+CTRL+h  # Delete the character before the cursor.
+
+CTRL+w  # Delete the word under the cursor.
+
+CTRL+u  # Delete everything before the cursor.
+
+CTRL+t  # Add one indentation.
+
+CTRL+d  # Delete one indentation.
+#+END_SRC
+
+I have explained the purpose of those keystrokes in clear terms and hoping you
+will pick it up with ease.
+
+* Completion in /Insert Mode/
+
+#+BEGIN_SRC bash
+CTRL+x CTRL+y # Scroll up
+
+CTRL+x CTRL+e # Scroll down
+
+CTRL+x CTRL-l # Complete a whole line from the content of one of your buffer.
+
+CTRL+x CTRL-f # Complete the filepath under the cursor. It expands environment variables if it contains a filepath too.
+
+CTRL+x s      # Complete with spelling suggestions.
+
+CTRL+x CTRL+v # Complete with the command line history.
+
+CTRL+x CTRL+i # Complete with the keywords in the current and included files. These files are in the option path.
+
+#+END_SRC
+
+Heads up! *Vim needs to be compiled with the +insert_expand feature for these
+keystrokes to work.
+
+
+* Restrict viminfo information in viminfo file
+#+BEGIN_SRC bash
+:set viminfo=!,'100,<50,s100. # that means , set the global variable max 100 files ,a maximum of 50 lines per register and 100kib for for each item.
+:oldfiles or :ol #- Display all marked files stored in the viminfo file.
+:rviminfo or :rv #- Read the viminfo file.
+:wviminfo or :wv #- Write the viminfo file.
+#+END_SRC
+
+We can manipulate the information vim store for us for future references.
+
+You can check /fucntions/ from within vim commandline like this :
+
+#+BEGIN_SRC bash
+:function or :fu # List all declared function.
+#+END_SRC
+
+Pretty easy? Right.
+
+* Substitute from the command line
+
+#+BEGIN_SRC bash
+&                    # Repeat the last substitute, without its range and its flags.
+g&                   # Repeat the last substitute with the same flags but without the same range (it’s global), and replace its pattern with the last search pattern.
+#+END_SRC
+
+The value of *ampersand* is invaluable :)
+
+* Vim special strings
+
+#+BEGIN_SRC bash
+%         # Relative path of the current file.
+
+<cword>   #- Word under the cursor.
+
+<cWORD>   #- WORD under the cursor.
+
+<cfile>   #- Filepath under the cursor.
+
+<afile>   #- File open in the buffer when executing autocommands.
+
+<sfile>   #- Filename of sourced file when used with command :source.
+
+#+END_SRC
+
+These are vim's inbuilt variable , which can be manipulated if you desire to do
+so.
+
+* File patterns keywords
+
+#+BEGIN_SRC bash
+:p    #- Output the absolute path instead of the relative one. Also expand the tilda
+:.    #- Make the file path relative to the working directory.
+:~    #- Make the file path relative to the home directory (if possible).
+:h    #- Keep the head of the file path (remove the last element).
+:t    #- Keep the tail of the file path (remove everything except the last element).
+:r    #- Keep the root of the file name (remove its extension).
+:e    #- Remove everything except the extension of the filename.
+:s?pat?sub?  #- Substitute the first occurrence of “pat” with “sub”.
+:gs?pat?sub? #- Substitute all occurrences of “pat” with “sub”.
+#+END_SRC
+
+Arcane stuff? You are right, that is pretty cryptic. But if you read through
+the explanation beside it, makes you go like "Oh it is"!
+
+You can use the above things like this :
+
+#+BEGIN_SRC bash
+:echom expand("%")
+:echom expand("%:p")
+:echom expand("<cword>")
+#+END_SRC
+
+You can copy and paste this into the vim command line to see its effect of
+it. But, please read the statement beside each letter above to make yourself
+understand the implication each one has.
+
+
+* Plain vanilla VIM
+
+#+BEGIN_SRC bash
+NORC  #- Don’t load any vimrc but load your plugins
+NONE  #- Don’t load any vimrc nor plugins.
+#+END_SRC
+
+
+* Vim special arguments
+
+#+BEGIN_SRC bash
+<silent>  #- Doesn’t output the mapping in the Vim command-line. If you want to also drop the output of the command linked to the mapping, add the command :silent.
+
+<buffer>  #- The mapping’s scope is reduced to the current buffer only. These mappings have the priority on the global ones.
+
+<expr>    #- The mapping executes a Vimscript expression instead of a Vim command.
+
+<unique>  #- The mapping fails if it already exists. It’s useful if you don’t want to override any mapping defined previously.
+
+<Cmd>    #- The mapping can run a command without quitting the current mode you’re in.
+
+#+END_SRC
+
+* Difference between localist window and quickfix
+
+ - Local list is local and that means you can have local window per buffer
+
+ - quickfix window is global, that means you can only have one quickfix window for entire session
+
+A location list is similar to a quickfix list, except that the first is local to
+a window and the second is global to your Vim instance. In other words, you can
+have multiple location lists available at the same time (one per window open),
+but you can only have access to one quickfix list
+
+
+* Typers of Registers
+
+  - The unnamed register (") - Contain the last deleted, changed, or yanked content, even if one register was specified.
+  - The numbered registers (from 0 to 9)
+  - 0 contains the content of the last yank.
+  - 1 to 9 is a stack containing the content you’ve deleted or changed.
+  - Each time you delete or change some content, it will be added to the register 1.
+  - The previous content of the register 1 will be assigned to register 2, the previoius content of 2 to 3…
+  - When something is added to the register 1, the content of the register 9 is lost.
+  - None of these registers are written if you’ve specified one before with the keystroke ".
+  - The small delete register (-) Contains any deleted or changed content smaller than one line.
+  - The read only registers (., % and :)
+  - . contains the last inserted text.
+  - % contains the name of the current file.
+  - : contains the most recent command line executed.
+  - The alternate buffer register (#) - Contain the alternate buffer for the current window.
+  - The expression register (=) - Store the result of an expression. More about this register below.
+  - The selection registers (+ and *)
+  - + is synchronized with the system clipboard.
+  - * is synchronized with the selection clipboard (only on *nix systems).
+  - The black hole register (_) - Everything written in there will disappear forever.
+  - The last search pattern register (/) - This register contains your last search.
+  - CTRL+R % in INSERT mode, you’ll put the content of the register % in your current buffer.
+
+
+* Pattern replacement
+
+ - :s/pattern/replacement/ - Substitute the first occurrence of pattern on the current line with replacement.
+ - :s#pattern#replacement# - Equivalent substitution to the one just above. Handy if you have some URLs in your pattern or your replacement.
+ - :s/pattern/ - delete the first occurrence of pattern on the current line.
+ - :s/pattern/replacement/g - Substitute every occurrence of pattern on the current line.
+ - You can also add a range as prefix and a count as suffix:
+ - :%s/pattern/replacement/ - Substitute every first occurrence of pattern on each line of the current buffer.
+ - :%s/pattern/replacement/g - Substitute every occurrence of pattern on each line of the current buffer.
+ - :1,10s/pattern/replacement/ - Substitute every first occurrence of pattern on the first ten lines of the current buffer.
+ - :s/pattern/replacement/ 10 - Substitute every first occurrence of pattern for the current line and the 10 next lines.
+ - :1,10s/pattern/replacement/ 5 - Substitute every first occurrence of pattern on the first ten lines and on the five lines below the last line of the range.
+ - :s g 10 - Repeat the last substitution without its flag, and add a new flag g. It will affect the 10 lines after the last line of the last substitute command.
+ - :&& - Repeat the last substitute with its flags.
+ - :~ - Repeat the last substitute command with the same replacement, but with the last used search pattern.
+
+
+* Redirections
+
+ - :redir > <file> - Write every command’s output to the file <file>.
+ -  Use :redir! (with a bang !) to overwrite the file.
+ -  Use >> instead of > to append to the file.
+ - :redir @<reg> - Write every command’s output to the register <reg>.
+ - :redir @<reg>>> - Append every command’s output to the register <reg>.
+ - :redir => <var> - Write every command’s output to the variable <var>.
+ - :redir END - End the redirection.
+ -:redir @A  --> Appending
+
+
+* Filtering
+
+ - :filter /content/ buffers - Only output the buffers with part of the filepath matching content.
+ - :filter /archives/ oldfiles - Only output the marked files with part of the filepath matching archives.
+
+
+* Vim Pseudo Variables
+#+BEGIN_SRC bash
+
+   Prefix	                            Meaning
+
+& varname              # A Vim option (local option if defined, otherwise global)
+
+&l: varname  	         # A local Vim option
+
+&g: varname	         # A global Vim option
+
+@ varname	         # A Vim register
+
+$ varname	          #An environment variable
+#+END_SRC
+
+* Vim Variable scope
+#+BEGIN_SRC bash
+  Prefix	                           Meaning
+
+ g: varname	             # The variable is global
+
+ s: varname	             # The variable is local to the current script file
+
+ w: varname	             # The variable is local to the current editor window
+
+ t: varname	             # The variable is local to the current editor tab
+
+ b: varname	             # The variable is local to the current editor buffer
+
+ l: varname	             # The variable is local to the current function
+
+ a: varname	             # The variable is a parameter of the current function
+
+ v: varname	             # The variable is one that Vim predefines
+#+END_SRC
+
+Isn't enough to get going. I am sure it takes quite some time for you to get
+accustomed to using these tips. The purpose of this post is to make you aware
+of the stuff which might skip you.
+
+ By the way, you can watch my video on this in [[https://www.youtube.com/watch?v=0A_5FU5GsVI][Youtube]] .

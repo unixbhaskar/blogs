@@ -1,0 +1,86 @@
+#+title: Why Linux Native Tools Are Better
+#+date: 2022-11-01
+#+tags: Technical
+
+Well, this reflects my understanding or experience with tools comes bundles with
+Linux. First and foremost, I must confess that, I haven't used or sit on /other OS/ long
+period of time. So, I might be lacking their offering and ploy.
+
+Tools come bundled with Linux are *good enough* for most of the people using this
+/operating system/,if not all. Okay, that statement drive out of the notion, that
+people like me, who does normal work with their operating system. But is that
+actually true? No, it is not true. People do wired things all the time with
+their understanding and ability. So, it boils down to, two kinds of people, one
+who are happy and enjoy what comes bundled with their OS and others are more
+adventurous and ready to try out their luck with external stuff.
+
+I, probably fall in the former group of people, who are happy and use the stuff
+comes bundled with it. The reasoning could be in this line, that most of the
+tools are /*time tested*/ and do at least ninety percent of work people do,
+sitting on Linux.
+
+Few things play huge role to get along with this thinking. Those are :
+
+ 1) It is all about that the specific tools are there *by default*.
+
+ 2) You don't have to maintain those separately, because some smart folks take care
+    of it.
+
+ 3) Those tools(read native tools) are *well integrated* with rest of the OS.
+
+ 4) *No surprises*, if the operating system provider not make deliberate attempt
+    to something else with those tools.
+
+ 5) One doesn't have gone out in the wild i.e. on internet, to find help for
+    use, man pages are good enough to get you going.
+
+    PS: But having said that, man pages are not always helpful, especially
+    those lacking explicit example.
+
+These all ethos to, if I say so, to do with /*reliability*/ and that has been
+proven over the decades of by various different level of use across different
+sector. Not every one use those tools come from same background to have clear
+understanding or know-how to find those. Moreover, it saves tremendous amount of
+times, when people know things are in the /default location/ to use.
+
+It is *boring* or *least surprising* in a good way, reliability stems out of
+it. Doesn't it?
+
+Okay, I understand the excitement doing exciting things with *so-called* new
+tools. But are they really?? I have found out that most the /new mechanism/ somehow
+built on age-old stuff.
+
+Now, if a so-called *new tool* depend on several other tools to get along, that
+will be serious pain point. A good tool, should be *self-sufficient* . Believe me
+or not, most the time tested tools are independent one and no such reliability
+on other tools.
+
+It has twofold advantage, one, you can use it with individually, and it will
+provide you only the thing you want, or the tool is capable off. Second, you can
+easily integrate with other tools to achieve more complex task. In some way, my
+brain is wired that way, probably doing in that fashion over and over again.
+
+Make no mistake, that process is no /hunky-dory/ and had some taking to getting
+used to. Lack of internet access taught me so many things which I couldn't if I
+had the exposure to have it. Why? Because it took time to understand and use
+those tools in *proper way*. For me, it took way more time due to my lack of bend
+of mind(strictly no pun intended). So, I can not preach like an "expert" with
+ease and smooth.
+
+Moreover, the speed benefit can not be ignored. A native tool does thing way
+faster than the something foreign bring into the system and require more
+tools to perform something simple. */Linux tool chains/* are way more efficient
+when used locally available stuff shipped with the operating system they are
+supposed to use.
+
+The overhead of maintaining such tools are absolutely minimal. Think about it,
+that you don't have to care about maintaining tools like make, gcc, cat, sed, awk to
+name a few. These are all there *by default*. You don't have to lose sleep over
+where to get those and how to maintain those. You probably, haven't realized it
+,that some people are toiling to providing the comfort of doing that on our
+behalf. But that is the positive, that it frees you to think and tap the power of
+already well maintained tool to do the actual problem-solving.
+
+The intention behind all these previous vignettes are,get yourself comfortable
+or accustomed to native stuff Linux offer out of the box. The more you are
+getting familiar with it the better you reap benefit for yourself.

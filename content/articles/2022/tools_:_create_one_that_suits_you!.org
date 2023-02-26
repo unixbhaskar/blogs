@@ -1,0 +1,177 @@
+#+title: Tools,create one that suits you!
+#+date: 2022-01-01
+#+tags: Technical
+
+Well, sitting on a open system(read it as GNU/Linux or UNIX) gives you the
+facility and encouragement to build stuff which probably only suitable to your
+need and environment.Yes, it is shortsighted view and a very close one.But, it
+certainly stem a thought sooner or later to make some adjustment of your own
+requirement to make more generalized and released it for public consumption's.Not
+,necessary every single piece follow that route , but over the time most of them
+will do and do for the good of your work and help others to take a cue out of it
+and implements in their way in their specific environment.
+
+I ,personally do it for sometimes . Not everything has to be gigantic or do so
+many things at once(*remember the true UNIX philosophy! do one thing and do it
+well*), that still applies .
+
+There is and was always an inclination among the /"_modern experts_"/ to make things
+complicated to show they are "/cut above the rest/"..what a pathetic way to
+disseminate information which could help millions.
+
+But that policy only bug people who are truly lazy and do copy and paste. Kinda
+shallowness infliction.Anyway,I have always refuse to the easy offering,because
+it didn't last long and the offering has had motive which never entice me.
+
+So, with my limited capability ,I do always search for something which first and
+foremost comfort me to use in the environment I operate day to day basis. My
+logic or understanding is pretty flat , that if I am not comfortable in the
+first place then how could others be get along with it? Wildly assuming that
+everyone has similar kind of mindset or capacity like me.(Always thought others
+were more brain capacity and capability than me,no second thought on it),Period.
+
+Now, the motivation is quite clear , lets get out hands dirty for few trivial in
+terms of technical engagement but super useful thing to make ,which fueled well
+in the environment I operate.
+
+First,I do have inclination to make my programs to have some sort of humane name
+, which should be easy to remember and while looking at the name you can rightly
+guess the purpose of the program. And it suppose to do all the name suggest,
+nothing else.
+
+For instance, /_opening a file_/ is pretty common operation and should trace our
+brain to remember the command or editor name invoke it .For this reason I wrote
+small one line function and included system initialization file...here it look
+like this :
+
+#+begin_src bash
+file_open ()
+{
+    vim "$(find  $(pwd) -type f | fzf)"
+}
+#+end_src
+
+Yes, I took advantage of the tools which are freely available to use and stitch
+those together to form something which produce the stuff that helps me.This is as
+simple as that,the above code use a specific editor and it could be replaced
+with your default one.And this will , for instance , you are in a specific
+directory and want to open a file ,it will give you the enlisting with fuzzy
+searching ability to choose the file to operate on.Notice, the name of the
+binary is /file_open/ and it essentially means to open a file.Period.
+
+Next, copying files to */backup/* place is of utmost importance. I have scripts
+which do the things for me automatically. But, the below example shows you to do
+the thing manually. Okay, you can do this autonomous way.
+
+#+begin_src bash
+backup_dot_files ()
+{
+    cp -v "$1" "$(find /data/dotfiles -name '*' -type f | fzf)"
+}
+#+end_src
+
+Similar vein,identical structure ,same tool , easy. I have use it for my
+dotfiles,you could use it for any purpose.I am sure thousand of thing sprouting
+in your head by looking at the trivial code example,that is good sign . But, for
+heaven's sake don't make things complicated because you can.That will certainly
+defeat the purpose of the tools to have for your convenience. Look,
+complication brings lots of trouble for yourself in space of days ,so why
+bother. If something can be done simple way, do it that way.
+
+
+Again, I am gonna show you yet another similar example using almost identical
+structure.These stuff came up spur of the moments and since etched into the
+workflow.Here is how to copy modified file to the specific git Rep..pretty
+mundane but useful to me:
+
+#+begin_src bash
+copy_to_gitrepo ()
+{
+    cp -v "$1" "$(find ~/git-linux/AdminScripts -name '*'  -type f | fzf)"
+}
+#+end_src
+
+It is not about showing you various thing to do various manner. I am trying to
+show you similarity ,because it can gain you stuff at ease.
+
+Here is an example , how to do */search/* system wide. The function use the built
+in default stuff to get the result and the purpose is obvious...
+
+#+begin_src bash
+search ()
+{
+    if [ ! -e .git ]; then
+        sudo find / -name "$1" -ls 2> /dev/null;
+    else
+        git grep -n "$1";
+    fi
+}
+#+end_src
+
+
+Well, trivial right? Right, that is the whole purpose to get comfortable to use easy
+and not so easy stuff.
+
+Here is another piece,before doing any */sed/* operation ,it should take backup of
+the file first .
+
+#+begin_src bash
+sedwise ()
+{
+    if [[ $# -ne 2 ]]; then
+        echo Use like this: sedwise regexex filename;
+    else
+        sed -i.$(date +'%F') $1 $2;
+        echo The original file is stored as $1.$(date +'%F');
+    fi
+}
+#+end_src
+
+These all there in my  [[\[\[https://github.com/unixbhaskar/dotfiles/blob/master/.bashrc\]\[\]\]][.bashrc]] file ,and I am assuming you didn't get time to
+see it . But, that is not the point, the moot point mentioned in start of the
+article.
+
+Automatic way of *dotfiles* copied to the backup place and in the git repo
+done by some trivially written script , like this:
+
+#+begin_src bash
+#!/bin/bash
+declare -a configfiles=(.bashrc .vimrc .muttrc .profile .gitconfig .i3configs
+.i3blocks .emacs .orgemacs .orgithreeconfig)
+filechange=$(find $(cat configfiles) -type f  -printf '%TY-%Tm-%Td %TT %p\n' |
+	sort -r | head -1)
+#echo ${configfiles[@]}
+#data_modification=$(stat -c "%y %n" ${configfiles[@]})
+
+#echo "Data Modification of these files .. $data_modification"
+
+#while true;
+#do
+   #ls  .bashrc .muttrc .gitconfig .vimrc .profile > /dev/null
+
+	/usr/bin/notify-send "Config file Updated!" "ConfigFile:$filechange"
+#done
+#while true;do echo ~/.vimrc | entr -p notify-send "Vimrc Updated!";done
+#while true;do echo ~/.gitconfig | entr -p notify-send "Gitconfig Updated!";done
+
+#while inotifywait -e modify --fromfile /home/bhaskar/configfiles; do
+    #/usr/bin/ notify-send "Config file updated!"
+ #done
+
+dotfile_local_backup_file="/data/dotfiles/"
+
+copy_to_dotfiles_repo="/home/bhaskar/dotfiles/"
+
+cp -u  $filechange $copy_to_dotfiles_repo
+
+cp -u  $filechange $dotfile_local_backup_file
+
+notify-send "Copied to all the backup places: $filechange $(date +'%F')"
+
+#+end_src
+
+The above script trigger every time I made a change to those specific files.So,
+the following actions becomes obvious.
+
+Hope this will give some sorts of clue to do those stuff better way(I am sure
+you can).

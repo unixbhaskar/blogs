@@ -1,0 +1,90 @@
+#+title: In The Linux Parlance
+#+date: 2022-12-15
+#+tags: Technical
+
+When an operating system is so enticing and attracts people from different
+fields and uses it as their daily driver, something then must be commendable has
+been done by the folks who are in charge of it.
+
+And I mean "in charge of it" to those, who are actively involved in this project
+for a long time (reads decades of putting undivided attention on it).
+
+But new users and well care giver are growing over the decades, most people fall
+into two categories:
+
+One: To make a name for themselves (a prime human inclination).
+
+Second: To play with their imagination and to see it flowing in real examples
+used in day-to-day life. Kinda fulfilling their grey cells' desire through their
+work. This second bunch of people calls themselves,"nerds"...."geeks".
+
+This project is growing and moving in a bloody fast-paced environment with
+collaboration from people located in different corners of the world. To keep
+pace with it,people have to actively engage in it otherwise, it will be
+extremely difficult to catch from outside.
+
+The project contribution comes from people via email. It started like that and
+it remains the same for over 30 years. And it seems it is going be at least one
+more decade, if and only if, something significant beneficial will take over.
+
+The contribution to the project is taking a "patch" to the existing solution for
+fixing bugs, enhancing the functionality, remove unnecessary or legacy
+stuff(super cool thing) to name a few. And the way people send patches with a
+predefined set rule set by the project's old members.
+
+Generally, people have trained or tweaked, or configured their editor(vim or
+emacs) to write patches in the form , which conforms to the standard of the
+project. Plus must adhere to the well-specified guideline to get along.
+
+Every damn single line of code is reviewed by at least two persons!!( quoting a
+famous kernel developer statement) . So, you can see ,how stringent it is to
+pass through as well inspected. But, having said that, it has its quarks too,
+like every other project, and from time to time it sleeps through to keep up its
+own expectation.
+
+The server market has been conquered many moons ago with not a faint of
+resistance and the proliferation of handheld having this software in them is
+unfathomable, the only glitch is probably on the desktop front and people who
+live with it for a long (for instance, yours truly, I have been using linux on
+desktop/laptop precisely since year 2000,15th of January) knows why it is not
+taking off. The fragmentation and lack of uniformity in the user space make it
+difficult to get on with normal people.
+
+The second, dominating reason (again quoting a famous kernel developer speech),
+is that the OEM(Original Equipment Manufacturer) has to take initiative to
+provide Linux as the prime operating system or at least a viable option to get
+on with it, which is missing for a long time.
+
+Until at least, one of the aforementioned problems goes away, the trouble with
+desktop adoption will forever be bugging people to adopt it or use it en masse.
+
+The efforts are pouring into getting it better, but too many efforts are going
+in too many directions making things worse than unifying. Everybody wants a pie
+of their own. So, the fragmentation continues.
+
+Now some insight is that, restricts the user accisible or user space thing to
+deviate or have variety, so the end user gets less distracted and sticks to one
+single interface. The kernel provided by the various Linux distributions is
+having its patch applied on top of the vanilla kernel to work on their
+behalf. That has to be stopped otherwise the chance of unifying will not
+happen. And I still believe, the kernel is not the source of this problem.
+
+Something written in the above vignette might impact some large open-source
+company businesses too. Because those shops are proving desktop environments as
+per their company policy and dishing them out to their clients. And, because
+they are dominating the market with their fair share, most people see their
+stuff. The jolt people get when they try to other options. Most of them are
+quite, in fact, radically different.
+
+So, I don't know what would be the exact solution to this mess. But, all I can
+dish out is my own way of dealing with it. I do not have enough brain power like
+most of you have, so I have a very restricted set of stuff to operate on without
+getting deviated or distracted. It helps me immensely to get along with my
+beloved operating system and the open-source echo system.
+
+I have a real gripe about the fact, I am seeing a lot of people doing
+"contributing for the sake of contributing". Meh, that is not how that suppose
+to work.
+
+Enough, until I find the zeal to write something about my living computing
+environment.

@@ -1,0 +1,206 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1075
+#+title: How Do I Get Sync With Upstream Stuff
+#+date: 2022-09-05
+#+tags: Technical
+
+TL;DR
+
+Well, my limited understanding of technology doesn't allow me go far with the
+process of making it automated everything. Although, I made great deal of effort to
+make things as smooth as possible and guess what? Most of the stuff just work
+miraculously without much fuss!!
+
+As I have written/showed by video that, I do need very minimal stuff to operate
+on, and it's been the case for many years now. Mostly, because of shy away from
+the shiny and popular and importantly glitzy stuff. Two prominent reasons, one,
+I do not have enough time, like every one else in the wild to deal with never
+ending saga of a "hot of the oven stuff". Second, I would prefer to use age-old
+stuff which has been proven and tested and stood with the time. Especially, when
+the /new shiny/ stuff is not 1/10 of its strength of its own.
+
+I do use few specific software day to day basis to get on with the life on
+computer, and it's been long. Few added but mostly subtracted. To start with, I
+do use */GNU_\Linux/* as my only source as far as the /operating system/ is
+concerned. Although, I have /four/ different variant of it running for long
+time. All of them have dedicated partitions and some common partitioned to go
+along with those. Oh, did I mention, I do have one slice dedicated to /FreeBSD/
+and that is solely for some experimental purpose and *rarely* find time to use it.
+
+The choice of /editor/ again is very restricted and convenient one, so I do stick
+with, again like every one else, *vim* for long time and still do. There is reason
+for it. Because it ships with almost all the /GNU\_Linux/ distribution, I
+personally use. */Emacs/* is the latest addition, roughly around 4-5 years back, I
+opted for it with equal vengeance like vim. And I am enjoying every bit of
+it, barred some hiccups like every other software.
+
+*Browser* become an integral part of our day operation of computing or using
+computer to consume information and dishing out too on /the Internet/. I have my
+choice of browsers to get on with it. I am a long time *Firefox* user, but it has
+its flaws(like everything else) and for dire need on the way, I have discovered
+two more browsers, those are become part and parcel of regular use i.e /*Vimb*/ and
+/*Nyxt*/. One is written on basis of vim principles and adopt and work just like
+key binds of the editor, other is having more flexible with three different modes
+attached to it, namely, vim, emacs and cua. So, is very flexible. But, What I like
+most of these two is, both of them are entirely *keyboard driven*. Although, I
+have put a plugin for Firefox to behave just like that, means, I can use it
+entirely from the keyboard. And these are very common practices among the lots
+of people in the tech.
+
+Now, as I have mentioned in the above that I do sit on *GNU\_Linux* and like
+everyone else I do spend my majority of the time on without graphical
+environment, do all sorts of thing which help me first to make things smooth and
+efficient and then if I decide sometime that it is for people who probably
+consume it, then I released in /*public repositories on Github*/ and as well
+through the */[[https://www.youtube.com/c/BhaskarChowdhury][Youtube Channel]]/*.
+
+Well, few of the software of my liking, I need to get on with their regular
+activity to keep myself abreast with the progress. One of them, I have
+contributed with shortcoming, but those commitments are mine and am glad I did.
+
+Here is a /shell script/ which does the syncing with *Linux* repositories every single
+day. Pretty ordinary stuff, sync with the actual repositories, pull it down to
+local machine, push it out to /*[[https://github.com/unixbhaskar][GitHub]]*/ forked repositories of mine.
+
+The script is entirety here for your information and peek :
+
+#+BEGIN_SRC bash
+
+#!/bin/bash
+
+source ~/.bashrc >/dev/null 2>&1
+
+cat << "EOF"
+             a8888b.
+             d888888b.
+             8P"YP"Y88
+             8|o||o|88
+             8'    .88
+             8`._.' Y8.
+            d/      `8b.
+          .dP   .     Y8b.
+         d8:'   "   `::88b.
+        d8"           `Y88b
+       :8P     '       :888
+        8a.    :      _a88P
+      ._/"Yaa_ :    .| 88P|
+ jgs  \    YP"      `| 8P  `.
+ a:f  /     \._____.d|    .'
+      `--..__)888888P`._.'
+EOF
+
+kern_source="/home/bhaskar/git-linux/linux"
+cd $kern_source  && git switch master && git pull && cd $HOME
+
+noti_running=$(ps -ef | grep notifi | head -1 | gawk '{print $2}')
+
+if [[ "$noti_running" != "" ]];then
+          notify-send --expire-time=10000 --urgency=normal "It is pulling from the remote...wait"
+else
+        echo "Notification daemon is turned off :("
+fi
+
+
+repo="/home/bhaskar/git-linux/linux_github_fork"
+#githome="/home/bhaskar/git-linux"
+
+#echo -e "\n Cloning a HUGE repo , so it will take hell lot of time ..have patience..\n"
+
+#cd $githome
+
+#time git clone https://github.com/unixbhaskar/linux.git linux_github_fork
+
+cd $repo
+
+#echo -e "\n Adding upstream to be in sync with my github fork....\n"
+
+#git remote add upstream https://github.com/torvalds/linux.git
+
+echo -e "\n Fetching upstream ... \n"
+
+git fetch upstream
+
+if [[ $? -eq 0 ]];then
+
+   echo -e "\n Looks alright..proceed \n"
+else
+   echo -e "Something went wrong..check manually \n"
+fi
+
+
+echo -e "\n Checking out the local master ....\n"
+
+git checkout master
+
+
+echo -e "\n Go ahead and merge upstream/master to local/master ...\n"
+
+git merge upstream/master
+
+echo -e "\n Pushing the latest tags to the remote too...\n"
+
+find_latest_tag=$(git describe --abbrev=0 --tags)
+
+if [[ "$find_latest_tag" != "" ]];then
+#	git push origin $find_latest_tag
+        git pushlatestlinuxtag
+else
+	echo "Nothing new"
+fi
+echo -e "\n Checking out the final state of repo..\n"
+
+single_repo_status
+
+#if this branch is ahead of the remote branach push it
+
+forwd=$(git branches | grep "ahead")
+
+if [[ "$forwd" != "" ]];then
+
+	echo -e "\n Please push to remote,becasue local branch is ahead of remote branch."
+           git updatelinux && git gitlablinux
+	    cd $kern_source
+	    git-show-new
+	    $(command -v vimb) https://github.com/unixbhaskar/linux.git >/dev/null 2>&1
+
+   else
+	   echo -e "\n It seems local and remote branches have similar commits."
+fi
+
+#+END_SRC
+
+Alright, alright it is not elegant, but it does the job for me. This script is
+uploaded in //*[[https://github.com/unixbhaskar][GitHub]]*// for your perusal. Oh, there are some aliases and function,
+which I tried to name them as per their action. I don't think it will be hard to
+use of your own for that functionality.
+
+
+There is one more for the *Git* absolute similar in nature, with only repositories
+url changed.
+
+And I also have mentioned somewhere else that, I do build my own editors by
+*compiling from source* and that is true for the editor I use, that means, I do
+build /*Vim and Emacs from source*/. It is just a matter of preference, you are
+not supposed to agree with that. I do, because, I want to, for my own reason.
+
+Likewise, *I do build my own kernel* for long time and I have mentioned that in
+details in my other post.
+
+Also, I do sync with *i3* and other /limited interesting/ repositories. These
+efforts are for my sake.
+
+Having done and said that, the main communication of information flows through
+/mail/ and I have been a long time *Mutt* user for various reason. To name a few, it
+is textual, and it is lightweight. And importantly it bides well with my workflow
+and operations.
+
+Most of my ideas are borrowed from /better people/ who are better off with the
+stuff I have been using and mentioned. I am still discovering so many within
+that limited zone I have been living with. Barred, I do throw away the
+complexity, the moment I sense it.(it is kinda judgment call).
+
+The idea always propel into head, due to mainly lack of bend of mind, to stick
+with minimal thing which can accomplish what I wanted to do. And till to date, I
+am not yet disappointed. The primary reason, I stay away from complexity is that I
+simply can not handle overly bloated stuff with my gray cell capacity. I do like
+the simplicity and easy use of open system and never look beyond it.

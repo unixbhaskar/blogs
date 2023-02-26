@@ -1,0 +1,210 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1129
+#+title: Slackware Linux:Yet Another Way Of Creating and Installing Package
+#+date: 2023-01-14
+#+tags: Technical
+
+
+......albeit automated way :)
+
+Well, like everyone else in the wild, I do play with my shortcomings
+i.e. writing small programs to accomplish mundane tasks with triviality.
+
+In that specific quest, I have at automating the Slackware Linux Package
+Creation Process and Installation.
+
+Now, wait, what's the big deal? The internet is littered with that kind of
+content and people are randomly doing the same thing. It is a gripe, but soon
+realize that not everyone's requirements or the moment of the spur are quite the
+same, certainly.
+
+See, I am trying to justify my undertaking of doing the almost same thing…meh.
+
+But ..but it is my own and, certainly displeases a lot of shell script experts
+in many ways, so heads up, fellas.
+
+I wrote it last year sometimes(the date suggested that) and tweaked/polished it
+yesterday a little bit.
+
+Here is the damn script in its entirety at your disposal :
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+#===============================================================================
+#
+#          FILE: slack_custom_pkg_install.sh
+#
+#         USAGE: slack_custom_pkg_create_and_install.sh  "url" "package name" "version"
+#
+#   DESCRIPTION: Build a custom Slackware package
+#
+#       OPTIONS: Need to provide the target software download url,name and version as an argument.
+#  REQUIREMENTS: tar gzip xz bunzip makepkg
+#          BUGS:
+#         NOTES: Customized version of the Slackware package management.
+#        AUTHOR: Bhaskar Chowdhury (https://about.me/unixbhaskar), unixbhaskar@gmail.com
+#  ORGANIZATION: Independent
+#       CREATED: 05/13/2022 10:27
+#      REVISION:  1.0
+#===============================================================================\
+
+url=$1
+basepath=$HOME/slackware_custom_package
+pkg_name=$2
+pkg_ver=$3
+arch=$(uname -m)
+build_dir=$basepath/$dir_name
+mkpkg="/sbin/makepkg -l y -c n"
+instpkg="/sbin/installpkg"
+slpkg="/usr/sbin/slackpkg"
+
+# File system to hold the new package stuff
+
+echo Build basic file stucture for the new package creation
+echo
+
+mkdir -p "$basepath"/{build,install}
+touch "$basepath/install/slack-desc"
+
+ cat <<EOF  >$basepath/install/slack-desc
+	 $pkg_name: $pkg_name \(Short/Brief description\)
+	 $pkg_name:
+	 $pkg_name: Enter a description of the package you are building.
+	 $pkg_name:
+	 $pkg_name:
+	 $pkg_name:
+	 $pkg_name:
+	 $pkg_name:
+	 $pkg_name:
+	 $pkg_name:
+	 $pkg_name:
+EOF
+
+
+cd "$basepath" || exit
+
+usage(){
+
+	echo You are suppose to provide three argumenrs: url,name and version
+	echo
+	echo $(basename $0) \"url\" \"name\" \"version\"
+        echo
+	echo Also, do not forget to enter some metadata about the package
+	echo In the $basepath/install/slack-desc file\;like below
+	echo
+	echo app: Application Name \(Short/Brief description\)
+	echo app:
+	echo app: Enter a description of the package you are building.
+	echo app: All 11 "app:" lines must be present
+	echo app: "app" needs to be your application name.
+	echo app: The handy-ruler is there to help you, these lines should not exceed
+	echo app: 79 characters.
+	echo app:
+	echo app:
+	echo app:
+	echo app:
+	echo This script will prompt you to enter these details,essentially open an editor
+}
+
+
+if [[ $# -ne 3 ]];then
+	usage
+	exit 1
+fi
+
+
+# Fetch the software
+
+echo Downloading.......
+echo
+
+wget "$url"
+
+
+# Gather stats about this package build
+
+echo This package is building on $arch and the name of the package is $pkg_name \
+	and the version is $pkg_ver
+
+echo
+echo Extracting ........
+echo
+
+file_to_ex=$(find . -name "*.tar.*")
+
+#tar -xvzf "$file_to_ex"
+
+$(command -v tar) xvjf "$file_to_ex"
+dir_name=$(basename "${file_to_ex%.*}" | tr -d "tar$" | sed 's/.$//')
+cd "$dir_name" || exit
+
+# make build of the software
+
+build() {
+
+
+echo Hang on! We are building it .........
+
+        configure --prefix=/usr --localstatedir=/var --sysconfdir=/etc
+
+	make
+
+# We gonna install in build dir
+
+       make install "$build_dir/build"
+
+
+# strip off unnecessary things
+
+      strip -s $build_dir/usr/lib/* $build_dir/_install/bin/*
+
+# Gizzped the man pages
+
+     gzip -9 $build_dir/usr/man/man?/*.?
+
+}
+
+# Before making the actual package, put some metadata in designated file
+
+
+$(command -v vim) $basepath/install/slack-desc
+
+# It could be other editor of choice
+# $(command -v emacs) -nw /install/slack-desc
+
+
+# make package
+
+package()
+{
+        echo Making package of the built software......
+
+        sh -c ""$mkpkg" "$pkg_name"_"$pkg_ver"_$arch.tgz"
+
+
+        echo Installing........
+
+              sudo  sh -c ""$instpkg" "$pkg_name"_"$pkg_ver"_$arch.tgz"
+
+	echo Show installed package info......
+
+	 "$slpkg" info "$pkg_name"
+}
+
+build
+package
+
+#+END_SRC
+
+Alright, I believe the mundane script is pretty self-explanatory. But, if you
+have curiosity, you can ask me. But, haven't I commented enough in the script
+itself to make it clear? Wondering.
+
+Nevertheless, Slackware Linux has many scripts like this, if you go to their
+wiki(which I encourage you to do so) and people have already written better
+stuff than this. But, this wholly created me to get along with the process
+in my "own" way.
+
+You can tweak and play with it in your environment and take a cue from it to use
+in other situations. I do not expect you to copy and paste this but to get the
+idea and I am sure, you can do a better job than I did.
