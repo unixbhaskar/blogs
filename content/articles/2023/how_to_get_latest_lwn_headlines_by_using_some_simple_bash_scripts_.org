@@ -1,0 +1,159 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1237
+#+title: How To Get Latest LWN Headlines By Using Some Simple Bash Scripts
+#+date: 2023-03-20
+#+tags: Technical Bash Scripting
+
+
+Well, as the title of this post suggests, I am gonna show *My Way* of doing that
+stuff.
+
+A STERN HEADS-UP to the /*Shell Experts*/ and /*Kernel Developers*/, if it makes
+you furious about my stupidity, then mitigating that feeling is not my
+responsibility.
+
+
+Also, this work is hugely influenced by somebody else's better work. You can
+certainly peek at that [[https://sleeplessbeastie.eu/2020/01/08/how-to-display-lwn-news-using-message-of-the-day-framework/][here]] and kindly give the credit to the author.
+
+
+So, to begin with, [[https://lwn.net][LWN]] is providing us the /real news/ about the *linux kernel
+development* and related stuff, since 1999. All, I am trying to remind people
+that they are bloody good to provide the optimum information about that topic
+for the people( mostly geeks, because it's hugely technical) to embrace and
+enhance their appetite.
+
+By being fed with enough information for a /long/ (as per my understanding), it is
+become a part and parcel of daily life to check the damn site first thing in the
+morning with a cup of hot coffee.(After doing more rigorous work,mostly
+automated invocation of other important things related to that).
+
+As I stumbled upon one fine day on the mentioned link in one of the above
+vignettes and decided to fine-tune it for my environment, where I spend all of my
+time doing computation work every single day.
+
+The entire process is a combination of several scripts( that is partly due to my
+lack of understanding and maintainability).
+
+Here is the first one, which basically calls up other scripts in it to perform
+a certain task
+
+#+BEGIN_SRC bash
+#!/bin/bash
+/home/bhaskar/bin/lwn_headlines.orig
+
+/home/bhaskar/bin/lwn_url_content
+
+# /home/bhaskar/bin/lwn_show
+
+vim -u NONE -c "4,13 normal Ilwn_headlines[" -c "%s/https/]=https/g"  -c "14,18 normal D"   /home/bhaskar/.lw_headlines  -c wq
+
+/home/bhaskar/.lw_headlines
+
+#+END_SRC
+
+As you can see, this is pretty simple, I am using *vim Ex prompt commands* , the
+longest line in the script to perform some eliminations on those specific line
+numbers.
+
+Finally, call up a file residing in the home directory(as it is by default hidden
+because of the leading dot) to show up the headlines in /dmenu/ (describe below)
+to select, and pressing enter will open that article in the desired browser.
+
+Alright, the next one is the main file hugely modified from the original one. So,
+here it is :
+
+#+BEGIN_SRC bash
+#/bin/bash
+file=/home/bhaskar/headline.lwn
+
+notify-send --expire-time=10000 --urgency=normal  "Hang on! It is churning news from LWN.... $(date +'%F')"
+
+>$file
+
+lwn_urls_file=/home/bhaskar/lwn_urls_file
+get_lwn_urls() {
+	curl --silent https://lwn.net/headlines/newrss | grep "link" | tr -d "<>" | sed 's:link$::g' | sed 's:^.*\(link\)::g' | sed 's:/rss/$::g'
+}
+get_lwn_urls > $lwn_urls_file
+sed -i '1d' $lwn_urls_file
+
+curl --silent https://lwn.net/headlines/newrss | xmlstarlet select -N it="http://purl.org/rss/1.0/"  -N dc="http://purl.org/dc/elements/1.1/" --text --noblanks --template --match "//rdf:RDF/it:item[position() <= 10]"  -v it:title -o '\\n' | tr -d "'" | xargs  echo -e > $file
+
+# -o '<===>'  -v dc:date
+
+
+#cat $file | dmenu -l 10 -p  "LWN Headlines:" &&  cat $lwn_urls_file | dmenu -l 10  | xargs -I {} setsid -f vimb {}
+#+END_SRC
+
+I believe the lines in the script are pretty self-explanatory. Surprise! Because
+I don't need an explanation for those. Do you?
+
+*xmlstarlet* is binary, you should get it from your package manager of OS.
+
+Okay, the next file is a little one but important, so take a peek :
+
+#+BEGIN_SRC bash
+#!/bin/bash
+
+declare -A lwn_headlines
+
+
+title=$(printf '%s\n' "${!lwn_headlines[@]}" | dmenu -l 10 -p "LWN_Headlines: ")
+
+if [ "$title" ]; then
+	url=$(printf '%s\n' "${lwn_headlines["${title}"]}")
+        brow=$(open_in_specific_browser2)
+	$brow $url
+fi
+
+#+END_SRC
+
+A simple associative array is created with the apt name and reading in a cycle and
+once selected opens in a targeted browser.I have embedded another script to call up
+various browsers I use(FF, vimb, nyxt) and select the specific one to open the
+selected url.
+
+
+The next script has some manipulations of lwn urls, so take a peek here :
+
+#+BEGIN_SRC bash
+#!/bin/bash
+lwn_urls_file=/home/bhaskar/lwn_urls_file
+curl --silent https://lwn.net/headlines/newrss | grep "link" | tr -d "<>" | sed 's:link$::g' | sed 's:^.*\(link\)::g' | sed 's:/rss/$::g'
+#+END_SRC
+
+See, nothing much to explain.A simple curl invocation and some old-school UNIX
+commands give it a shape for consumption on other scripts and places.
+
+Here is the next script, which is having some /sed/ manipulation in it :
+
+#+BEGIN_SRC bash
+paste -d '' $HOME/headline.lwn $HOME/lwn_urls_file > $HOME/unified_lwn
+sed -i 's/(//g' /home/bhaskar/unified_lwn
+sed -i 's/)//g' /home/bhaskar/unified_lwn
+sed -i '/https/!d' /home/bhaskar/unified_lwn
+gawk -v x="$(cat "/home/bhaskar/unified_lwn")" '{print} /declare/{print x }' ~/bin/lwn_show  > ~/.lw_headlines
+#+END_SRC
+
+Very ugly way of manipulating urls for feeding purposes.
+
+Now, I have a key bind in /i3[fn:1] config file/ to call up that finally generated file in
+*/$HOME/.lw_headlines/* and it will display the latest 10 headlines on dmenu[fn:2], once
+selected and then pressing the enter will ask for the browser to open the link,
+selecting that will be done the page to open in that specific browser.
+
+
+I am sticking with bare minimum tools, whatever comes along with GNU/Linux
+except for xmlstarlet .
+
+Oh, btw, I made a video of the entire execution of the process for *HackerNews*,
+you might take a look at it [[https://youtu.be/xVp1aYWVYjc][YouTube_Video]] .
+
+
+
+* Footnotes
+
+[fn:1] https://i3wm.org
+
+[fn:2] https://tools.suckless.org/dmenu
