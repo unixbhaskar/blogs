@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2023-03-21 Tue 09:29 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>How To Get Latest LWN Headlines By Using Some Simple Bash Scripts</title>
+<meta name="author" content="Bhaskar Chowdhury" />
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    padding: 3px;
+    color: #555;
+    background-color: #f2f2f299;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+</style>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">How To Get Latest LWN Headlines By Using Some Simple Bash Scripts</h1>
+<p>
+Well, as the title of this post suggests, I am gonna show <b>My Way</b> of doing that
+stuff.
+</p>
+
+<p>
+A STERN HEADS-UP to the <i><b>Shell Experts</b></i> and <i><b>Kernel Developers</b></i>, if it makes
+you furious about my stupidity, then mitigating that feeling is not my
+responsibility.
+</p>
+
+
+<p>
+Also, this work is hugely influenced by somebody else's better work. You can
+certainly peek at that <a href="https://sleeplessbeastie.eu/2020/01/08/how-to-display-lwn-news-using-message-of-the-day-framework/">here</a> and kindly give the credit to the author.
+</p>
+
+
+<p>
+So, to begin with, <a href="https://lwn.net">LWN</a> is providing us the <i>real news</i> about the <b>linux kernel
+development</b> and related stuff, since 1999. All, I am trying to remind people
+that they are bloody good to provide the optimum information about that topic
+for the people( mostly geeks, because it's hugely technical) to embrace and
+enhance their appetite.
+</p>
+
+<p>
+By being fed with enough information for a <i>long</i> (as per my understanding), it is
+become a part and parcel of daily life to check the damn site first thing in the
+morning with a cup of hot coffee.(After doing more rigorous work,mostly
+automated invocation of other important things related to that).
+</p>
+
+<p>
+As I stumbled upon one fine day on the mentioned link in one of the above
+vignettes and decided to fine-tune it for my environment, where I spend all of my
+time doing computation work every single day.
+</p>
+
+<p>
+The entire process is a combination of several scripts( that is partly due to my
+lack of understanding and maintainability).
+</p>
+
+<p>
+Here is the first one, which basically calls up other scripts in it to perform
+a certain task
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #ff7f24;">#</span><span style="color: #ff7f24;">!/bin/</span><span style="color: #00ffff;">bash</span>
+/home/bhaskar/bin/lwn_headlines.orig
+
+/home/bhaskar/bin/lwn_url_content
+
+<span style="color: #ff7f24;"># </span><span style="color: #ff7f24;">/home/bhaskar/bin/lwn_show</span>
+
+vim -u NONE -c <span style="color: #ffa07a;">"4,13 normal Ilwn_headlines["</span> -c <span style="color: #ffa07a;">"%s/https/]=https/g"</span>  -c <span style="color: #ffa07a;">"14,18 normal D"</span>   /home/bhaskar/.lw_headlines  -c wq
+
+/home/bhaskar/.lw_headlines
+
+</pre>
+</div>
+
+<p>
+As you can see, this is pretty simple, I am using <b>vim Ex prompt commands</b> , the
+longest line in the script to perform some eliminations on those specific line
+numbers.
+</p>
+
+<p>
+Finally, call up a file residing in the home directory(as it is by default hidden
+because of the leading dot) to show up the headlines in <i>dmenu</i> (describe below)
+to select, and pressing enter will open that article in the desired browser.
+</p>
+
+<p>
+Alright, the next one is the main file hugely modified from the original one. So,
+here it is :
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #ff7f24;">#</span><span style="color: #ff7f24;">/bin/bash</span>
+<span style="color: #eedd82;">file</span>=/home/bhaskar/headline.lwn
+
+notify-send --expire-time=10000 --urgency=normal  <span style="color: #ffa07a;">"Hang on! It is churning news from LWN.... $(</span><span style="color: #fa8072;">date +'%F'</span><span style="color: #ffa07a;">)"</span>
+
+&gt;$<span style="color: #eedd82;">file</span>
+
+<span style="color: #eedd82;">lwn_urls_file</span>=/home/bhaskar/lwn_urls_file
+<span style="color: #87cefa;">get_lwn_urls</span><span style="color: #8c8c8c;">()</span> <span style="color: #8c8c8c;">{</span>
+        curl --silent https://lwn.net/headlines/newrss | grep <span style="color: #ffa07a;">"link"</span> | tr -d <span style="color: #ffa07a;">"&lt;&gt;"</span> | sed <span style="color: #ffa07a;">'s:link$::g'</span> | sed <span style="color: #ffa07a;">'s:^.*\(link\)::g'</span> | sed <span style="color: #ffa07a;">'s:/rss/$::g'</span>
+<span style="color: #8c8c8c;">}</span>
+get_lwn_urls &gt; $<span style="color: #eedd82;">lwn_urls_file</span>
+sed -i <span style="color: #ffa07a;">'1d'</span> $<span style="color: #eedd82;">lwn_urls_file</span>
+
+curl --silent https://lwn.net/headlines/newrss | xmlstarlet select -N <span style="color: #eedd82;">it</span>=<span style="color: #ffa07a;">"http://purl.org/rss/1.0/"</span>  -N <span style="color: #eedd82;">dc</span>=<span style="color: #ffa07a;">"http://purl.org/dc/elements/1.1/"</span> --text --noblanks --template --match <span style="color: #ffa07a;">"//rdf:RDF/it:item[position() &lt;= 10]"</span>  -v it:title -o <span style="color: #ffa07a;">'\\n'</span> | tr -d <span style="color: #ffa07a;">"'"</span> | xargs  echo -e &gt; $<span style="color: #eedd82;">file</span>
+
+<span style="color: #ff7f24;"># </span><span style="color: #ff7f24;">-o '&lt;===&gt;'  -v dc:date</span>
+
+
+<span style="color: #ff7f24;">#</span><span style="color: #ff7f24;">cat $file | dmenu -l 10 -p  "LWN Headlines:" &amp;&amp;  cat $lwn_urls_file | dmenu -l 10  | xargs -I {} setsid -f vimb {}</span>
+</pre>
+</div>
+
+<p>
+I believe the lines in the script are pretty self-explanatory. Surprise! Because
+I don't need an explanation for those. Do you?
+</p>
+
+<p>
+<b>xmlstarlet</b> is binary, you should get it from your package manager of OS.
+</p>
+
+<p>
+Okay, the next file is a little one but important, so take a peek :
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #ff7f24;">#</span><span style="color: #ff7f24;">!/bin/</span><span style="color: #00ffff;">bash</span>
+
+<span style="color: #b0c4de;">declare</span> -A lwn_headlines
+
+
+<span style="color: #eedd82;">title</span>=$<span style="color: #8c8c8c;">(</span><span style="color: #fa8072;">printf '%s\n' "${!lwn_headlines[@]}" | dmenu -l 10 -p "LWN_Headlines: "</span><span style="color: #8c8c8c;">)</span>
+
+<span style="color: #00ffff;">if</span> <span style="color: #8c8c8c;">[</span> <span style="color: #ffa07a;">"$title"</span> <span style="color: #8c8c8c;">]</span>; <span style="color: #00ffff;">then</span>
+        <span style="color: #eedd82;">url</span>=$<span style="color: #8c8c8c;">(</span><span style="color: #fa8072;">printf '%s\n' "${lwn_headlines["$</span><span style="color: #93a8c6;">{</span><span style="color: #fa8072;">title</span><span style="color: #93a8c6;">}</span><span style="color: #fa8072;">"]}"</span><span style="color: #8c8c8c;">)</span>
+        <span style="color: #eedd82;">brow</span>=$<span style="color: #8c8c8c;">(</span><span style="color: #fa8072;">open_in_specific_browser2</span><span style="color: #8c8c8c;">)</span>
+        $<span style="color: #eedd82;">brow</span> $<span style="color: #eedd82;">url</span>
+<span style="color: #00ffff;">fi</span>
+
+</pre>
+</div>
+
+<p>
+A simple associative array is created with the apt name and reading in a cycle and
+once selected opens in a targeted browser.I have embedded another script to call up
+various browsers I use(FF, vimb, nyxt) and select the specific one to open the
+selected url.
+</p>
+
+
+<p>
+The next script has some manipulations of lwn urls, so take a peek here :
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #ff7f24;">#</span><span style="color: #ff7f24;">!/bin/</span><span style="color: #00ffff;">bash</span>
+<span style="color: #eedd82;">lwn_urls_file</span>=/home/bhaskar/lwn_urls_file
+curl --silent https://lwn.net/headlines/newrss | grep <span style="color: #ffa07a;">"link"</span> | tr -d <span style="color: #ffa07a;">"&lt;&gt;"</span> | sed <span style="color: #ffa07a;">'s:link$::g'</span> | sed <span style="color: #ffa07a;">'s:^.*\(link\)::g'</span> | sed <span style="color: #ffa07a;">'s:/rss/$::g'</span>
+</pre>
+</div>
+
+<p>
+See, nothing much to explain.A simple curl invocation and some old-school UNIX
+commands give it a shape for consumption on other scripts and places.
+</p>
+
+<p>
+Here is the next script, which is having some <i>sed</i> manipulation in it :
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">paste -d <span style="color: #ffa07a;">''</span> $<span style="color: #eedd82;">HOME</span>/headline.lwn $<span style="color: #eedd82;">HOME</span>/lwn_urls_file &gt; $<span style="color: #eedd82;">HOME</span>/unified_lwn
+sed -i <span style="color: #ffa07a;">'s/(//g'</span> /home/bhaskar/unified_lwn
+sed -i <span style="color: #ffa07a;">'s/)//g'</span> /home/bhaskar/unified_lwn
+sed -i <span style="color: #ffa07a;">'/https/!d'</span> /home/bhaskar/unified_lwn
+gawk -v <span style="color: #eedd82;">x</span>=<span style="color: #ffa07a;">"$(</span><span style="color: #fa8072;">cat "/home/bhaskar/unified_lwn"</span><span style="color: #ffa07a;">)"</span> <span style="color: #ffa07a;">'{print} /declare/{print x }'</span> ~/bin/lwn_show  &gt; ~/.lw_headlines
+</pre>
+</div>
+
+<p>
+Very ugly way of manipulating urls for feeding purposes.
+</p>
+
+<p>
+Now, I have a key bind in <i>i3<sup><a id="fnr.1" class="footref" href="#fn.1" role="doc-backlink">1</a></sup> config file</i> to call up that finally generated file in
+<b><i>$HOME</i>.lw<sub>headlines</sub>/</b> and it will display the latest 10 headlines on dmenu<sup><a id="fnr.2" class="footref" href="#fn.2" role="doc-backlink">2</a></sup>, once
+selected and then pressing the enter will ask for the browser to open the link,
+selecting that will be done the page to open in that specific browser.
+</p>
+
+
+<p>
+I am sticking with bare minimum tools, whatever comes along with GNU/Linux
+except for xmlstarlet .
+</p>
+
+<p>
+Oh, btw, I made a video of the entire execution of the process for <b>HackerNews</b>,
+you might take a look at it <a href="https://youtu.be/xVp1aYWVYjc">YouTube<sub>Video</sub></a> .
+</p>
+<div id="footnotes">
+<h2 class="footnotes">Footnotes: </h2>
+<div id="text-footnotes">
+
+<div class="footdef"><sup><a id="fn.1" class="footnum" href="#fnr.1" role="doc-backlink">1</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara"><a href="https://i3wm.org">https://i3wm.org</a></p></div></div>
+
+<div class="footdef"><sup><a id="fn.2" class="footnum" href="#fnr.2" role="doc-backlink">2</a></sup> <div class="footpara" role="doc-footnote"><p class="footpara"><a href="https://tools.suckless.org/dmenu">https://tools.suckless.org/dmenu</a></p></div></div>
+
+
+</div>
+</div></div>
+<div id="postamble" class="status">
+<p class="date">Date: 2023-03-20</p>
+<p class="author">Author: Bhaskar Chowdhury</p>
+<p class="date">Created: 2023-03-21 Tue 09:29</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

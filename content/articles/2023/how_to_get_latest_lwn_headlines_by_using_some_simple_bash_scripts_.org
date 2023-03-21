@@ -154,6 +154,6 @@ you might take a look at it [[https://youtu.be/xVp1aYWVYjc][YouTube_Video]] .
 
 * Footnotes
 
-[fn:1] https://i3wm.org
+[fn:1:https://i3wm.org]
 
-[fn:2] https://tools.suckless.org/dmenu
+[fn:2:https://tools.suckless.org/dmenu]
