@@ -1,0 +1,151 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1248
+#+title: Emacs Build From Source And Other Tricks
+#+date: 2023-03-24
+#+tags: Technical Emacs Editor Opensource GNU
+
+Well, I have written about my /Emacs/ endeavor about two years back, and if you
+haven't looked at it, then you can do so precursor to this post, [[https://unixbhaskar.wordpress.com/2021/10/27/rambling-about-emacs/][Rambling About Emacs]] .
+
+Alright, here I am going to show you the script I use to build /*Emacs from
+Source*/. This is an absolutely ordinary script like my other scripts, but the
+damn thing works for me.
+
+Here is the script entirety for your viewing pleasure :
+
+#+BEGIN_SRC bash
+#!/bin/bash -
+#===============================================================================
+#
+#          FILE: emacs_build_from_source.sh
+#
+#         USAGE: ./emacs_build_from_source.sh
+#
+#   DESCRIPTION: Build Emacs from source
+#
+#       OPTIONS:
+#  REQUIREMENTS:
+#          BUGS: ---
+#         NOTES: Clone this repo git://git.savannah.gnu.org/emacs.git
+#        AUTHOR: Bhaskar Chowdhury (https://about.me/unixbhaskar), unixbhaskar@gmail.com
+#  ORGANIZATION: Independent
+#       CREATED: 09/24/2021 17:37
+#      REVISION:  ---
+#===============================================================================
+
+set -o nounset                              # Treat unset variables as an error
+basepath=/home/bhaskar/git-linux/
+
+cd $basepath
+
+if [ ! -d emacs ];then
+	git clone git@git://git.savannah.gnu.org/emacs.git
+	cd emacs
+
+elif [ -d emacs ];then
+       cd emacs
+# discard stuff from last build
+      git reset --hard
+
+# delete all of the last build stuff
+      git clean -xdf
+
+       git pull
+else
+	printf "The Emacs directory already exists....not cloning \n"
+	exit 1
+fi
+
+printf "Lets build it on.....$(hostname)"
+
+./autogen.sh
+./configure --with-pgtk
+make
+
+
+if [ $? -eq 0 ] ; then
+
+	printf "Do you want to install system wide? [Y/N]: %s"
+	read -r res
+
+	if [ "$res" == "Y" ];then
+		sudo make install
+	else
+		printf "Okay, you not want to install it system wide....not installing "
+fi
+fi
+#+END_SRC
+
+
+Nothing special in it. And importantly I have given enough comments to make it
+easy to understand. I have been using this script to upgrade emacs on
+specific linux distributions and it never breaks on me. Luck probably.
+
+Alright, one important aspect I have come across while using it on one of my
+distros (and I can't remember which one), it was somehow refusing to come up with the
+GUI version of emacs, found out, one of emacs maintainer somewhere mentioned this
+trick to get it up and running. This problem is specifically related to the X
+session.
+
+So, here is the mitigation I have used, when the emacs GUI version refuses to come
+up :
+
+#+BEGIN_SRC bash
+#!/bin/bash
+emacs --no-x-resources &>/dev/null
+#+END_SRC
+
+Just, one damn line made the trick. Basically, negating the X resources while
+kicking up the client.
+
+The next trick is, easily found out the /*system configuration features*/ are
+built with. You can simple use this below line from the command prompt or shell
+to find it out :
+
+#+BEGIN_SRC sh
+emacs -batch --eval="(prin1 system-configuration-features)"; echo
+#+END_SRC
+
+Darn simple! Isn't it? The result would look like this :
+
+#+BEGIN_SRC sh
+tp_x250_09:45:25_Fri Mar 24: :~>emacs_system_config_features
+"ACL CAIRO DBUS FREETYPE GIF GLIB GMP GNUTLS GPM GSETTINGS HARFBUZZ JPEG JSON LCMS2 LIBOTF
+LIBXML2 M17N_FLT MODULES NOTIFY INOTIFY PDUMPER PNG RSVG SECCOMP SOUND THREADS
+TIFF TOOLKIT_SCROLL_BARS X11 XDBE XIM XPM GTK3 ZLIB"
+#+END_SRC
+
+Your output could be a little different, but rest assured most of the components will
+be there are identical.
+
+How do I copy new emacs packages to the destined directory? Usually ~/.emacs.d/
+. So I have made a simple function and put it in my bash initialization file, so
+I can call it from the command line to do the job for me.
+
+Here is the function :
+
+#+BEGIN_SRC sh
+tp_x250_09:56:01_Fri Mar 24: :~>declare -f emacs_pkgs_clone
+emacs_pkgs_clone ()
+{
+    cd $HOME/.emacs.d && git clone "$1" && cd "$(basename $1 .git)"
+}
+
+#+END_SRC
+
+Pretty ordinary and darn simple. It simply gets into the designated directory and
+clones the stuff where the package home is, which is almost the majority of the time on
+popular hosting platforms i.e github or gitlab . And once it does the cloning
+then simply get into that cloned project directory. Now, what I have not
+done that is, some of the packages need to be explicitly called up inside the main
+emacs initialization file. And for this, there should be an entry in that
+initialization file with the "load-path" variable.I generally do that by hand but
+easily could be integrated with this function.
+
+
+Oh, one last action I generally perform copying the entire /.emacs.d/ directory
+structure to copy to other locations in the system as a backup. And that
+activity is performed via cronjob in certain intervals.
+
+Alright, now if you feel the appetite to see my */dot emacs/* file which is hosted
+on [[https://raw.githubusercontent.com/unixbhaskar/dotfiles/master/.emacs][GitHub]] .
