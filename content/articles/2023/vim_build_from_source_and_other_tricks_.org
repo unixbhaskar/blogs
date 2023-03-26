@@ -1,0 +1,113 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1252
+#+title: Vim Build From Source And Other Tricks
+#+date: 2023-03-26
+#+tags: Technical Vim Editor Opensource
+
+Alright, if you somehow missed my take on /vim/ then it is a good time to take a
+peek before you read below. Here is my [[https://unixbhaskar.wordpress.com/2021/10/28/rambling-about-vim/][Rambling About Vim]],
+
+In this specific post, I am going talk about the way I build vim with the help
+of a rudimentary bash script and other trivialities, which probably I haven't
+covered in my old posts about vim.
+
+First thing first, let me start with to show you the ordinary script I use to
+build my vim on various distributions I use. Here it is for your perusal :
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+#===============================================================================
+# FILE: vim_build_from_source.sh
+# USAGE: ./vim_build_from_source.sh
+# DESCRIPTION: Build Vim from source
+# OPTIONS: System clipboard copy needs gui build too.
+# REQUIREMENTS:
+# BUGS: ---
+# NOTES: Clone this repo git@github.com:vim/vim.git
+# AUTHOR: Bhaskar Chowdhury (https://about.me/unixbhaskar), unixbhaskar@gmail.com
+# ORGANIZATION: Independent
+# CREATED: 09/24/2021 17:37
+# REVISION: ---
+#===============================================================================
+
+set -o nounset # Treat unset variables as an error
+basepath=/home/bhaskar/git-linux/
+
+printf "Hang on! Lets take a backup of existing files and folders first .....\n"
+
+ sudo mv /usr/bin/vim{,.$(date +'%F_%T')}
+ sudo mv /usr/share/vim{,.$(date,#+'%F_%T')}
+
+if [[ $? -eq 0 ]];then echo Done!  else echo Not backed up properly...so
+	aborting exit 1
+fi
+
+cd $basepath
+
+if [ ! -d vim ];then
+
+       git clone git@github.com:vim/vim.git cd vim
+
+elif [ -d vim ];then
+
+       cd vim make clean git pull
+
+else
+        printf "The Vim directory already exists....and updated...not cloning \n"
+	exit 1
+fi
+
+printf "Lets build it on.....$(hostname)"
+
+
+./configure \ --enable-multibyte \ --enable-luainterp=dynamic \
+--enable-perlinterp=dynamic \ --enable-pythoninterp=dynamic \
+--enable-python3interp=dynamic \ --enable-rubyinterp=dynamic \ --enable-fontset
+\ --enable-gui=gtk2 \ --enable-cscope \ --enable-fail-if-missing \ --with-luajit
+\ --with-features=huge \
+
+make
+
+
+if [ $? -eq 0 ] ; then
+
+	printf "Do you want to install system wide? [Y/N]: %s"
+        read -r res
+
+	if [ "$res" == "Y" ];then
+                sudo make install
+                sudo cp -v  /usr/local/bin/vim /usr/bin/
+       else
+              printf "Okay, you not want to install it system wide....not installing "
+       fi
+fi
+
+#+END_SRC
+
+Dead simple and ordinary newbie script. And I have been using it for quite sometime
+now without any trouble. Try your luck, if it is run out on you, then you can
+have a chance to holler at me.
+
+Now, the hard part is over, so we can see some stuff to glue with the built
+thing.I have a script to show man pages in vim( you probably noticed it, if you
+ever watched my [[https://youtube.com/c/BhaskarChowdhury/videos][Youtube Videos]]).
+
+Anyway, here is the script :
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+sh -c "export MANPAGER="vim -u .vimrc_gruvbox -R -c 'set ft=man nomod norelativenumber nonumber nolist' -M +MANPAGER -""
+
+#+END_SRC
+
+Okay, you can directly put this line inside of your shell initialization file
+and make an alias to it for the same effect.It is basically running vim with
+some options negated for the showing man pages within vim. Convenient, because
+you can use the vim key binds while exploring the man pages.
+
+
+So,there is detailed advanced stuff related to vim can be found in this post I
+have written some time back [[https://unixbhaskar.wordpress.com/2022/06/04/vim-advance-stuff/][Article about vim advance stuff]].
+
+Also, I wrote about [[https://unixbhaskar.wordpress.com/2022/12/31/automate-vim-plugin-install-by-bash-script/][Automate vim plugin install]]. You might check that out too.
