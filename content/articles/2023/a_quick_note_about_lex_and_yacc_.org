@@ -1,0 +1,116 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1263
+#+title: A Quick Note About Lex/Flex And Yacc/Bison
+#+date: 2023-03-31
+#+tags: Technical Tools
+
+Alright,this is a little take on /Lex and Yacc/, which might help a few people who
+are delving into it or want to delve into it for the sake of their field and
+work.
+
+This is certainly *not exhaustive material* but from my notes accumulated from
+various papers.
+
+If you have a long time attached to the computing field and you are delving
+with the system-related tasks of developing stuff, then you are certainly bumped
+into these renowned tools. These are used *extensively* across the spectrum.
+
+* Few points about Lex/Flex aka /lexical analyzer generator and Yacc/Bison aka parser generator/
+
+a) A lex input file is composed of three possible sections: definitions, rules,
+and helper functions.The sections are delimited by %%. Lex transforms its input
+file into a plain C file that can be built using an ordinary C compiler.
+
+b) Definition : it runs user-supplied C code blocks for regular expression
+matches. It reads a list of regexes and constructs a giant state machine that
+attempts to match them all “simultaneously.”
+
+c) Lex files have .l (dot el) extension with C syntax.
+
+d) To build lex , and turn the input file into an intermediate C file,you need
+to run like this :
+
+#+BEGIN_SRC C
+lex -t lexfile.l > lexfile.c
+#+END_SRC
+
+then compile it like this :
+
+#+BEGIN_SRC C
+gcc -o whatevertheoutputfilename lexfile.c -ll
+#+END_SRC
+
+e) Lex creates a function called yylex(), and inserts the code blocks verbatim
+into a switch statement. When using lex with a parser, the parser will call
+yylex() to retrieve tokens, named by integers.
+
+f) EOF in lex is 0, which is different from the EOF macro in the C standard
+library.
+
+g) Lex and yacc are designed to create standalone programs, with user-defined
+code blocks stuck inside. When classic lex and yacc work together, they use a
+bunch of global variables.
+
+h) Flex and Bison, on the other hand, can generate thread-safe functions with
+uniquely prefixed names that can be safely linked into larger programs.
+
+i) A parser can act on the tokens using recursive rules. Yacc/byacc/bison are
+LALR (look-ahead left recursive) parsers, and Bison supports more powerful modes
+if desired.
+
+j) LR parsers build bottom-up toward a goal, shifting tokens onto a stack and
+combining (“reducing”) them according to rules.
+
+k) Initially there’s no lookahead token, so yacc calls yylex() to get one.
+
+l) YACC is a powerful tool to transform grammar into a state machine,
+
+m) YACC creates two files, *y.tab.h* file and *y.tab.c* both of which have hundreds
+of lines of C code that implement a LARL(1) parser for the specified grammar
+and the code for the specified actions.
+
+n) Bison is a general-purpose parser generator used to convert a grammar
+description for a LALR(1) context-free grammar into a parser that is written in
+C and parses the grammar.
+
+o) Bison parsers are bottom-up parsers that are they start from the leaf nodes of
+a tree and work their way upward until a root node is arrived at.
+
+p) It is an upgrade from yacc and one of the most commonly used LALR tools.
+
+q) Lex/Flex is a *scanner* and yacc/Bison is a *parser generator*.
+
+r) A lex/flex program has the following structure,
+
+#+BEGIN_SRC C
+DECLARATIONS
+%%
+RULES
+%%
+AUXILLIARY FUNCTIONS
+#+END_SRC
+
+s) The above instructions are for the *C compiler*
+
+t) They are used for various things like, /header files,functions,global variables/
+
+
+*References:*
+
+1) [[https://www.cs.utexas.edu/users/novak/yaccpaper.htm][Stephen C. Johnson's paper on Yacc ]]
+
+2) https://www.cs.virginia.edu/~cr4bd/flex-manual/
+
+3) https://www.csee.umbc.edu/~chang/cs431/Lex_Manual.pdf
+
+4) https://www.man7.org/linux/man-pages/man1/lex.1p.html
+
+5) https://www.gnu.org/software/bison/manual/
+
+6) https://begriffs.com/posts/2021-11-28-practical-parsing.html
+
+7) https://en.wikipedia.org/wiki/Yacc
+
+8) https://www.man7.org/linux/man-pages/man1/yacc.1p.html
+
+9) https://edoras.sdsu.edu/doc/yacc-intro.pdf
