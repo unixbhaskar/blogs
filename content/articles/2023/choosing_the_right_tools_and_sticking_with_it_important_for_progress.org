@@ -1,0 +1,111 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1266
+#+title: Choosing The Right Tools And Sticking With It Important For Progress
+#+date: 2023-04-08
+#+tags: Technical Informational Tools
+
+Well, living with a platform over two decades taught me some stern lessons and
+most of them were invaluable. In this post, I am going to focus on the
+technicalities of this aspect. Leave the human interaction(which is equally
+important) for another take.I am a great proponent of /*UNIX's strikingly small
+utilities*/[fn:1]  always.They are small,useful, and importantly not bulky.Most of my
+day-to-day work involves taking advantage of those tools and it's been ages since I
+took the computer and open platforms as a computing endeavor.
+
+So, to start with while I am sticking with single most platforms throughout my
+computing life i.e opens platform . Where things change very abrupt pace and
+keeping up with them sometimes becomes a very daunting task, if that persuasion is not
+directly impacting your day-to-day life.So, choosing wisely makes a lot of sense
+and for me, my lack of bend of mind helps me to stick with very few. Primarily,
+because of my very limited /requirement/ and usability. I am sort of person not go
+to hell and is bound to try out all the bleeding edge for no apparent reason. Most of
+the time my justification for cutting failed on my face, so, I refrained from
+it.
+
+
+But, when I do, trying to stick with it as long as possible to make sense of
+it,in a form that might help me to thrive in life with them.This is the same
+rationale that insists I choose software from [[https://suckless.org][Suckless softwares]]. The striking
+thing about their approach to minimalist offerings(mostly ignoring all the
+hip-hoop-hoopla about their software).
+
+In general, I am not the kinda person to jump the gun too quickly on
+something, mostly because I have come over the hump. So,I take time to evaluate
+before coming up with something to say. And importantly hands-on stuff with
+them.Not just by reading and listening to some /renowned people's/ thoughts about
+it.
+
+I have built my stuff(read tools) from their(i.e suckless) offering and sticking
+with it for some years now. Working with open source can sometimes really be
+rewarding. But having said that, not everything was hunky-dory, had put in a lot of
+effort(because of my limited capacity and capability of gray cells), but as
+usual that pays rich dividends over time. Moreover, I can derive things from
+their offering as per my liking and need.
+
+As I mentioned, putting a serious kind of effort to get things going with their
+software and other's offering is the norm get along with them. Sometimes, things
+do not at all go the prescribed way. Then I have taken deep dive it finds it out what
+is causing that(in a popular term that is called, getting into the rabbit hole),and
+everybody does that, so I didn't do anything special.It was more of a
+requirement fulfillment than anything else. I sometimes disagree with their way of
+offering things ,but it is alright,after all it is their offering, right? It is
+up to you to get along and find another way.
+
+You can see here that I built my /st terminal/[fn:2] with my requirement and
+it's been some years now that I have been using it. Likewise, I have to build a
+popular application launcher name /dmenu/[fn:3], a little bit of understanding of C
+language and importantly knowing /patching/[fn:4] and patch[fn:5] are important to
+get things lined up for you.
+
+Fortunately, I didn't have to sweat too much to get over the awkwardness thrown
+at me by their offering.Most of them were pretty easily discover-able.
+
+Sometimes,the general patching fails me(like many others who use their offering),
+and would have to do it by hand and hoping for it won't be too long and clunky
+and to my surprise those moments are very short-lived. Because the offerings are
+so minimal that the only way you can /enhance to your liking is/ by patching various
+aspects of the specific software to the chosen one.It is a kind of thing you
+have to bend over it for once(in general).
+
+Investing time in choosing your arsenal is important to get along in the long term
+view.Something that is popular doesn't means it has to have better usability than
+the time-tested and proven ones.Not necessary, that everything comes across as a
+tool that is bad, but investigation is of the utmost importance before jumping
+it and binding it to an important workflow.A few aspects have to consider:
+
+/One,the maintenance headache should be less./
+
+/Second,the ease of usability/.
+
+/Third, the smoothness of upgrade-ability  or enhancement./
+
+/Fourth, be careful about the licensing strategy./
+
+
+I don't think one should look beyond those. Now, come the question, what
+happened if the software(the modern tools)is not maintained anymore and you have
+already inducted it into your workflow, then you are left with the option to
+fork it and maintain it yourself.
+
+If it is not for individual consumption then working with competent people
+certainly makes things much better than living with them(tools).At least,you will
+be sure that if you can't fix the damn thing, someone else on the team has probably
+done the things for you.Like it happens in the wild of opensource, most of the
+solutions we get solved, because someone else already bumped into it and taken the
+pain to solve the issue.
+
+I think I should leave it here for your epistemic endeavor to deal with it.
+
+
+
+* References:
+
+[fn:1:https://en.wikipedia.org/wiki/List_of_Unix_commands]
+
+[fn:2:https://github.com/unixbhaskar/st_terminal_build]
+
+[fn:3:https://github.com/unixbhaskar/dmenu_build]
+
+[fn:4:https://en.wikipedia.org/wiki/Patch_(computing)]
+
+[fn:5:https://www.man7.org/linux/man-pages/man1/patch.1.html]
