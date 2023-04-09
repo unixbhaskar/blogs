@@ -1,0 +1,109 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1273
+#+title: How To Fix The Damn OpenSSL Version Problem in Slackware
+#+date: 2023-04-09
+#+tags: Technical OpenSSL Slackware
+
+Well, living with a /Linux desktop/ has its own quark and everybody knows about
+it. In spite of living with it for 23 long years, it still breaks on me and I
+had to curse and fix it in my local system.
+
+In this case, I was on /Slackware Current[fn:1]/ and made a regular update like every
+other update to the system and the damn system broke on me, specifically stating
+that *openssl* library mismatch problem. As a result, a few of the program which are
+bound with it started to not working....irks ..here is an example of it :
+
+#+BEGIN_SRC bash
+[1/1]   Package: openssl11-1.1.1t-x86_64-1.txz
+wget: /lib64/libssl.so.1.1: version `OPENSSL_1_1_1' not found (required by
+wget)
+wget: /lib64/libssl.so.1.1: version `OPENSSL_1_1_0' not found (required by
+wget)
+wget: /lib64/libcrypto.so.1.1: version `OPENSSL_1_1_0' not found (required by
+wget)
+`
+#+END_SRC
+
+For this reason, *wget, sudo* ,and many others started complaining about the missing
+version of the OpenSSL version. A New update to the system bring OpenSSL version
+3.1.0 . So, it is obviously broken stuff that was built with other version of
+it.
+
+After a little bit of head scratching and an internet search leads me to fix the
+problem for the time being.Here are the steps I took :
+
+* Step 1:
+
+Boot into another distro(which I have in other partitions) in this case, I boot
+into Gentoo .
+
+* Step 2
+
+*Chooot* to a specific partition where Slackware is installed . I have use this script
+ of mine to do the automation to that process , which you can find on [[https://github.com/unixbhaskar/AdminScripts/blob/master/change_os_root][GitHub]].
+
+* Step 3
+
+Open a terminal in the host system, in my case it is on Gentoo and wget the
+openssl.1.1.1 and once it is downloaded move or copy that file to /mnt (where I
+have mount the Slackware  partition via my script).
+
+* Step 4
+
+Once you back into the chroot terminal environment , you can find that
+openssl.1.1.1 under the root(/) directory.
+
+* Step 5
+
+Once you spotted that *txz* file then you have to run the native Slackware package
+manager to install that file, like this :
+
+#+BEGIN_SRC bash
+
+(chroot) root@Gentoo_09:01:12_Sun Apr 09:/ # installpkg openssl11-1.1.1t-x86_64-1.txz
+Verifying package openssl11-1.1.1t-x86_64-1.txz.
+Installing package openssl11-1.1.1t-x86_64-1.txz:
+PACKAGE DESCRIPTION:
+# openssl11 (SSL toolkit version 1.1.x)
+#
+# The OpenSSL certificate management tool and the shared libraries that
+# provide various encryption and decryption algorithms and protocols.
+#
+# This product includes software developed by the OpenSSL Project for
+# use in the OpenSSL Toolkit (http://www.openssl112.org). This product
+# includes cryptographic software written by Eric Young
+# (eay@cryptsoft.com). This product includes software written by Tim
+# Hudson (tjh@cryptsoft.com).
+#
+Executing install script for openssl11-1.1.1t-x86_64-1.txz.
+Package openssl11-1.1.1t-x86_64-1.txz installed.
+`
+#+END_SRC
+
+* Step 6
+
+See, the */required version of openssl/* got installed. Now try to use, one of the
+apps to see whether it is functioning properly or not. In this case, I tried wget
+and it works...see..
+
+#+BEGIN_SRC bash
+
+(chroot) root@Gento_09:01:12_Sun Apr 09:/ # wget https://mirrors.kernel.org/slackware/slackware64-current/slackware64/n/ntp-4.2.8p15-x86_64-13.txz64/n/ntp-4.2.8p15-x86_64-13.txz
+--2023-04-09 09:04:13--  https://mirrors.kernel.org/slackware/slackware64-current/slackware64/n/ntp-4.2.8p15-x86_64-13.txz
+Resolving mirrors.kernel.org (mirrors.kernel.org)... 139.178.88.99, 2604:1380:45e3:2400::1
+Connecting to mirrors.kernel.org (mirrors.kernel.org)|139.178.88.99|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 2038364 (1.9M) [text/plain]
+Saving to: ‘ntp-4.2.8p15-x86_64-13.txz’
+
+ntp-4.2.8p15-x86_64-13.txz                 100%[======================================================================================>]   1.94M  53.6KB/s    in 38s
+
+2023-04-09 09:04:53 (53.0 KB/s) - ‘ntp-4.2.8p15-x86_64-13.txz’ saved [2038364/2038364]
+`
+#+END_SRC
+
+*Voila!*
+
+* Footnotes
+
+[fn:1] https://mirrors.kernel.org/slackware/slackware64-current/slackware64/
