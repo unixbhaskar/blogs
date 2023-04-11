@@ -1,0 +1,186 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1288
+#+title: Bibliography Management In Emacs With BibTeX
+#+date: 2023-04-11
+#+tags: Technical Emacs BibTeX
+
+Well, on my way to getting better, I have discovered a piece of software in one of
+my editors(i.e Emacs) ,and the software is called *BibTeX[fn:1]* . See, there is little
+resemblance to the short name with the elaboration of the software it consists
+off and uses for primarily. That means, with /bibliography management with tex/, you
+can come up with more authentic than mine interpretation.
+
+Anyway, while I was managing my bibliographic and note-taking stuff via emacss's
+/org-mode/, that is good enough to the job for me. But, then why the switch?
+Because,that same stuff can be managed better way with this software.
+
+I have /*ignored* a/ lot of stuff people write and talk about it. Because, those
+requirements are not required by me. So, I tried to focus on /my required thing/
+than what others dishes out. Am I missing something by restricting myself to a
+certain specific thing? Yes, I do. Not yet come the time when I could have
+ponder about the other bells and whistle about this specific software.
+
+So, then am I not dishing out /half-baked/ stuff about it?? No, I am not. It
+fulfill /my requirement/ and that is why I am writing this,if somebody wanted to
+take a cue out of it.
+
+Lets,start with the present scenario,then we go backward to the beginning. Here
+is how it is looks like now :
+
+[[~/Pictures/Screenshots/2023-04-11-111443_1366x768_scrot.png]]
+
+Okay, a little background,before, I opting for to use this software i.e BibTeX ,I
+was happily using another method to keep my books and journals and notes in
+separate org files(like everyone else) and pull them up with
+/org-capture-template/ entry and key binds to insert related info in the specific
+file.
+
+Likewise,here in this interface, what you are seeing in the picture on top is
+main BibTeX interfaces. It can be used with two precise interface inside emacs,
+those are /ivy-bibtex and helm-bibtex/. I am using /helm-bibtex/ and it is quite
+alright to me for my convenience.
+
+I have got three specific files, which are having a specific name to express the
+job it is supposed to keep.
+
+*bibliography.bib* ---> is the main bib file where all the BibTeX entries get
+inducted.
+
+*notes.bin*  --> is the only note taking file related to the bibliography file.
+
+*books.bib* ---> is for keeping all compiled books entry as /pdf/
+
+Now, you can see BibTeX/ needs a dot bib file which should conforms to the
+BibTeX format.
+
+If you scroll down in the main BibTeX interface, you can see those files,
+
+[[~/Pictures/Screenshots/2023-04-11-113044_1366x768_scrot.png]]
+
+
+Alright, various things (i.e articles, journals, online, books) have different
+predefined temples come with this software.And the default ones are good enough
+to get along initially. But, once you get comfortable with this,(like we do for
+every other pieces of software we use) then you can churn out your own sadistic
+requirement with specially designed templates or modified the default one.
+
+Now, how the heck actually a /bib file/ look likes? Here is a sample
+
+[[~/Pictures/Screenshots/2023-04-11-113554_1366x768_scrot.png]]
+
+Okay,how do we enter information like the above in the bibliographic file? There
+is way to this in bibtex and it has simple keybind, once in the
+bibliographic.bib is open in a buffer, simply type /C-x C-b/ , this will give you
+a chance to complete the required format for that specific temples to choose
+from. Let me show you, it is look like once you press the key bind
+
+[[~/Pictures/Screenshots/2023-04-11-114303_1366x768_scrot.png]]
+
+Alright, there are more options if you scroll down that highlighted bar in the
+minibuffer[fn:2] for specific requirement. All you have to do, select the required
+type in that list and press enter to fuse the template in that bibliography.bib
+file,simple.
+
+Suppose, in that drop down I have selected book and press enter,the template would
+look like this in the bibliography file as bibtex entry :
+
+[[~/Pictures/Screenshots/2023-04-11-114815_1366x768_scrot.png]]
+
+Now, you can see, the default templates are pretty extensive,you probably not
+needed all the field to fill in. The fields starts with /ALT or OPT/ are really
+optional, that means you can fill them if you want or have information. But,
+what are option without those to words,like the first four options, you are
+suppose to fill in, that is mandatory. Once, you are done with the entry, you
+are suppose to press /C-c C-c/ to get it formatted for bibtex entry. On they way,
+it also allocate key for the specific entry to search that item later.You can
+modify that entry while on it or access the default chosen one, because, most of
+the time it shows sensible keys to attach with the document.Finally, you need to
+save the file wit standard /C-x C-s/ and then look at echo area at the bottom of
+them screen and it should show *Done, (re) loading the bibliography*. If the
+template is not filled properly, and you try to save the file , then it will
+complain about that action.So , you need to correct that information then save
+it ,then only the bibliography gets regenerated.
+
+There are currently *87* different commands to manipulate bibtex file and I
+encourage you go through them at least once,And most of them have shotcut keys
+attached with them. If something from that command list is not having key bins
+you can bind it yourself and it is pretty trivial to do so.
+
+Say, you have inducted an entry which suppose to have an pdf attachment,how do
+you do that? For that operation, you need place your highlighted cursor on main
+bibtex interface entry and press /TAB/ to get the action menu like this :
+
+[[~/Pictures/Screenshots/2023-04-11-121502_1366x768_scrot.png]]
+
+So, you can from the above screenshot that various options are available to use
+for that entry.Choose whatever is required for that entry. If you look closely
+in the very first screenshot of this page, specifically on the right side
+between the year and type there is icons for pdf attachment and having an note
+for that specific entry. This icons can be changed through bibtex variable tweak
+from /customized menu/ options. Those are kind of visual indicator.
+
+I can open any entry by highlight it and press enter.If the entry has pdf
+attachment , it will go ahead and opens the pdf in system wide pdf viewer, in
+my case it is /zathura[fn:3]/ .This is because, most of the time I run emacs in /tty
+mode/ that means in terminal session.But if you run emacs(like 90 percent of the
+people do) in GUI mode then you must have /pdf=tool/ to open the pdf inside emacs,
+which is cool.
+
+For note taking related to specific entry as you saw in action page ,there is an
+option to /edit note/ one you select by pressing enter ,your designated note files
+gets open and allow you to write the note about that entry . Again the
+predefined note header and properties can be modified via little lisp coding or
+tweaking the bibtex variables.
+
+let me show you a note taking screen ,the process, if I want to take a note on
+specific entry on main bibtex entry,then pressing the TAB while the entry is
+highlighted will put you in action page like the last screenshot and you have
+select /edit note/ and the corresponding note file will get open :
+
+[[~/Pictures/Screenshots/2023-04-11-122930_1366x768_scrot.png]]
+
+See, my cursor s sitting right on the author and if we go down little and start
+writing about that specific subject.Pretty handy, right? And convenient too.
+
+I use /citar[fn:4]/ to manage cite specific stuff, as I said almost all the actions have
+shortcut keys available,if not you can bind one by yourself.I have a key bind to
+pen cite with key bind /C-c t o/  and it shows like this in minibuffer:
+
+[[~/Pictures/Screenshots/2023-04-11-124334_1366x768_scrot.png]]
+
+Now, if I select any of the entry from the above screenshot minibuffer, it will
+simply ask me to create a denote file(which a way to backlink with other notes)
+or open the attached url or pdf .See like this :
+
+
+[[~/Pictures/Screenshots/2023-04-11-124546_1366x768_scrot.png]]
+
+Extremely convenient to work around with reference s and notes. There are way
+more options than I needed, but the people who are delve with academic papers
+might need all those.All in all, this software is extremely powerful for
+resource management.
+
+Also, I sometimes take advantage of /org-bibtex/ which greatly help in citation.
+
+Oh, I have made two videos about the process, you might take peek on those [[https://youtu.be/i2jspE5dcBU][Emacs
+BibTeX Adds Convenience Part-1]]  and [[https://youtu.be/nw7bAdkSgfI][Emacs BibTeX Adds Convenience Part-2]] .
+
+* Footnotes
+
+[fn:1]https://www.emacswiki.org/emacs/BibTeX
+
+[fn:2]https://www.emacswiki.org/emacs/MiniBuffer
+
+[fn:3]https://pwmt.org/projects/zathura/
+
+[fn:4]https://github.com/emacs-citar/citar
+
+# /home/bhaskar/Pictures/Screenshots/2023-04-11-111443_1366x768_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-11-111443_1366x768_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-11-113044_1366x768_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-11-113044_1366x768_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-11-113554_1366x768_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-11-113554_1366x768_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-11-114303_1366x768_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-11-114303_1366x768_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-11-114815_1366x768_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-11-114815_1366x768_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-11-121502_1366x768_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-11-121502_1366x768_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-11-122930_1366x768_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-11-122930_1366x768_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-11-124334_1366x768_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-11-124334_1366x768_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-11-124546_1366x768_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-11-124546_1366x768_scrot.png
