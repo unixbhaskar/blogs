@@ -1,0 +1,419 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1310
+#+title: Notmuch and Mu Are Two Damn Good Tools For Email Searching And Indexing
+#+date: 2023-04-13
+#+tags: Technical Email Tools
+
+TL;DR ....I am NOT responsible for your impatience to read till the end.
+
+If and only if,email is closely integrated with your workflow then these tools
+i.e. Notmuch[fn:1] and Mu[fn:2] are invaluable for productivity.
+
+Now, let me get you started from a couple of places,where I draw inspiration for
+running it myself.
+
+One, straight from the mouth of a renowned kernel developer in the LWN[fn:3]
+article.
+
+Two, this [[https://youtu.be/pBs_P_1--Os][Carl Worth,the author of Notmuch describing at linuxconf 2011
+Australia video]] .
+
+Now,once we have to go through the above resources and form a notion about it then
+from here everything will be downhill,I mean pretty darn simple.I will show you
+the interface and integration and importantly,how I use it day to day basis.
+
+Lets,start from important aspect,how do you access it?? I am ignoring the
+fact,whoever is reading this post is good enough to know,at least, how to
+install package in their respective /linux distroibutions/ and also known how to
+compile software from source.See, I am making it very clear, if you have to have
+some base to get on with it.Nope, it is not scary , as you might thing, if I can
+grab it, everyone else should be able to do it(knowing my lack of bend of mind).
+
+Once you get over the hurdle of installing the damn thing on your machine(check
+out the link at the footnotes, which should tell you, how to install it step by
+step).You can access it from the command line and very first command you should
+run like this :
+
+[[~/Pictures/Screenshots/2023-04-13-031422_1366x768_scrot.png]]
+
+Now, you can clearly see the explicit options are defines as /subcommand/ to the
+notmuch binary.I am skipping first two(setup and new),the former should run
+*very first/ command after notmuch is installed in the system and it will ask
+you various question about different aspect of your mail management.The
+later,will simply initialize the /notmuch database/ to keep the record of the
+mails you wish to put in.
+
+To see the message in notmuch database(assuming you ran ,setup first and then
+new, as explained in the above vignette),you are suppose to run it like this :
+
+[[~/Pictures/Screenshots/2023-04-13-032907_444x18_scrot.png]]
+
+..and the result would look like this :
+
+[[~/Pictures/Screenshots/2023-04-13-033150_1358x710_scrot.png]]
+
+I have just take out a screenshot from my terminal output of running that /search/
+command.
+
+To get specific mail or inbox, you are suppose to *tag* messages for individual or
+mailbox of particular type.Likewise, you can /reindex/ the notmuch database for
+get a different views of your mail ordering and storage.
+
+You can get all the address, means all the mail id from the header of the
+/sender's mail header/ by running :
+
+[[~/Pictures/Screenshots/2023-04-13-035159_374x25_scrot.png]]
+
+...and the output would be like this :
+
+
+[[~/Pictures/Screenshots/2023-04-13-034830_545x713_scrot.png]]
+
+
+Now, interesting aspect, you can run the subcommand *dump* to get tags associated
+with a search term like this :
+
+#+BEGIN_SRC bash
+tp_x250_03:58:47_Thu Apr 13: :~>notmuch dump Bhaskar
+#+END_SRC
+
+...and the result would look like this :
+
+[[~/Pictures/Screenshots/2023-04-13-040057_706x375_scrot.png]]
+
+Alright,command line is blazing fast and extremely useful.But, we should be
+using it within our mail client or convenience of our editors. It has got an
+integration with *vim* and *emacs* .
+
+/Emacs/ has a package called *notmuch.el* and it provide an interface inside the
+editor, like this :
+
+[[~/Pictures/Screenshots/2023-04-13-040839_1366x768_scrot.png]]
+
+..and once select any of the tags(remember I told you that every message has to
+be tagged in notmuch to distinguish from each others), by pressing *t* in the
+above interface and selecting the name will produce output like this in a
+buffer:
+
+[[~/Pictures/Screenshots/2023-04-13-041312_1366x768_scrot.png]]
+
+I have selected the *linux-kernel* tag for the above output.Nice! Right? You can
+expand the thread on this interface by pressing *z* on the threaded mail.
+
+There are lot of options in this *notmuch interface of emacs* , you can explore
+those options at your leisure.
+
+Now, a bit talk about the second software, which is called *Mu* and is kinda
+similar like notmuch. It too has command line interface , which will allow you
+to do so many things, You should be familirize yourself this commands if you
+want to use this software. The first thing if you run /man mu/ and the very first
+section of it consist of the command you should be familiar with, for your
+reference , it looks like this :
+
+[[~/Pictures/Screenshots/2023-04-13-042212_804x392_scrot.png]]
+
+#+BEGIN_SRC bash
+tp_x250_04:26:39_Thu Apr 13: :~>mu index
+indexing maildir /home/bhaskar/gmail-backup -> store /home/bhaskar/.cache/mu/xapian
+/ indexing messages; checked: 14755; updated/new: 0; cleaned-up: 0
+#+END_SRC
+
+
+As, you can see ,it has indexed your mails in a certain database of its
+own.Running the /info/ subcommand will produce the information :
+
+#+BEGIN_SRC bash
+tp_x250_04:29:03_Thu Apr 13: :~>mu info
+maildir           : /home/bhaskar/gmail-backup
+database-path     : /home/bhaskar/.cache/mu/xapian
+schema-version    : 453
+max-message-size  : 100000000
+batch-size        : 250000
+messages in store : 14755
+created           : Mon 25 Apr 2022 03:51:37 PM IST
+personal-address  : unixbhaskar@gmail.com
+#+END_SRC
+
+
+Now, if you want to search for somebody's mail , then you can do so, like this :
+
+#+BEGIN_SRC bash
+tp_x250_04:30:49_Thu Apr 13: :~>mu find Greg
+#+END_SRC
+
+...and it produces output like this :
+
+[[~/Pictures/Screenshots/2023-04-13-043221_1145x673_scrot.png]]
+
+The above pictures contains mails which are all tagged with Greg.
+
+Mu too has a emacs package and interface, which is called *mu4e* and it is bloody
+popular among people. The initial interface will look like this:
+
+[[~/Pictures/Screenshots/2023-04-13-043717_1366x768_scrot.png]]
+
+and once you select the adjacent keys with the specified options, it will simply
+bring the specific interface, basically enlisting seggregated mails. Let me
+select one, for instance, I want to see the today's mail then I have to press
+[bt] in quick succession to get it invoked and the result would be shown like
+this :
+
+[[~/Pictures/Screenshots/2023-04-13-044134_1366x768_scrot.png]]
+
+
+As you can seen on the modeline that it was still updating my mail folder. But
+you got the idea,how it should look. You can do various actions on them by suing
+all the predefined keys and functions this package provide to get on with
+it. All it needs investing some time with it(like with any other software).
+
+Finally, I have got /notmuch and *mu* integration with my mail clien mutt *and I access
+that interface with some *mutt macros* ,just like this :
+
+For Mu to work with mutt inside mutt :
+
+#+BEGIN_SRC bash
+tp_x250_05:00:45_Thu Apr 13: :~>cat .mutt/macros | grep emu
+   index \emu "<shell-escape>mu find  --clearlinks --format=links --linksdir=~/.maildir/search date:today   --fields=\" n l \""
+tp_x250_05:01:05_Thu Apr 13: :~>cat .mutt/macros | grep emr
+   index \emr "<change-folder-readonly>~/.maildir/search" "mu find results"
+#+END_SRC
+
+For Notmuch to work inside mutt :
+
+#+BEGIN_SRC bash
+tp_x250_05:03:49_Thu Apr 13: :~>cat .mutt/macros | grep notmuch
+ index \ens  "<enter-command>unset wait_key<enter><shell-escape>~/bin/mutt-notmuch --prompt search<enter><change-folder-readonly>~/.maildir/notmuch_search<enter>"  "search mail (using notmuch)"
+ index \ent "<enter-command>unset wait_key<enter><pipe-message>~/bin/mutt-notmuch thread<enter><change-folder-readonly>~/.maildir/notmuch_thread<enter><enter-command>set wait_key<enter>"  "search and reconstruct owning thread (using notmuch)"
+#+END_SRC
+
+
+Note: that "\e" is to denote escape key then with two letter, those have to press
+in quick succession to get the interface.
+
+Here is my absolutely simple and workable /notmuch-config/ file :
+
+#+BEGIN_SRC bash
+# .notmuch-config - Configuration file for the notmuch mail system
+#
+# For more information about notmuch, see https://notmuchmail.org
+
+# Database configuration
+#
+# The only value supported here is 'path' which should be the top-level
+# directory where your mail currently exists and to where mail will be
+# delivered in the future. Files should be individual email messages.
+# Notmuch will store its database within a sub-directory of the path
+# configured here named ".notmuch".
+#
+
+[database]
+path=/home/bhaskar/gmail-backup
+
+# User configuration
+#B
+#OB
+# Here is where you can let notmuch know how you would like to be
+# addressed. Valid settings are
+#OB
+#	name		Your full name.
+#OB	primary_email	Your primary email address.
+#	other_email	A list (separated by ';') of other email addresses
+#			at which you receive email.
+#OBOB
+# Notmuch will use the various email addresses configured here when
+# formatting replies. It will avoid including your own addresses in the
+# recipient list of replies, and will set the From address based on the
+# address to which the original email was addressed.
+#
+
+[user]
+name=Bhaskar Chowdhury
+primary_email=unixbhaskar@gmail.com
+
+# Configuration for "notmuch new"
+#
+# The following options are supported here:
+#
+#	tags	A list (separated by ';') of the tags that will be
+#		added to all messages incorporated by "notmuch new".
+#
+#	ignore	A list (separated by ';') of file and directory names
+#		that will not be searched for messages by "notmuch new".
+#
+#		NOTE: *Every* file/directory that goes by one of those
+#		names will be ignored, independent of its depth/location
+#		in the mail store.
+#
+
+[new]
+#tags=encrypt;to;from;linux-kernel;
+ignore=Airline;Amazon_store;Amazon_Web_Services;Blackberry_Travel;Credit_Card;Electricity_Bills;Income_Tax;Internet_Archives;kbuild_test_robot;kernelci_bot;kernel_test_robot;Lenovo;;PrivateInternetAAccess;Puppet_News;Reddit;Snapdeal;Tikona;tip-bot2;Tripit;Visa;AUTOSEL;'INBOX/Google_Alert';'INBOX/LWN';
+
+# Search configuration
+#
+# The following option is supported here:
+#
+#	exclude_tags
+#		A ;-separated list of tags that will be excluded from
+#		search results by default.  Using an excluded tag in a
+#		query will override that exclusion.
+#
+
+[search]
+ exclude_tags=deleted;spam;Drafts;Trash;
+
+# Maildir compatibility configuration
+#
+# The following option is supported here:
+#
+#	synchronize_flags      Valid values are true and false.
+#
+#	If true, then the following maildir flags (in message filenames)
+#	will be synchronized with the corresponding notmuch tags:
+#
+#		Flag	Tag
+#		----	-------
+#		D	draft
+#		F	flagged
+#		P	passed
+#		R	replied
+#		S	unread (added when 'S' flag is not present)
+#
+#	The "notmuch new" command will notice flag changes in filenames
+#	and update tags, while the "notmuch tag" and "notmuch restore"
+#	commands will notice tag changes and update flags in filenames
+#
+
+[maildir]
+synchronize_flags=true
+
+#+END_SRC
+
+Now, here is a ordinary bash script to make tag with notmuch and sync my mails :
+
+#+BEGIN_SRC bash
+#!/bin/bash
+
+source ~/.bashrc >/dev/null  2>&1
+
+mail_backup=/home/bhaskar/gmail-backup/
+
+# Clean up the old backup dirs
+cd $mail_backup
+
+echo Cleaning old backup dirs ......
+find $PWD -type d -name  ".notmuch" -prune -o -name ".notmuch*"  -ls
+
+find $PWD -type d -name ".notmuch" -prune -o -name ".notmuch*"  -exec rm -rf {} \; >/dev/null  2>&1
+
+# Take backup of the existing database
+echo Taking backup of the existing database.....
+
+mv /home/bhaskar/gmail-backup/.notmuch{,$(date +'%F_%T')}
+find $mail_backup -type d -name ".notmuch*" -newermt $(date '+%F') -ls
+
+# Fetch mails from remote IMAP server to local mail directory
+printf "\n\n Getting sync with remote imap server and pull down new mails...\n\n"
+
+mbsync gmail
+
+# Start indexing the fetched mails
+printf "\n\n Hang on! It is building the database with new mails.......\n\n"
+notmuch new
+#> /dev/null 2>&1
+
+
+# Various tags for refinement
+printf "\n\n Wait....building tags based inboxes for easy searchability.....\n"
+
+notmuch tag -inbox from:"googlealerts-noreply@google.com" and subject:"Google Alert"
+notmuch tag -inbox from:"lwn@lwn.net" and subject:"LWN.net"
+notmuch tag +linux-kernel -inbox -kernel-patch -xfs -ext4 to:"linux-kernel@vger.kernel.org" or cc:"linux-kernel@vger.kernel.org" and not subject:"[PATCH]"
+notmuch tag +EmacsDiffBugs -inbox -attachment from:"emacs-diffs-request@gnu.org" or from:"bug-gnu-emacs-request@gnu.org"
+notmuch tag +emacs_orgmode -inbox to:"emacs-orgmode@gnu.org"
+notmuch tag +geek-stuff -inbox subject:"The Geek Stuff"
+notmuch tag +git-pull -inbox subject:"[GIT PULL]"
+notmuch tag +kernel-patch -inbox -linux-kernel subject:"[PATCH]" or from:"bhaskarlinux73@gmail.com"
+notmuch tag +mutt -inbox -attachment  to:"mutt-users@mutt.org"
+notmuch tag +git -inbox -attachment to:"git-users@googlegroups.com"
+notmuch tag +vim -inbox -attachment to:"vim_use@googlegroups.com"
+notmuch tag +i3 -inbox -attachment  to:"i3-discuss@freelists.org"
+notmuch tag +mutt-dev -inbox -attachment to:"mutt-dev@mutt.org"
+notmuch tag +Junio -inbox -attachment -kernel-patch from:"gitster@pobox.com"
+notmuch tag +git-dev -inbox to:"git@vger.kernel.org"
+notmuch tag +ext4 -inbox -kernel-patch to:"linux-ext4@vger.kernel.org" and cc:"linux-fsdevel@vger.kernel.org"
+notmuch tag +xfs -inbox -kernel-patch  to:"djwong@kernel.org" and cc:"linux-xfs@vger.kernel.org" and cc:"linux-fsdevel@vger.kernel.org"
+notmuch tag +kernel-build -inbox -kernel-patch to"linux-kbuild@vger.kernel.org"
+notmuch tag +llvm-clang -inbox -kernel-patch to:"llvm@lists.linux.dev"
+notmuch tag +linux-firmware to:"linux-firmware@kernel.org"
+notmuch tag +gentoo -inbox -attachment to:"gentoo-user@lists.gentoo.org"
+notmuch tag +wireguard -inbox -attachment to"wireguard@lists.zx2c4.com"
+notmuch tag +nyxt -inbox -attachment  subject:"[atlas-engineer/nyxt]"
+notmuch tag +gcc -inbox -attachment  to:"gcc-patches@gcc.gnu.org"
+notmuch tag +gcc -inbox -attachment  to:"gcc@gcc.gnu.org"
+notmuch tag +gcc -inbox -attachment to:"gcc-help@gcc.gnu.org"
+notmuch tag +UNIX_Tips -inbox subject:"Unix Tip:"
+notmuch tag +Al_Viro -inbox -attachment  to:"viro@zeniv.linux.org.uk"
+notmuch tag +Linus  -inbox -attachment   to:"torvalds@linux-foundation.org"
+notmuch tag +Andrew  -inbox -attachment  from:"akpm@linux-foundation.org" and to:"akpm@linux-foundation.org"
+notmuch tag +Paul_E_McKenney -inbox -attachment  from:"paulmck@kernel.org"
+notmuch tag +Greg -inbox -attachment   from:"gregkh@linuxfoundation.org" and to:"gregkh@linuxfoundation.org"
+notmuch tag +David_Miller -inbox -attachment   to:"davem@davemloft.net"
+notmuch tag +Jonathan_Corbet -inbox -attachment to:"corbet@lwn.net"
+notmuch tag +Thomas_Gleixner -inbox -attachment to:"tglx@linutronix.de"
+notmuch tag +syzbot -inbox subject:"[syzbot]"
+notmuch tag +gentoo -inbox subject:"[gentoo-kernel]" and from:"mpagano@gentoo.org"
+notmuch tag +github-linux-repo -inbox subject:"[unixbhaskar/linux]"
+notmuch tag +Ted_Tso -inbox -attachment to:"tytso@mit.edu"
+
+
+# Print the message only if everything above went well.
+
+if [[ $? != 0 ]];then
+	echo not done.
+else
+notify-send --expire-time=50000 --urgency=normal "Mailboxes have synced at $(date +'%R')"
+fi
+
+#+END_SRC
+
+
+Simple indexing with mu:
+
+#+BEGIN_SRC bash
+#!/bin/bash
+
+maildir=/home/bhaskar/.maildir
+
+#mu init --maildir=~/.maildir/ --my-address=unixbhaskar@gmail.com
+cd $maildir
+/usr/bin/mu index
+
+notify-send --urgency=normal "Mail indexing done by Mu"
+#+END_SRC
+
+What else? I believe the information in this post is good enough to get it going.
+
+Oh, I almost forgot, that I have made videos about notmuch and mu ,you can check
+them here: [[https://www.youtube.com/watch?v=FyrsXi-akQo][NotMuch As Mail Indexer]]  and [[https://www.youtube.com/watch?v=qdDEpDv7cVM][Mu As Mail Indexer and Searcher]] .
+
+* Footnotes
+
+[fn:1] https://notmuchmail.org/
+
+[fn:2] https://www.djcbsoftware.nl/code/mu/
+
+[fn:3] https://lwn.net/Articles/705856/
+
+# /home/bhaskar/Pictures/Screenshots/2023-04-13-031422_1366x768_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-13-031422_1366x768_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-13-032907_444x18_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-13-032907_444x18_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-13-033150_1358x710_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-13-033150_1358x710_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-13-035159_374x25_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-13-035159_374x25_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-13-034830_545x713_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-13-034830_545x713_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-13-040057_706x375_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-13-040057_706x375_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-13-040839_1366x768_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-13-040839_1366x768_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-13-041312_1366x768_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-13-041312_1366x768_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-13-042212_804x392_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-13-042212_804x392_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-13-043221_1145x673_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-13-043221_1145x673_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-13-043717_1366x768_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-13-043717_1366x768_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-13-044134_1366x768_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-13-044134_1366x768_scrot.png
