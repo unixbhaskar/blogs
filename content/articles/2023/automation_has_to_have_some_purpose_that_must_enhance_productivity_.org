@@ -1,0 +1,532 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1317
+#+title: Automation Has To Have Some Purpose That Must Enhance Productivity
+#+date: 2023-04-16
+#+tags: Technical Automation Scripting Tools
+
+What am I telling anew to people?? Every damn shop is doing it and showing the
+whole world how good they are with /big and better/ tools to accomplish the *complex* job
+flawlessly.
+
+What a rosy picture people sucked into. Anyway, it not my headache to delve into
+some wonderland. My automation are trivial in nature, done with readily
+available tools in the system.( I am sure, it popped into head, that how far you
+go with that??) and you are not wrong. Because, the crackpot heads are filled
+with some idiotic ideas to dish out to hog cheap limelight .....meh .
+
+Now,the rant went away,let me soak you with my frivolous ideas and work.If you
+get disappointed seeing below stuff,it is absolutely your shortcoming to see and
+understand my shortcoming.
+
+First one is:
+
+* Build FFMPEG from upstream source on Slackware
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+#===============================================================================
+#
+#          FILE: ffmpeg_buid_from_upstream_on_slackware.sh
+#
+#         USAGE: ./ffmpeg_buid_from_upstream_on_slackware.sh
+#
+#   DESCRIPTION: This script will build ffmpeg from upstream source
+#
+#       OPTIONS: ---
+#  REQUIREMENTS: rsync x264(this has to be installed beforehand)
+#          BUGS: ---
+#         NOTES: Shipped package with Slackware might not have all
+#        AUTHOR: Bhaskar Chowdhury (https://about.me/unixbhaskar), unixbhaskar@gmail.com
+#  ORGANIZATION: Independent
+#       CREATED: 08/28/2022 04:17
+#      REVISION:  ---
+#===============================================================================
+
+set -o nounset                              # Treat unset variables as an error
+
+# Get the latest version from upstream
+rsync -avz rsync://mirrors.kernel.org/slackware/slackware-current/source/l/ffmpeg .
+
+ffmpegdir="/root/ffmpeg"
+
+cd "$ffmpegdir" || echo "Nope,not get into it ...aborting"
+
+# Extract out the version numeric from the package name
+version=$(find . -name "*.xz" -type f -print | sed -e 's#ffmpeg# #' | sed -e 's#tar.xz# #' | sed -e 's#.$# #'  | sed -e 's#^./-# #')
+
+# Change the permission of the package build script,give exec bit
+chmod +x ffmpeg.SlackBuild
+
+echo Building it ....
+
+# This directing the build script to use x264 video codecs
+sh -c "X264=yes ./ffmpeg.SlackBuild"
+
+# Checking if the build went alright or not and take decision based on it
+if [[ $? -eq 0 ]];then
+	echo installing the package.
+
+	 sh -c "installpkg  /tmp/ffmpeg-$version-x86_64-1.txz"
+
+else
+	echo Build is not ok.cross check it...
+fi
+#+END_SRC
+
+
+* Get the damn PDF from the Download folder to designated pdf folder
+
+Here is what I cooked up for me
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+downdir=$HOME/Downloads
+bib_source=$HOME/bibliography/pdf_docs/
+
+# inotifywait -m --include "[pdf$]" ${downdir} -e create -e moved_to |
+#     while read ${downdit} action file; do
+#         notify-send "The file '$file' appeared in directory '${downdir}' via '$action'"
+#     done
+
+
+inotifywait -m ~/Downloads -e create -e moved_to |
+while read path action file; do
+    #echo "The file '$file' appeared in directory '$path' via '$action'"
+    # Check if the file is a PDF or another file type.
+    cd $downdir
+    if [[ $(head -c 4 "$file") = "%PDF" ]]; then
+        notify-send "PDF found - filename: $file"
+        mv "$file" $bib_source
+    else
+        notify-send "NOT A PDF!"
+fi
+done
+
+#+END_SRC
+
+Pretty ordinary, but the damn thing works well for me. Basically, keep and eye
+with /inotifywait/ (it is tool, which keep tracks the event in the monitoring
+path) and once it sense some activity(which was explicitly specified by me) and
+perform certain action on it. In this case, /move the downloaded pdf file from
+download directory to pdf-docs directory located somewhere else in the
+filesystem/.
+
+Alright, the next one is even simpler:
+
+* Sync bibliography file to separate backup location in the file system
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+echo Syncing ..wait ..
+echo
+sudo cp -Rpv /home/bhaskar/bibliography /data/
+#+END_SRC
+
+This little script run periodically from cron.
+
+Next one is,
+
+* Sync blogs folder with entry selection, this is /semi-automatic/ process
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+source_dir="/home/bhaskar/blogs/content/articles/2023/"
+
+dest_dir="/home/bhaskar/.emacs.d/OrgFiles/"
+
+backup_dir="/data/blogs/content/articles/2023/"
+
+# inotifywait -m -q -e | while read -r file  | fzf --prompt "select file:"
+  # do
+  #   # cp "$source_dir" "$dest_dir"
+  # done
+
+find "$source_dir" -type f -exec sh -c "basename {}" \; 2>/dev/null | fzf --prompt="Select file:" | xargs -I {} cp "$source_dir/{}" "$dest_dir"
+
+cp -ru "$source_dir" "$backup_dir"
+
+if [ $? == 0 ];then
+
+notify-send "File copied to destination dirs sucessfully"
+else
+	notify-send "Nope,not done."
+fi
+
+#+END_SRC
+
+I have use an external tool call *fzf* just for the sake of /ease of use/ . It could
+have been done without it.
+
+The next one is:
+
+* Youtube video script sync with various locations in the file system
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+declare -A  yt_videos
+
+  yt_videos[ArchLinux_Package_Browse_With_FZF]="https://www.youtube.com/watch?v=6eykE9w2onk"
+  yt_videos[Automate_assembly_program_in_vim]="https://www.youtube.com/watch?v=nhppqYF9aEg"
+  yt_videos[Bash_Scripts_For_Archiving_And_Dearchiving]="https://www.youtube.com/watch?v=OoFWXiXGYKc"
+  yt_videos[Emacs_Build_From_Source]="https://www.youtube.com/watch?v=xhVCca83C7M"
+  yt_videos[Compile_C_Program_Inside_Emacs]="https://www.youtube.com/watch?v=fCsaBHv6p6M"
+  yt_videos[EMMS_Music_Plyer_On_Emacs]="https://www.youtube.com/watch?v=UL2ICoKXF7s"
+  yt_videos[Emacs_Abbreviation_Creation]="https://www.youtube.com/watch?v=DLPuRmSNOWQ"
+  yt_videos[Emacs_Buffer_As_Scratchpad]="https://www.youtube.com/watch?v=HmOd6zWlhjk"
+  yt_videos[Emacs_Bug_Report_How_To]="https://www.youtube.com/watch?v=FpV8VzFVhMI"
+  yt_videos[Emacs_Help]="https://www.youtube.com/watch?v=ubaCgwIDE7E"
+  yt_videos[Emacs_Insert_Date_Time]="https://www.youtube.com/watch?v=u762RxmHEbc"
+  yt_videos[Emacs_Org_Capture]="https://www.youtube.com/watch?v=2Wi-QhQa-xw"
+  yt_videos[Emacs_Package_Management_Part_II]="https://www.youtube.com/watch?v=aay6wzH6v2w"
+  yt_videos[Emacs_Package_Management_Part_I]="https://www.youtube.com/watch?v=8T6MnQ0gwF8"
+  yt_videos[Emacs_Pane_Focus_Back]="https://www.youtube.com/watch?v=vi5L8_NkGyk"
+  yt_videos[Emacs_Sign_Git_Commit_In_Magit]="https://www.youtube.com/watch?v=yKqu44bmpUw"
+  yt_videos[Emacs_Vim_Config_Cross_Edit]="https://www.youtube.com/watch?v=fndsXHgcvM0"
+  yt_videos[Firefox_Download_By_Bash_Script_Automation]="https://www.youtube.com/watch?v=oWkVz7VdRw0"
+  yt_videos[Git_Aliases_For_Convenience]="https://www.youtube.com/watch?v=4pDSDhV2lkU"
+  yt_videos[Git_Info_Popup_On_Vim]="https://www.youtube.com/watch?v=pyoDm5Lbgl8"
+  yt_videos[Git_Popup_Info_On_Emacs]="https://www.youtube.com/watch?v=b6vm6g9fuZA"
+  yt_videos[Insert_block_of_text_autometically_in_Vim]="https://www.youtube.com/watch?v=IVuJykif5G4"
+  yt_videos[Introduction_To_VIMB_Browser]="https://www.youtube.com/watch?v=3jGX1QrZbRY"
+  yt_videos[Kernel_Modules_Info]="https://www.youtube.com/watch?v=4r0f5ILcFls"
+  yt_videos[Kernel_Release_on_Popup_With_A_Single_Keypress]="https://www.youtube.com/watch?v=XHSL5lReP38"
+  yt_videos[Kernel_utility_script]="https://www.youtube.com/watch?v=bddquzvRkHE"
+  yt_videos[Linux_Kernel_Config_And_Compile_Automation]="https://www.youtube.com/watch?v=Hq9CiI6D6do"
+  yt_videos[Mu_As_Mail_Indexer_Searcher]="https://www.youtube.com/watch?v=qdDEpDv7cVM"
+  yt_videos[Network_Port_Discover_Without_Tools]="https://www.youtube.com/watch?v=_uLcgtq5cN4"
+  yt_videos[Notmuch_As_Mail_Indexer]="https://www.youtube.com/watch?v=FyrsXi-akQo"
+  yt_videos[Open_Two_Files_Side_By_Side_In_Editors]="https://www.youtube.com/watch?v=qHMmXkawVpQ"
+  yt_videos[Pdf_Download_And_Open_Automated]="https://www.youtube.com/watch?v=kUGbm5nZ_Jk"
+  yt_videos[Pdf_Viewing_Inside_Emacs]="https://www.youtube.com/watch?v=m9tDf3pB2RA"
+  yt_videos[Quick_Runthrough_Of_Dotemacs_and_Orgemacs]="https://www.youtube.com/watch?v=MxcOPDGqqWk"
+  yt_videos[Search]="https://www.youtube.com/watch?v=ncShcpzCxyg"
+  yt_videos[Shell_Script:Chroot_With_A_Wrapper]="https://www.youtube.com/watch?v=-PioDHC2TV8"
+  yt_videos[Sync_with_upstream_kernel_release]="https://www.youtube.com/watch?v=lUj89W71bag"
+  yt_videos[Utility_System_Prompt_Interface]="https://www.youtube.com/watch?v=8tEMiZnZYoY"
+  yt_videos[Vim_Abbreviation]="https://www.youtube.com/watch?v=3FzUk-yTc6I"
+  yt_videos[Vim_As_Scratchpad_Window_For_Note_Taking]="https://www.youtube.com/watch?v=kSIrJh9m11Q"
+  yt_videos[Vim_Backquote_Replace_With_Dollar_Parenthesis]="https://www.youtube.com/watch?v=r8CoOaeMIj0"
+  yt_videos[Vim_Build_From_Source]="https://www.youtube.com/watch?v=I3NeEX2YzAc"
+  yt_videos[Vim_Plugin_List_Install]="https://www.youtube.com/watch?v=Cp2d4aMPAVk"
+  yt_videos[Vim_Shortcut_Plugin_To_Show_Help]="https://www.youtube.com/watch?v=ELPkU7nrhl0"
+  yt_videos[Vim_Splitting_Expanding_Collapsing]="https://www.youtube.com/watch?v=1fQC2kfkBQQ"
+  yt_videos[Vim_Tricks_Might_Help_You]="https://www.youtube.com/watch?v=kZV_U-FVe5k"
+  yt_videos[Vimb_Help_Popup]="https://www.youtube.com/watch?v=bgi9sCQSbQU"
+  yt_videos[Wiki_Search_Made_Easy_Bash_Script]="https://www.youtube.com/watch?v=QKvev3Bw_lk"
+  yt_videos[Wordpress_blogpost_from_emacs]="https://www.youtube.com/watch?v=PVZa3BUV7Us"
+  yt_videos[Hacknews_Headlines_By_Bash_Scripts]="https://youtu.be/xVp1aYWVYjc"
+  yt_videos[Tig_Is_A_Git_Texual_Frontend]="https://youtu.be/cMX1g5omE9s"
+  yt_videos[Vim_Integration_With_Cscope_And_Ctags_Tools]="https://youtu.be/1wDP1-IwwQ4"
+  yt_videos[Emacs_Execute_Shell_Scripts]="https://youtu.be/9WPTDYyJJV8"
+  yt_videos[Emacs_And_Vim_Undotree]="https://youtu.be/WnsD9K6nyEU"
+  yt_videos[Linux_Gentoo_update]="https://youtu.be/zQ7j5enIMcc"
+  yt_videos[GnuPG_Key_Upload_To_Keyserver]="https://youtu.be/bRxUFYzW-1s"
+  yt_videos[Linux_Notmuch_CLI_Mail_Indexer_Searcher]="https://youtu.be/YOtx0D1hIZI"
+  yt_videos[Emacs_On_Terminal]="https://www.youtube.com/watch?v=1Pi0F8IkgXg"
+  yt_videos[Network_Tool_Ipcalc]="https://youtu.be/aXj-Ar3N4EA"
+  yt_videos[Vim_StartupTime_Measure]="https://youtu.be/xFiHZ68OxgE"
+  yt_videos[Nyxt_A_Browser]="https://youtu.be/5bEDDr5S5Jw"
+  yt_videos[Vim_Prompt_For_NonExistent_Directiory_Create]="https://youtu.be/GeucbNvDIVg"
+  yt_videos[Finding_Keyboard_Key_Values_And_Use]="https://youtu.be/dXCunKs0v-w"
+  yt_videos[Emacs_Archive_Facility_On_Org]="https://youtu.be/vjX47mjyAWA"
+  yt_videos[Slackware_Linux_Update_Enlist_Package]="https://youtu.be/CSOh4zXDgNE"
+  yt_videos[Vim_Colorscheme_Change]="https://youtu.be/-zJZ1nEWksY"
+  yt_videos[Emacs_Orgmode_Shortcuts]="https://youtu.be/p2YQbgGWck0"
+  yt_videos[Build_Tools_For_Convenience]="https://youtu.be/9p5AElhcYrU"
+  yt_videos[Emacs_Vim_Find_Help_Better_Ways]="https://youtu.be/ez6Xf1deKBo"
+  yt_videos[Emacs_OrgMode_Embed_Source_Link_Pic]="https://youtu.be/R8HNtnLT2jI"
+  yt_videos[Browsers_Juggling_Vimb_Firefox_Nyxt]="https://youtu.be/tioNbOnk_0Q"
+  yt_videos[Vim_Floaterm]="https://youtu.be/hByPLNYgkuE"
+  yt_videos[Arch_Linux_Update]="https://youtu.be/qPgntOHgTRU"
+  yt_videos[Emacs_Keybinds_Help]="https://youtu.be/I3LAoD62iEw"
+  yt_videos[Emacs_Hightlight_And_SpellCheck]="https://youtu.be/KqSin4uQSf8"
+  yt_videos[Vim_Efficiency]="https://youtu.be/ywQeA2Inlmc"
+  yt_videos[Emacs_Finding_Packages_Concise_Way]="https://youtu.be/j7-qa_aP3uU"
+  yt_videos[Git_Openrations_For_Convenience]="https://youtu.be/hBBtv8gE5tA"
+  yt_videos[Emacs_Reload_And_restart_Quickway]="https://youtu.be/W6-KkOrkQaQ"
+  yt_videos[Bash_Script_To_Access_Important_Tools_Conveniently]="https://youtu.be/ct5blbWT5xQ"
+  yt_videos[Emacs_Lisp_Code_Evaluation]="https://youtu.be/Vme7R2AHMTo"
+  yt_videos[Elfeed_A_RSS_Feeds_Reader_On_Emacs]="https://youtu.be/jCSe3YQaykw"
+  yt_videos[Linux_Softwares_I_Do_Use]="https://youtu.be/phO34DmeOPo"
+  yt_videos[Vim_Dictionary_Spell]="https://youtu.be/Eis6n1Evl5Y"
+  yt_videos[Vim_Ex_Mode_Automate]="htts://youtu.be/LdHyS6FltRQ"
+  yt_videos[Emacs_Annotations]="https://youtu.be/ZkYaXhAtMso"
+  yt_videos[Suckless_SENT_As_Presentation_Software]="https://youtu.be/bIMonzA4Z4o"
+  yt_videos[Emacs_Terminal_Vterm]="https://youtu.be/OqTe7CO6PSM"
+  yt_videos[Shell_Tricks_Rudimentary_Stuffs]="https://youtu.be/sCjYHUBesGc"
+  yt_videos[Emacs:_Search_Engine_Mode]="https://youtu.be/XvQPGhd2WCU"
+  yt_videos[Vim:Note_Taking]="https://youtu.be/8uHCe_O_dXQ"
+  yt_videos[Emacs:Source_Code_Evaluation_Inside_OrgMode]="https://youtu.be/OxUbFIb_n8M"
+  yt_videos[Emacs:Multiple_Edits_At_Once]="https://youtu.be/O_jtVR1K3Vg"
+  yt_videos[Vim:Multiple_Edits_At_Once]="https://youtu.be/k_POrHvAHkQ"
+  yt_videos[Linux_MOTD]="https://youtu.be/YSfyxKOIl8Q"
+  yt_videos[Emacs:CRUX_File_Accessibility]="https://youtu.be/aVjlgScaZq4"
+  yt_videos[Emacs:Keyboard_Macro]="https://youtu.be/AFkXLmega8E"
+  yt_videos[Vim:Bookmarks_And_Annotations]="https://youtu.be/a5WVEpXYIdQ"
+  yt_videos[Emacs:Frame_Manipulation]="https://youtu.be/Mdky7dXbmLE"
+  yt_videos[Finding_Keys_For_Various_Apps_At_Ease]="https://youtu.be/xegdg_TYvuM"
+  yt_videos[Emacs:Commenting_Various_Source_Files]="https://youtu.be/nrT6PtEYK20"
+  yt_videos[Essential_Tools:Objcopy_Objdump_Nm_Readelf]="https://youtu.be/ErUnjagMjVU"
+  yt_videos[TaskWarrior:A_CommandLine_Task_Manager]="https://youtu.be/fnYtmSRIwjQ"
+  yt_videos[Vim:Commands_History_Oldfiles_Enlist]="https://youtu.be/WJaTRGwgtsg"
+  yt_videos[Emacs:Dired_Basic_Files_Manipulation]="https://youtu.be/2G7ILcm5WXA"
+  yt_videos[VimWiki_To_Organize]="https://youtu.be/8Pesss5HBXM"
+  yt_videos[Emacs_Orgmode_PGP_Encryption_Decryption]="https://youtu.be/y9zCkdyny4U"
+  yt_videos[Emacs_Debug_With_GDB]="https://youtu.be/X70OjYLUpEk"
+  yt_videos[I3_Window_Manager_Config_Rundown]="https://youtu.be/lnwtFxOPSZw"
+  yt_videos[GPG_Encryption_Inside_VIM]="https://youtu.be/C-wM7mLOqK0"
+  yt_videos[Emacs_WebJump]="https://youtu.be/-InpPQv7xas"
+  yt_videos[Pkg_Config_Tool]="https://youtu.be/8DyJ_hlkhMI"
+  yt_videos[Emacs_Essential_Keystrokes]="https://youtu.be/xxNtWEW8sLw"
+  yt_videos[Emacs_Narrow_And_Widen_Facility]="https://youtu.be/yrsczR2HSh4"
+  yt_videos[Vim_Pdf_And_Html_Notes_Automation]="https://youtu.be/f2ii2twaQeE"
+  yt_videos[Vim_Advance_Stuff]="https://youtu.be/0A_5FU5GsVI"
+  yt_videos[Writing_Linux_Kernel_Module]="https://youtu.be/u_9HZcPpGQU"
+  yt_videos[Emacs_Quick_Accessible_Stuff]="https://youtu.be/iXitA-p9yIk"
+  yt_videos[Emacs_Markdown_Mode]="https://youtu.be/b1ASu-gYVVg"
+  yt_videos[Emacs_Bash_Advance_Tips_Tricks]="https://youtu.be/CvaqG1u9RUY"
+  yt_videos[Emacs_Linux_Kernel_Binary_Disassembled]="https://youtu.be/zVQU-GN2yu8"
+  yt_videos[VIM_Macros_For_Automation_And_Enhancement]="https://youtu.be/yRQuWWSjkfM"
+  yt_videos[Emacs_Curated_List_Of_Apps_And_Utilities_By_The_Community]="https://youtu.be/qbpVAmWTFTU"
+  yt_videos[Emacs_Dictionary_Access_Within]="https://youtu.be/u3eTrwPlxpA"
+  yt_videos[Vim_ChangeList_JumpList_LanguageTool]="https://youtu.be/1Sn2ofB8ghM"
+  yt_videos[Emacs_Notes_Capture_From_PDF]="https://youtu.be/51bvZH9qjBw"
+  yt_videos[Emacs_Indents_Uppercase_Lowercase_Paragraph]="https://youtu.be/vCQKWkfPxpI"
+  yt_videos[Emacs_Important_Shortcuts]="https://youtu.be/HyX7a7zLulM"
+  yt_videos[Linux_Tools_Not_So_Common_But_Useful]="https://youtu.be/MEkZb2Z_REM"
+  yt_videos[Iptraf_Network_Monitoring_Tool]="https://youtu.be/vyU9mee0l_w"
+  yt_videos[How_To_Create_Debian_Package]="https://youtu.be/6KViyfAJQmY"
+  yt_videos[How_To_Make_CustomRepo_And_Ebuild_On_Gentoo]="https://youtu.be/cRyFGygeM2U"
+  yt_videos[Emacs_Slackware_Custome_Kernel_Bash_Script]="https://youtu.be/R3O8ewAXBHA"
+  yt_videos[Emacs_ArchLinux_Custom_Kernel_Bash_Script]="https://youtu.be/78v6J9x_G80 "
+  yt_videos[Debian_Custom_Kernel_Build]="https://youtu.be/xohcRmirI5Q"
+  yt_videos[Gentoo_Tips_And_Tricks]="https://youtu.be/b_btTQ0Vb3A"
+  yt_videos[Emacs_Version_Control_Facility_AKA_VC]="https://youtu.be/A93_RBDxbSE"
+  yt_videos[Emacs_Get_Youtube_Video_Contents_In_Org_File]="https://youtu.be/9QtKXdN1ej8"
+  yt_videos[Emacs_Proced_Is_A_Top_Like_Interfacee]="hettps://youtu.be/xpSLQxtfvw0"
+  yt_videos[Emacs_Weather_Reports]="https://youtu.be/zC-p5d3LU_Q"
+  yt_videos[Emacs_Spawn_EmacsClient_Different_Ways]="https://youtu.be/IeKqx-gjNXc"
+  yt_videos[Backup_Is_Very_Important_Activity]="https://youtu.be/r1HoybNK7Z8"
+  yt_videos[Automation_Flurry_Of_Little_Things]="https://youtu.be/_gGJYniDgcE"
+  yt_videos[Technology_CheatSheet_On_Browser_With_Duckduckgo]="https://youtu.be/t8dYcZ6uwac"
+  yt_videos[Eminent_Personalities_Who_Have_Influence_Me_To_No_End]="https://youtu.be/GiMdcnpxZLc"
+  yt_videos[Emacs_And_Overall_My_Worksflow]="https://youtu.be/flDpJdifLi8"
+  yt_videos[Google_Calendar_Inside_VIM]="https://youtu.be/RLGaR7ipFtk"
+  yt_videos[Emacs_Read_It_Later_Or_GetPocket_Facility]="https://youtu.be/nXU_qT6zUq8"
+  yt_videos[Emacs_Magit_Is_A_Visually_Appealing_Git_Controlling_Software]="https://youtu.be/8x8vF0_MFKI"
+  yt_videos[Bash_Support_Plugin_In_VIM]="https://youtu.be/DPfUWIJa254"
+  yt_videos[Emacs_Send_Mail_From_CommandLine]="https://youtu.be/fXkgsnJOXVg"
+  yt_videos[Quick_Peek_On_Mailbox_Without_Opening_The_Mail_App]="https://youtu.be/kEYf3ODUdzc"
+  yt_videos[Emacs_Transpose_Character_Words_Sentences]="https://youtu.be/oPqcolG7As0"
+  yt_videos[Emacs_Symbol_Definition_Find]="https://youtu.be/zWDqaXpLdXU"
+  yt_videos[I3_Window_Manager_Beautification]="https://youtu.be/Bt9H6OvLB6E"
+  yt_videos[File_System_Activity_Monitoring_In_RealTime_With_Inotify_Tools]="https://youtu.be/uA2o_aBuli0"
+  yt_videos[Emacs_Find_Out_What_Are_The_Componets_Baked_Into_It]="https://youtu.be/JaWrTBa_FF8"
+  yt_videos[Peek_Into_your_Running_Linux_System]="https://youtu.be/o3jBpLtnAiM"
+  yt_videos[Emacs_Profiling]="https://youtu.be/3NI46cEZbDA"
+  yt_videos[I3_Container_Layouts]="https://youtu.be/BMrjIaUf0pU"
+  yt_videos[Vim_Visual_Mode_Tricks]="https://youtu.be/LQjoVHdpmkk"
+  yt_videos[Emacs_Deft_Is_A_Nifty_Utility_About_NoteTaking]="https://youtu.be/SbBnGgZ7lXk"
+  yt_videos[Emacs_Bash_Scripts_To_Show_System_Utilities]="https://youtu.be/LUfWY3_88zs"
+  yt_videos[Multiple_Files_Open_At_Once_With_EmacsClient_In_TTY_Mode]="https://youtu.be/2834MBkiIOI"
+  yt_videos[Inter_Process_Communication_Stats_Via_Binary]="https://youtu.be/aA36AvCCEvI"
+  yt_videos[Automated_Way_To_Create_Git_Repo]="https://youtu.be/qCtDX1aLA6E"
+  yt_videos[Bash_Shell_Tricks_On_CommandLine]="https://youtu.be/G6LWXhS2YnY"
+  yt_videos[Emacs_Theme_Setting]="https://youtu.be/rN0sRHCvlVs"
+  yt_videos[Emacs_Kick_Off_Server_From_Your_Initialization_File]="https://youtu.be/uIENytjaWI8"
+  yt_videos[I3_Window_Manager_Workspace_Enlisting]="https://youtu.be/3rKr4n-J_f4"
+  yt_videos[Emacs_Bash_Script_To_Sync_Upstream_Repo_Linux_And_Git]="https://youtu.be/v1wsCBFq6jY"
+  yt_videos[Dialog_Is_A_Utility_To_Show_Information_In_A_Dialogbox_From_Shell_Script]="https://youtu.be/C02lJPUWENg"
+  yt_videos[Emacs_Sudo_Edit_Is_A_Package_To_Edit_File_With_Elevated_Privilege]="https://youtu.be/6x-jJvQ2nLc"
+  yt_videos[Vim_Language_Tool_Explained]="https://youtu.be/wMfLXJ5A4RE"
+  yt_videos[Build_And_Patch_Suckless_ST_Terminal]="https://youtu.be/ukUAfHvWn8E"
+  yt_videos[Watching_Movies_And_Listening_Music_On_Linux_Desktop_Laptop_With_Lightweight_Tools]="https://youtu.be/nkqxIHk6Fao"
+  yt_videos[Emacs_Which_Key_Is_A_Damn_Good_Package_To_Have]="https://youtu.be/jDy1gQOHyhs"
+  yt_videos[Emacs_Mu4E_Email_Interface_Shortcuts]="https://youtu.be/SedCG6Al7rk"
+  yt_videos[Emacs_Kill_Ring_Assist_You_To_Select_Copied_Texts]="https://youtu.be/UsCwOjv4NAI"
+  yt_videos[Emacs_Multi_Vterm_Is_Multiplex_Terminal]="https://youtu.be/JWAzyR7OJzg"
+  yt_videos[Emacs_Get_Help_At_Point]="https://youtu.be/WODySWQn5Sg"
+  yt_videos[Vim_Quick_Access_To_Help]="https://youtu.be/YnBI6-Kyx3k"
+  yt_videos[Emacs_BookMarks]="https://youtu.be/rrve42YaETQ"
+  yt_videos[Vimdiff_Can_Be_Useful_With_A_Bash_Wrapper]="https://youtu.be/BcJBvD1L7Yo"
+  yt_videos[Vim_Version_Bump_What_The_Fuss]="https://youtu.be/IwQ3t4kTKPY"
+  yt_videos[I3_Window_Manager_Native_Utility_Programs]="https://youtu.be/gbcxiSUrW6U"
+  yt_videos[Linux_Ls_Command_Much_Ado_But_Useful_Bunch]="https://youtu.be/AqNki2BaGsw"
+  yt_videos[Bash_Way_Of_Chopping_Text_From_Beginning_And_End]="https://youtu.be/v2l4vI-TA_E"
+  yt_videos[Emacs_Gnus_Gives_You_Retro_Vibes]="https://youtu.be/g-gpAALqDW8"
+  yt_videos[Linux_OneLiners_Make_Life_Easy]="https://youtu.be/G-1bGjdv2ak"
+  yt_videos[Bash_Script_To_Pull_Down_Required_Software_From_Internet]="https://youtu.be/E77sUv37W6Q"
+  yt_videos[Slackware_FFmpeg_X264_Problem_Resolution]="https://youtu.be/6klqtHv4tDI"
+  yt_videos[Linux_GPG_Keys_Export_Import_To_A_New_Machine]="https://youtu.be/Pj4zFgrfOuA"
+  yt_videos[Emacs_LanguageTool_Integration]="https://youtu.be/QcFOqkLm00o"
+  yt_videos[Emacs_Tricks_To_Boost_Productivity]="https://youtu.be/pBCscV3Nunc"
+  yt_videos[Start_Emacs_And_Vim_In_Vanilla_Mode]="https://youtu.be/k2ldwAHpuKk"
+  yt_videos[Command_Not_Found_Bash_Script_Sentinel_Check]="https://youtu.be/5KmiOVFfA5U"
+  yt_videos[Get_Formatted_Example_On_CommandLine_By_Cheat_Sh]="https://youtu.be/AJ0J_kWUf_E"
+  yt_videos[Which_Git_Commit_Touch_Which_Files_By_Perl_Script]="https://youtu.be/Cwx3-4Cmni8"
+  yt_videos[Vim_Fold_Functionality]="https://youtu.be/qDxwPwfZPdk"
+  yt_videos[Gentoo_Package_Finds_Easy_Ways]="https://youtu.be/5lh-aXhBlpk"
+  yt_videos[Emacs_Blog_Mode_Customized]="httppgqs://youtu.be/wO50xzlFzGA"
+  yt_videos[Linux_Has_Various_TOP_Interface]="https://youtu.be/EKoFQ824B5w"
+  yt_videos[Few_Linux_Binaries_Those_Might_Come_Handy]="https://youtu.be/rAyZFrhL4xk"
+  yt_videos[Slackware_Sbopkg_SlackpkgPlus_As_Aid]=" https://youtu.be/qnv-TpPNFUY"
+  yt_videos[Linux_Capabilities_Bloody_Good_And_Damn_Useful]="https://youtu.be/CBccG9mEa9A"
+  yt_videos[Linux_The_Importance_Of_Alias]="https://youtu.be/GQNKql9scTM"
+  yt_videos[Vim_As_MANPAGER_AKA_Seeing_ManPages_With_Vim_Capability]="https://youtu.be/Wv1U4HXP-sg"
+  yt_videos[Makefiles_All_About_Rules_And_Pattern_Matching]="https://youtu.be/eMfYyijl148"
+  yt_videos[FFMPEG_Is_The_Swiss_Army_Knife_Of_Video_Manipulation]="https://youtu.be/sGitiFy2vfA"
+  yt_videos[Linux_CommandLine_Tools_FZF_And_VGREP]="https://youtu.be/CMYxBFYzVK8"
+  yt_videos[Gentoo_Random_Rambling]="https://youtu.be/E1_JkIr8b_o"
+  yt_videos[Linux_Performance_Analysis_Tools_AKA_Perf_Tools]="https://youtu.be/30COAyJyFnc"
+  yt_videos[Emacs_Special_Character_Mode]="https://youtu.be/5ksrl8nzNug"
+  yt_videos[Linux_Git_Quick_Stats_With_Bash_Script]="https://youtu.be/Zw8eBbyodko"
+  yt_videos[Logwatch_Is_A_Utility_To_Get_LogFiles_Report]="https://youtu.be/HWtiO0nKBKE"
+  yt_videos[Linux_Sysstat_Package_Is_Quite_Indispensable]="https://youtu.be/fHn2Pc-lZE0"
+  yt_videos[Linux_Pmap_Binary_Assist_Understand_Process_Memory_Management]="https://youtu.be/at7TLHBaSVo"
+  yt_videos[Slackware_Linux_Automated_Update_And_Upgrade_By_Bash_Script]="https://youtu.be/GUjtPAB0Ty8"
+  yt_videos[Linux_Mail_Workflow_For_Convenience_And_Productivity]="https://youtu.be/d-FdvR_Nu7c"
+  yt_videos[Technical_Videos_Should_Make_You_Comfortable]="https://youtu.be/soawA6OOFXE"
+  yt_videos[Looking_At_The_Log_Files_Considered_A_Good_Habit]="https://youtu.be/pojWz7KFTMU"
+  yt_videos[Linux_Strace_Binary_Can_Assist_You_Debugging]="https://youtu.be/7sCJKmfD5HQ"
+  yt_videos[Linux_Initrd_Initramfs_System_Disassemble_And_Rebuild]="https://youtu.be/4aGbI2SpEQY"
+  yt_videos[Mutt_Tips_And_Tricks]="https://youtu.be/H7askBTH4dk"
+  yt_videos[Exploring_Git_Hooks_Scripts]="https://youtu.be/2Xy9caX7ceo"
+  yt_videos[Open_Emacsclient_At_Will_With_Specified_Program]="https://youtu.be/Z7gvigh8c7Q"
+  yt_videos[Vim_Highlight_Without_Getting_Into_VisualMode]="https://youtu.be/4Gz-cEMEac4"
+  yt_videos[Linux_Firefox_Look_And_Feel_Tweaks]="https://youtu.be/3aaTN3vQC30"
+  yt_videos[Git_Committer_Info_With_OneLiner_Script]="https://youtu.be/FYJTY7zgYAg"
+  yt_videos[GCC_Flags_Explore]="https://youtu.be/LY4c05OpvOo"
+  yt_videos[Linux_Terminals_Quick_Peek]="https://youtu.be/wro3FRWyWv0"
+  yt_videos[Bash_Script_Query_For_Important_Tools_In_The_System]="https://youtu.be/EG-T3wFa8EI"
+  yt_videos[Find_Out_Which_Init_System_You_Are_On_Programmatically]="https://youtu.be/9EHK9I_w0Bg"
+  yt_videos[Apache_Httpd_Web_Server_Status_Codes_Explained]="https://youtu.be/_wDkM8yvcIU"
+  yt_videos[Rambling_About_GNU_Screen_A_Terminal_Multiplexer]="https://youtu.be/I6_hIlpqsjQ"
+  yt_videos[Vim_I3_Config_Syntax_Hightlight_With_I3Config_Plugin]="https://youtu.be/iGAyTDVPBA4"
+  yt_videos[LVM_Few_Of_The_Binaries_Rundown]="https://youtu.be/nDEGKcNEcrg"
+  yt_videos[Write_Text_On_FFMPEG_Recorded_Video]="https://youtu.be/-rpRa9caSvU"
+  yt_videos[Inside_Vim_GX_Open_Browser_And_GF_Open_File]="https://youtu.be/7XhtV2wNbWk"
+  yt_videos[Eww_Is_A_Built-In_Browser_In_Emacs]="https://youtu.be/YT9v_As_734"
+  yt_videos[How_To_Generate_Self_Signed_Certificate]="https://youtu.be/S2tj5QlNr08"
+  yt_videos[Bash_Array_Explained]="https://youtu.be/UCWN7spM1lo"
+  yt_videos[Quick_Access_To_I3_Window_Manager_Scratchpad_And_WindowList]="https://youtu.be/D1SMsMqjRUM"
+  yt_videos[Gentoo_EQuery_Tool_Can_Save_Lot_Of_Your_Time]="https://youtu.be/J11SFy9pnbM"
+  yt_videos[Firefox_Database_Optimize_To_Run_It_Faster]="https://youtu.be/6w3pdSaW_Jc"
+  yt_videos[Website_Response_Time_Measure_By_Shell_Script]="https://youtu.be/UyHmmMYh2C8"
+  yt_videos[Youtube_Video_Title_And_Views_Count_On_Terminal]="https://youtu.be/LBGW2It0g_0"
+  yt_videos[Few_Systemd_Binaries_Rundown]="https://youtu.be/aZtddOX5Akw"
+  yt_videos[Gentoo_Portage_Utilities_Help_You_To_Operate_Efficiently]="https://youtu.be/ngyKTRX8Wms"
+  yt_videos[Emacs_Orgmode_Subscripts_Superscripts_Plus_Protect_Underscore_Separated_Words]="https://youtu.be/Jb4ZZ2kN03g"
+  yt_videos[Changes_And_Local_Search_By_Simple_Bash_Function]="https://youtu.be/T9axbmVVBeg"
+  yt_videos[I3_Window_Manager_Mode_Launcher_Facility]="https://youtu.be/adpb_C0XvHU"
+  yt_videos[How_I_View_Pdf_With_Zathura_In_A_Dedicated_Workspace_On_I3]="https://youtu.be/1EO3maGoBqw"
+  yt_videos[Emacs_Control_H_Key_Prefix_Can_Be_Bloody_Useful]="https://youtu.be/bD0-xKE6yQo"
+  yt_videos[Emacs_Magit_Way_Of_Creating_Rudimentary_Patch]="https://youtu.be/Cn3YovbsH18"
+  yt_videos[Quick_Peek_At_Bash_Script_Executions]="https://youtu.be/P3w1vSa-2q8"
+  yt_videos[Bash_Create_Hash_Table_Entry_With_Hash_Builtin]="https://youtu.be/ameBDkENDcw"
+  yt_videos[Vimdot_Is_Bloody_To_Draw_Diagrams_With_Minimal_Fuss]="https://youtu.be/ipO2Wuc39_0"
+  yt_videos[Emacs_BibTex_Add_Convenience_Part_I]="https://youtu.be/i2jspE5dcBU"
+  yt_videos[Emacs_BibTex_Add_Convenience_Part_II]="https://youtu.be/nw7bAdkSgfI"
+  yt_videos[Emacs_Quick_Productivity_Enhance_Tips]="https://youtu.be/-B-kjKRXelM"
+  yt_videos[Change_Root_In_Automated_Way_By_Bash_Script]="https://youtu.be/Cd1zxxTz_bc"
+  yt_videos[Fzf_Integration_With_Vim]="https://youtu.be/73FEowbmgFM"
+
+title=$(printf '%s\n' "${!yt_videos[@]}" | dmenu -l 30 -p "My_YT_Videos_Play_Online: ")
+
+if [ "$title" ]; then
+	url=$(printf '%s\n' "${yt_videos["${title}"]}" )
+	$(command -v mpv) --ytdl-format=best $url
+fi
+
+#+END_SRC
+
+Again, this is a /semi-automatic/ process. I have to enter the url by hand and once
+saved, it gets synced with other places.
+
+
+* How to actually sync with backup place somewhere else in file system
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+source_path="/home/bhaskar/Videos/"
+dest_path="/data/My_YT_Videos/"
+
+$(command -v rsync) -avz --stats --progress "$source_path" "$dest_path"
+
+#+END_SRC
+
+
+Alright, the next one is:
+
+* Get Youtube stats on terminal
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+# This script is to fetch youtube video title and view count and show it on the
+# terminal. Presently, only showing latest five videos title and count, but
+# that could be change to any number. You need to change the file name to the
+# paste command to reflect the change in output.
+
+
+TIMESTAMP=$(date +%s)
+URL="https://youtube.com/c/BhaskarChowdhury/videos"
+TITLES="yt-dlp --skip-download --get-title --no-warnings $URL >"$HOME/yt_video_headings""
+VIEWS="wget -q -O- ${URL} | grep -oP \"[0-9,]+(?=\sviews)\" | uniq >"$HOME/yt_video_views""
+# SPIN="/home/bhaskar/spinner2.sh"
+
+# Checking the timestamp to see when was the last time it was updated. If that
+# passed 10 mins then fetch agian otherwise show the last fetched results.
+
+check_youtube_stats () {
+# Timestamp
+  # {
+  #    echo "$TIMESTAMP"
+  #  } >"$HOME/.youtube_fetch_timestamp.last"
+
+        echo Hang on! It might take some times to get it...
+	echo
+	    # eval "$SPIN"
+            eval "$TITLES"
+            eval "$VIEWS"
+
+# if [[ -t 1 ]]
+#    then
+#      if [[ -f "$HOME/.youtube_fetch_timestamp.last" ]]
+#      then
+#          LAST=$(cat "$HOME/.youtube_fetch_timestamp.last")
+# 	 DIFFERENCE=$((("$TIMESTAMP" - "$LAST")))
+#          if [[ $DIFFERENCE -gt 200 ]]
+#            then
+          head -n5 "$HOME/yt_video_headings" >"$HOME/latest5_yt_video_title"
+
+          head -n5 "$HOME/yt_video_views" >"$HOME/latest5_yt_video_views"
+        # else
+        #     echo Too soon to update..
+        # fi
+	#
+# fi
+# fi
+
+
+echo "Views     Title" >"$HOME/yt_video_stats"
+paste -d '       ' "$HOME/latest5_yt_video_views" "$HOME/latest5_yt_video_title" >>"$HOME/yt_video_stats"
+
+
+cat "$HOME/yt_video_stats"
+
+}
+
+check_youtube_stats
+
+#+END_SRC
+
+Pretty ordinary,honestly. And importantly, it takes some time to get it from
+there, so you have to leave it there, once invoked.
+
+
+You might be interested to look into my horrific scripts repository at [[https://github.com/unixbhaskar/AdminScripts][GitHub]]
