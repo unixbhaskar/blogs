@@ -1,0 +1,169 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1331
+#+title: Git: A Revision Control System Can Be Made Easy And Beautiful
+#+date: 2023-04-18
+#+tags: Technical Git Automation Tools Script
+
+Well, I try to use my extremely limited understanding and knowledge about *Git* to
+the fullest potential by borrowing better ideas and works from
+others. Sometimes, use my crude method(you can see the rough edge written all
+over it) get over something complex and mind-bending stuff.
+
+In that quest over the decades, I have curated and adopted so many things
+related to this bloody good tool to enhance my productivity with it.While I
+might still not good enough to get over the line, but I am constantly trying to
+learn it from the better people out their.
+
+In this post, I will share few of my /frequently used/ git operation
+script/commands/process to make myself comfortable with it every single
+day. But, why this effort? Because,some part of gray cells told me many moons
+ago that, investing behind it might be a good thing to happen in computing
+work.So,the effort behind it, like other software I use, is honest and draining.
+
+
+Heads up! if the below stuffs disappoint you to the highest level, it is your
+inability to understand my shortcomings not yours.
+
+Alright, after every /sync with upstream mirror repo/ I wanted to have a look at
+,what are the commits it possesses. Here is little script which I have embedded in
+my other(main script to sync with upstream) to show the result once it is
+finished:
+
+#+BEGIN_SRC bash
+#!/bin/bash
+
+if [ "$1" != "" ];then
+	branch="$1"
+else
+	branch="HEAD"
+
+fi
+
+printf "\n%s%s\n\n" $(git rev-list $branch ^$branch@{1} | wc -l) " commits were added by your last update to $branch:"
+
+git --no-pager log $branch ^$branch@{1} --oneline
+
+#+END_SRC
+
+..and when it executes, it produces output like this below:
+
+[[~/Pictures/Screenshots/2023-04-18-090612_584x367_scrot.png]]
+
+I have snipped the output for the sake of brevity. :)
+
+Now,seeing the /git log/ in normal is useful but not fun, to make thing more
+colorful, I have put little spice to it and it looks like this on terminal:
+
+[[~/Pictures/Screenshots/2023-04-18-091040_1206x742_scrot.png]]
+
+...and here is the *function* for the reason of that above output ,
+
+[[~/Pictures/Screenshots/2023-04-18-091601_830x183_scrot.png]]
+
+Again, I have made a small function for /git stats/ and it looks like this while
+run on the repository :
+
+[[~/Pictures/Screenshots/2023-04-18-092249_858x736_scrot.png]]
+
+..and I have snipped the output just to avoid the monotone. And the function is
+like this :
+
+#+BEGIN_SRC bash
+gitstat ()
+{
+    if [[ -e .git ]]; then
+        git log --oneline --stat;
+    else
+        echo not a git repo.;
+    fi
+}
+#+END_SRC
+
+This is embedded in the /bash initialization file aka dot bashrc/ ,so I can use it
+throughout the system.
+
+Alright, /gitgraph/ is an alias which show git commits with graphical decorations,
+like this
+
+[[~/Pictures/Screenshots/2023-04-18-093045_914x735_scrot.png]]
+
+and the /alias/ is like this :
+
+#+BEGIN_SRC bash
+tp_x250_09:32:24_Tue Apr 18: :~>alias | grep gitgraph
+alias gitgraph='git log --all --decorate --oneline --graph'
+#+END_SRC
+
+I have been using a program called /git-quick-stats[fn:1]/ , which I have found on
+Github and it seems it is quite useful. It basically provides a menu on the
+terminal to select from and it will generated the corresponding output of the
+git commands. While on the terminal, and invoke it like this :
+
+#+BEGIN_SRC bash
+✔ ~/git-linux/emacs [master ↓·1|✔]
+09:39 $ git-quick-stats
+#+END_SRC
+
+..and the output of the invocation would be look like this :
+
+[[~/Pictures/Screenshots/2023-04-18-094038_434x344_scrot.png]]
+
+As you can see, there are various useful options to see. For instance, let me
+pick one, say number 3 and it will show last 10 days changelog of this
+reposityory:
+
+[[~/Pictures/Screenshots/2023-04-18-094520_614x463_scrot.png]]
+
+I have snipped the screen capture,but got the idea by looking at the screen
+shot.
+
+Let me try to select one more option from that menu, so you can see the
+different output it produce,
+
+I have selected number 11 from that menu and it will show number of commits
+per day  and it shows like this :
+
+[[~/Pictures/Screenshots/2023-04-18-094932_109x237_scrot.png]]
+
+
+On the leftmost numbers are the commits and the date is beside that
+number. Pretty useful right?
+
+* How to find the *last committed hash* in a git repository, I have create this :
+
+[[~/Pictures/Screenshots/2023-04-18-100653_469x141_scrot.png]]
+
+Neat! See I am happy with my frivolously created stuff.
+
+* How to /add and commit at once/ ? Let me show you :
+
+[[~/Pictures/Screenshots/2023-04-18-101259_388x133_scrot.png]]
+
+It will take one parameter, that is the message within quote. If not provided it
+will simply aborted the operation.
+
+* How to discard changes
+
+[[~/Pictures/Screenshots/2023-04-18-101809_404x136_scrot.png]]
+
+It is too take a parameter and do the job of discarding.
+
+Alright, enough for the time being. If I do something new about it, then I might
+update this post.
+
+
+* Footnotes
+
+[fn:1] git@github.com:arzzen/git-quick-stats.git
+
+# /home/bhaskar/Pictures/Screenshots/2023-04-18-090612_584x367_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-18-090612_584x367_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-18-091040_1206x742_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-18-091040_1206x742_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-18-091601_830x183_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-18-091601_830x183_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-18-092249_858x736_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-18-092249_858x736_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-18-093045_914x735_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-18-093045_914x735_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-18-094038_434x344_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-18-094038_434x344_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-18-094520_614x463_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-18-094520_614x463_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-18-094932_109x237_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-18-094932_109x237_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-18-100653_469x141_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-18-100653_469x141_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-18-101259_388x133_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-18-101259_388x133_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-18-101809_404x136_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-18-101809_404x136_scrot.png
