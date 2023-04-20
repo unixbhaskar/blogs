@@ -1,6 +1,6 @@
 #+BLOG: Unixbhaskar's Blog
 #+POSTID: 1331
-#+title: Git: A Revision Control System Can Be Made Easy And Beautiful
+#+title: Git A Revision Control System Can Be Made Easy And Beautiful
 #+date: 2023-04-18
 #+tags: Technical Git Automation Tools Script
 
