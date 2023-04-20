@@ -1,0 +1,187 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1336
+#+title: I3 Window Manager Customizations For My Need
+#+date: 2023-04-20
+#+tags: Technical I3 Window_Manager Tiling_Window_Manager
+
+Well, I have expressed my fondness for /*I3 Window Manger*/ and the associate
+programs in the past, [[https://unixbhaskar.wordpress.com/2021/11/02/i3-window-manager-a-fascinating-journey/][I3 Window Manager,A Fascinating Journey]], which you might
+take a peek at.
+
+This post is all about a few of my customization entries in the /i3-config/ file, and,
+certainly, I am not gonna cover everything I did. To know all the customization,
+you need to look into my /i3 config file[fn:1]/, which is hosted on GitHub.
+
+
+Here, I am going to pick a few of the customization,and in no particular order. :)
+
+* How to start specific programs at the start,means when I3 launch
+
+#+BEGIN_SRC sh
+##Autostart
+# exec $HOME/bin/st_solarized
+exec $HOME/bin/clipmenud
+exec $HOME/bin/pia-client
+exec $HOME/bin/noti_active
+exec $HOME/bin/command-t_ruby_fix.sh >/dev/null 2>&1
+exec emacs --bg-daemon
+exec $HOME/bin/start_btop
+exec $HOME/bin/move_pdf >/dev/null 2>&1
+#exec emacsclient -c
+#+END_SRC
+
+
+* How to show clipboard items with specified colors in dmenu
+
+#+BEGIN_SRC sh
+# clipmenu show the selection in dmenu
+
+bindsym $mod+z exec "clipmenu -sb \#ff0000 -sf \#00ffff -p 'clipboard items listed:'"
+
+#+END_SRC
+
+* How to pop-up emacs buffer when I need it
+
+#+BEGIN_SRC sh
+# Emacs pop up buffer anywhere
+# for_window [title="^emacs-everywhere$"] move to scratchpad
+ for_window [title="^emacs$"] floating enable, resize set 680 745
+ bindsym $mod+F12 exec  "emacsclient -c"
+
+#+END_SRC
+
+* How to pop-up vim buffer when I need it
+
+#+BEGIN_SRC sh
+# Vim pop up buffer anywhere
+# for_window [instance="^vim-everywhere$"] move to scratchpad
+for_window [instance="^vim-everywhere$"] floating enable, resize set 900 500
+bindsym $mod+Ctrl+Return exec "st_solarized -n vim-everywhere -e vim ~/Notes/$(date +'%F_%T').md"
+#+END_SRC
+
+* Mutt mail client floating window
+
+#+BEGIN_SRC sh
+# Mutt floating window
+for_window [instance="^Mutt$"] floating enable, resize set 900 500
+bindsym $mod+Shift+m exec "st_solarized -n Mutt -e mail_open"
+
+#+END_SRC
+
+* Emacs org-capture protocol
+
+#+BEGIN_SRC sh
+# Emacs org-capture protocol
+bindsym $mod+Shift+o  exec org-capture
+
+#+END_SRC
+
+* LWN headlines
+
+#+BEGIN_SRC sh
+# LWN headlines
+bindsym $mod+l exec lwn_headlines
+
+#+END_SRC
+
+* Wikipedia search
+
+#+BEGIN_SRC sh
+# Wikipedia search
+bindsym $mod+Shift+w exec wikipedia_search
+#+END_SRC
+
+* Mail subject line on dmenu top 20
+
+#+BEGIN_SRC sh
+# Mail subjectline top 20(Sys_Reg == PrtSc)
+bindsym $mod+Sys_Req exec check_mail2
+#+END_SRC
+
+* HackerNews on dmenu
+#+BEGIN_SRC sh
+# Hacker News top 10 headlines with dmenu
+bindsym $mod+Shift+h exec hn_hlines
+#+END_SRC
+
+* Open my youtube videos
+
+#+BEGIN_SRC sh
+# Open my Youtube Videos
+bindsym $mod+Ctrl+y exec my_yt_videos
+#+END_SRC
+
+* Add bookmarks
+
+#+BEGIN_SRC sh
+# Add bookmark to the default file
+bindsym $mod+Ctrl+b exec add_bookmark
+#+END_SRC
+
+* Make scratchpad windows show at once
+#+BEGIN_SRC sh
+# Make scratchpad windows shows at once
+bindsym $mod+Ctrl+1 exec "i3-msg '[class=.] scratchpad show'
+#+END_SRC
+
+* I3 /mode launcher/ facility to open various things
+#+BEGIN_SRC sh
+set $mode_launcher Launch: [r]Reddit [t]Twitter [l]Linkedin [g]Github [b]Blogs [u]Youtube [e]Goodreads [s]Slashdot [p]Phoronix
+bindsym $mod+j mode "[r]Reddit [t]Twitter [l]Linkedin [h]Kernel_mailing_list [g]Github [b]Blogs [u]Youtube [e]Goodreads [s]Slashdot [p]Phoronix"
+
+mode "[r]Reddit [t]Twitter [l]Linkedin [h]Kernel_mailing_list [g]Github [b]Blogs [u]Youtube [e]Goodreads [s]Slashdot [p]Phoronix" {
+    bindsym r exec open_reddit
+    bindsym g exec open_github
+    bindsym e exec open_goodreads
+    bindsym b exec open_blogs
+    bindsym u exec open_youtube
+    bindsym h exec open_lore
+    bindsym s exec open_slashdot
+    bindsym t exec open_twitter
+    bindsym l exec open_linkedin
+    bindsym p exec open_phoronix
+    bindsym Escape mode "default"
+    bindsym Return mode "default"
+}
+#+END_SRC
+
+* Capture a screenshot and show the latest captured screenshot
+#+BEGIN_SRC sh
+# Take a screenshot of the entire desktop upon pressing $mod+x
+bindsym $mod+x exec scrot  -e 'mv $f ~/Pictures/Screenshots' && notify-send -t 1000 "Screenhot stored in ~/Pictures/Screenshots directory"
+
+# Show latest capture screenshot
+bindsym $mod+Shift+comma  exec show_latest_screenshot
+#+END_SRC
+
+* Controlling CMUS and MPV with keybinds for Songs and Videos
+#+BEGIN_SRC sh
+# Mpv pause
+bindsym $mod+Shift+s exec mpv_stop
+
+# Mpv continue
+bindsym $mod+Shift+p exec mpv_cont
+
+# Cmus next song play
+bindsym $mod+Ctrl+n exec cmus-remote --next
+
+# Cmus prev song play
+bindsym $mod+Ctrl+r exec cmus-remote --prev
+
+# Cmus playback toggle
+bindsym $mod+Ctrl+t exec cmus-remote --pause
+
+# Cmus Stop Play
+bindsym $mod+Ctrl+v exec cmus-remote --stop
+
+# Cmus Start Play
+bindsym $mod+Ctrl+s exec cmus-remote --play
+
+# Kill/Stop Mpv
+bindsym $mod+Ctrl+k exec kill_mp
+#+END_SRC
+
+
+* Footnotes
+
+[fn:1] https://github.com/unixbhaskar/dotfiles/blob/master/.ithreeconfig
