@@ -1,0 +1,44 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1343
+#+title: How To Tweak Linux Kernel Variables On The Fly
+#+date: 2023-04-24
+#+tags: Technical Linux Kernel Config Tools Automation
+
+Alright, in this post, I am going to show you, how easily you can tweak the
+/Linux Kernel Variables/ on the fly with ease. The kernel comes with script folder,
+and it contains so many of the utilities written by the kernel devs for their
+easy usability. In turn, ordinary people like us can take advantage of those.
+
+Especially, you can take advantage of a script called *config* which is located in
+the script folder. And can be used to /enable or disable/ any specific kernel
+variable while building. I have been using it in my kernel building script for
+long.
+
+In fact, I have a alias set to call it up whenever I needed like this :
+
+[[~/Pictures/Screenshots/2023-04-24-040416_469x64_scrot.png]]
+
+And it can be used inside the /kernel source tree/. If you simply run the script
+without giving any options, it will tell you, what exactly you need to do.
+
+[[~/Pictures/Screenshots/2023-04-24-040703_583x516_scrot.png]]
+
+So, you can see, that you don't have to prefix the variable you want to enable
+or disable this script As the help section clearly stated that, you can only
+name the variable without the prefix of *CONFIG_*.
+
+
+Now, here is the way I have been using it in my script, as stated above,let me
+show the specific line :
+
+[[~/Pictures/Screenshots/2023-04-24-041136_627x32_scrot.png]]
+
+[[~/Pictures/Screenshots/2023-04-24-041305_617x28_scrot.png]]
+
+Likewise, you can use it to enable any specific variable you want. One level of
+convenience.
+
+# /home/bhaskar/Pictures/Screenshots/2023-04-24-040416_469x64_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-24-040416_469x64_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-24-040703_583x516_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-24-040703_583x516_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-24-041136_627x32_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-24-041136_627x32_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-04-24-041305_617x28_scrot.png http://unixbhaskar.files.wordpress.com/2023/04/2023-04-24-041305_617x28_scrot.png
