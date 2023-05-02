@@ -1,0 +1,165 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1353
+#+title: How Am I Running My Browsers Without Depending On Linux Distributions Support?
+#+date: 2023-05-02
+#+tags: Technical Browsers Firefox Vimb Nyxt Tools WebkitGtk
+
+Alright, the title might evoke some frowning. But, wait,I haven't yet explained
+the matter in the title. And you don't expect it to be a /clickbait/ one, too.
+
+So, the truth is, you still have to depend on distributions provided /libraries/
+to build the browser.And it is a heavy lifting task.
+
+Now, I have stated in many places that, I do not depend on one particular
+browser, but have multiple of them, precisely, three of them. Namely,
+Firefox[fn:1] ,Vimb[fn:2] and, Nyxt[fn:3] .
+
+And all of them are /*Compiled from the source*/. Why? The primary reason is, I am
+using multiple distributions and have common *home* and *data* partitions. These
+sources commonly reside in one of them.And every time I boot up any of my OS, those
+partitions get mounted too.Hence, the customized and compiled browsers are
+available on all the OSes.
+
+I wanted to have a specific /look and feel/ for my browsers, Because, like most of
+you, I do spend a considerable amount of time in the browsers too, so the tool has
+to have something of my liking and importantly have some features baked into it.
+
+Nope, I do not have any preferences over others. I have selected these software,
+because they are different(although provide the same facility) on UI and
+build.They use different languages for build and with different principles behind
+to have that kind of stuff.
+
+* Firefox
+
+Firefox is widely known and I have been using it since 2008. I have customized
+it as per my liking and added and chopped functionality baked into
+it.Sometimes,performance hits bad(certainly not like circa 2010-2016), when they
+were horrific and I went on trying to variants of it. Some of them work well,
+some didn't.But, finally, I have settled on the actual one and stick with it for
+some years now. I have a small script, which fetches the latest version of it and
+installs it on the system,if I need to. I have also allowed it to upgrade(you can
+do so,they have provided the mechanism for that) automatically behind the
+scene.Till now it is behaving as I want it to behave.
+
+Here is the script, which might interest you :
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+#===============================================================================
+#
+#          FILE: get_latest_firefox.sh
+#
+#         USAGE: ./get_latest_firefox.sh
+#
+#   DESCRIPTION: Install the latest firefox browser and install it.
+#
+#       OPTIONS: ---
+#  REQUIREMENTS: curl tar
+#          BUGS: ---
+#         NOTES: ---
+#        AUTHOR: Bhaskar Chowdhury (https://about.me/unixbhaskar), unixbhaskar@gmail.com
+#  ORGANIZATION: Independent
+#       CREATED: 09/24/2019 15:27
+#      REVISION:  ---
+#===============================================================================
+
+set -o nounset                              # Treat unset variables as an error
+source /home/bhaskar/colors.sh
+NOCOLOR="\033[0m"
+
+printf "\n\n\n ${Reverse}${Bright}${LimeYellow} Get the latest firefox from Mozilla ${NOCOLOR} ....\n\n\n"
+
+curl -Lo firefox.tar.bz2 'https://download.mozilla.org/?product=firefox-latest&os=linux64&lang=en-US'
+
+if [[ $? == 0 ]];then
+	  printf "${Bright}${Green} Success ${NOCOLOR} \n\n"
+  else
+	    printf "${Bright}${Red} Failed ${NOCOLOR} \n\n"
+fi
+
+current_date=$(date '+%F')
+folder_date=$(ls -ld --full-time $HOME/firefox | gawk '{ print $6 }')
+
+if [[ "$folder_date" != "$current_date" ]];then
+	mv -v $HOME/firefox $HOME/firefox.$(date +"%d-%m-%Y")
+fi
+
+tar -xjf firefox.tar.bz2
+
+cd firefox
+#  $HOME/firefox/firefox firefox_$version
+# cp  $HOME/firefox/firefox $HOME/bin/firefox
+
+ printf "${Bright}${Magenta} Kill the existing process.... ${NOCOLOR}...\n\n"
+
+ pkill firefox
+
+ printf "Clearing the startup cache ..wait \n\n"
+
+ find ~/.cache/mozilla/firefox/18q9dvrr.default-release -type d -name startupCache | xargs rm -rf
+ printf "\n\n Done \n"
+
+cd ..
+rm -f firefox.tar.bz2
+
+#start up
+
+firefox --version
+
+firefox&
+
+exit 0
+
+#+END_SRC
+
+While running, it looks like this :
+
+[[~/Pictures/Screenshots/2023-05-02-170412_1366x768_scrot.png]]
+
+It has a tight integration with /I3 Window Manager/[fn:4] . You can find the two
+important files for this look and feel, those are, *userChrome.css* and
+*userContent.css* in [[https://github.com/unixbhaskar/AdminScripts][GitHub AdminScripts]]  repository of mine.
+
+* Vimb
+
+This browser is based on the principle of using /Vim/ bindings and utility and
+importantly behaves like it. Hence, the name /Vimb/ . My config file related to it
+is uploaded in [[https://github.com/unixbhaskar/dotfiles][GitHub Dotfiles]] repository. It has two files, namely, /vimb_config/
+and /vimb_style_config/ . While running this browser, it is looking like this :
+
+[[~/Pictures/Screenshots/2023-05-02-171759_1366x768_scrot.png]]
+
+Again, it has a close association with the /i3 Window Manager/ and it serves me
+well. I have heavily tweaked it as per my need, if you glean the above-
+mentioned configuration file you could see the effect.
+
+* Nyxt
+
+The last one is called Nyxt. This is an adaptation of a similar time when I get
+the above browser. This browser is written in /lisp/ language and pact with
+functionality.Distinctively, it has three modes,namely, /Emacs,Vim and CUA/ . I,
+personally use this browser with full /emacs/ mode enabled.It is still being
+developed. I have customized it too,as per my liking and use. You can find the
+configuration file and style file in the *GitHub Dotfiles* Repository. While
+running this browser, it looks like this :
+
+[[~/Pictures/Screenshots/2023-05-02-173225_1366x768_scrot.png]]
+
+No brainier, it too has tight integration with /I3 Window Manager/.
+
+The good thing about running all of these from source is that I can change and chop
+as per my need and requirements and, importantly, whenever I want.
+
+* Footnotes
+
+[fn:1]https://getfirefox.com
+
+[fn:2]https://fanglingsu.github.io/vimb/
+
+[fn:3]https://nyxt.atlas.engineer/
+
+[fn:4]https://i3wm.org
+
+# /home/bhaskar/Pictures/Screenshots/2023-05-02-170412_1366x768_scrot.png http://unixbhaskar.files.wordpress.com/2023/05/2023-05-02-170412_1366x768_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-05-02-171759_1366x768_scrot.png http://unixbhaskar.files.wordpress.com/2023/05/2023-05-02-171759_1366x768_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-05-02-173225_1366x768_scrot.png http://unixbhaskar.files.wordpress.com/2023/05/2023-05-02-173225_1366x768_scrot.png
