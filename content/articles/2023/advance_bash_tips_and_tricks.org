@@ -1,0 +1,212 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1357
+#+title: Advance Bash Tips and Tricks
+#+date: 2023-05-04
+#+tags: Technical Bash Shell Tools Linux
+
+So, I was wondering that I could have made an enlist of some nifty features of
+/Bash Shell[fn:1]/ and now this post is the reality of that thought. :)
+
+I could have made this post even lengthier by adding more, but refrained,because,
+small dosage will help ordinary people like us to remember things easily.
+
+
+* Debug Mechanism
+
+#+BEGIN_SRC bash
+#Step 1
+
+export PS4='# ${BASH_SOURCE}:${LINENO}: ${FUNCNAME[0]}() - [${SHLVL},${BASH_SUBSHELL},$?] '
+
+# Step 2:
+
+   `set -o xtrace`    .....inside the script
+
+# Step 3:
+
+       `pstree`    ...command to find out the process hierarchy
+
+# step 4:
+
+   Use some predefined variables for safety check ..
+
+   - `set -o errexit`
+
+   - `set -o nounset`
+
+   - `set -o pipefail`
+
+   - `set -o nullglob`
+#+END_SRC
+
+* Some useful print statement
+
+#+BEGIN_SRC bash
+`print() {
+  echo $(basename $0):${BASH_LINENO[0]}:${FUNCNAME[1]}"()" "$*"
+}`
+
+#+END_SRC
+
+* Testing numeric value
+
+#+BEGIN_SRC bash
+`$user_inputed_numeric_value =~ ^[0-9]*$`
+#+END_SRC
+
+* UpperCase
+
+#+BEGIN_SRC bash
+`bash_uppercase=what_the_heck`
+
+`printf "%s\n" ${bash_uppercase^^}`
+#+END_SRC
+
+* LowerCase
+
+#+BEGIN_SRC bash
+`bash_lowercase=REALLY`
+
+`printf "%s\n" ${bash_lowercase,,}`
+#+END_SRC
+
+* Array Index Iteration
+
+#+BEGIN_SRC bash
+`lang_array=(C Java Bash Assembly)
+
+for (( i = 0; ${#lang_array[@]}; i++ )); do
+  echo $i "="  ${lang_array[$i]}
+done`
+#+END_SRC
+
+* Array Without Index
+
+#+BEGIN_SRC bash
+`lang_array=(C Java Bash Assembly)
+
+for lang in ${lang_array[@]}; do
+  echo $lang
+done`
+#+END_SRC
+
+* Array With Specific Index
+
+#+BEGIN_SRC bash
+`lang_array=(C Java Bash Assembly)
+
+for lang in ${lang_array[@]:1}; do
+  echo $lang "(skipped the first one)"
+done`
+#+END_SRC
+
+* Array Of Files
+
+#+BEGIN_SRC bash
+`tarballs=($(ls /my/dir/*.tar.gz))`
+#+END_SRC
+
+* All About Map
+
+#+BEGIN_SRC bash
+`declare -A map_example
+map_example=(
+  ["first_name"]="Donald"
+  ["last_name"]="Knuth"
+)
+
+for el in ${!map_example[@]}; do
+  echo $el":" ${map_example[$el]}
+done`
+#+END_SRC
+
+* Start and End With uppercase and lowercase letter
+
+#+BEGIN_SRC bash
+`VAR='holy kow'
+  echo "${VAR^}"
+
+ VAR='HOLY KOW'
+ echo "${VAR,}"`
+#+END_SRC
+
+* Make specific character uppercase
+
+#+BEGIN_SRC bash
+`VAR='mastsr mind'
+ echo "${VAR^^s}`
+#+END_SRC
+
+* Make specific character lowercase
+
+#+BEGIN_SRC bash
+`VAR='MSMSMS PHPHPH'
+ echo "${VAR,,M}"`
+#+END_SRC
+
+* With Regex
+
+#+BEGIN_SRC bash
+`VAR='SOSOSO CRCRCR'
+ echo "${VAR,,[CR]}`
+#+END_SRC
+
+* Case match inside loops
+
+#+BEGIN_SRC bash
+`VAR='tell'
+if [ "${VAR^^}" == "TELL" ];then
+echo 'Matched!'
+else
+echo 'Not Matched!'
+fi`
+#+END_SRC
+
+..and one more ...
+
+#+BEGIN_SRC bash
+`VAR='fall'
+ if [[ "${VAR^^a}" == *"a"* ]];then
+ echo 'Matched!'
+ else
+ echo 'Not Matched!'
+ fi`
+#+END_SRC
+
+* Call trace
+
+#+BEGIN_SRC bash
+`function print_call_trace()
+{
+  # skipping i=0 as this is print_call_trace itself
+  for ((i = 1; i < ${#FUNCNAME[@]}; i++)); do
+    echo -n  ${BASH_SOURCE[$i]}:${BASH_LINENO[$i-1]}:${FUNCNAME[$i]}"(): "
+    sed -n "${BASH_LINENO[$i-1]}p" $0
+  done
+}`
+#+END_SRC
+
+* Browse internet by Bash
+
+#+BEGIN_SRC bash
+`exec 3<>/dev/tcp/www.wikipedia.org/80
+  netstat -anpt | grep 80 | grep bash
+  cat <&3`
+#+END_SRC
+
+Oh, I have made some videos about it in the past, if you are interested, you can
+peek at them on my [[https://www.youtube.com/c/BhaskarChowdhury/Videos][Youtube Channel]].
+
+* References:
+
+1. http://skybert.net/bash/serious-programming-in-bash/
+
+2. https://steve-parker.org/sh/bourne.shtml
+
+3. http://cfajohnson.com/shell
+
+4. https://www.gnu.org/software/bash/manual/bash.html
+
+* Footnotes
+
+[fn:1] GNU Bash can be found here : https://www.gnu.org/software/bash/
