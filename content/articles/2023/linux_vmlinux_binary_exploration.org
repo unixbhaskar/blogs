@@ -1,0 +1,192 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1382
+#+title: Linux Vmlinux Binary Exploration
+#+date: 2023-05-11
+#+tags: Technical Linux Tools Script Opensource Kernel
+
+
+*TL;DR Also,no amount of information will help, if you are NOT willing to invest time.*
+
+Don't you think the internet is littered with that topic?? Then why the heck, I
+am trying to delve into that same redundancy? Because,I want to and I believe I
+can make this post more consumable to ordinary users like me.
+
+Sounds feeble reasoning?? I can't help much,your call.
+
+Well, first of all while you compile your kernel from source,you get a binary
+called *vmlinux* or if you get that in some other form,like most distributions
+provide that but along with their patchset baked into it. This *vminux* is the
+*/Uncompressed/* binary of the /compressed form/ of *vmlinuz* . See, the difference??
+Look again and read carefully.
+
+All right,don't sweat yet. Because, we have people, who are engaged in /Linux
+Kernel Development/ who have already recognized that use and they wrote a
+program/script to assist our needs.But, how do you get it? Surely, you need the
+/Linux Kernel Source tree/ by having it downloaded and importantly *Untarred*
+it. Once you have done that, there is a /scripts/ folder that contains a script name
+*extract-vmlinux* . See! the name is so explicit, that it should not miss your
+eyes,once you are in that directory listing.
+
+Let me give you a workable example of how to do that. First and foremost
+thing, copy the damn kernel to a different directory than /boot (which is where the
+kernel is often and should be found). And I did the same and run the script with the
+argument to extract the kernel compressed image.
+
+[[~/Pictures/Screenshots/2023-05-11-044037_511x40_scrot.png]]
+
+
+So once copied to a different location as shown in the above picture, then you
+need to call up that /*extract-vmlinux*/ script with that compress image of the
+kernel, which just copied above to the different location. Here is out come of
+running that command :
+
+[[~/Pictures/Screenshots/2023-05-11-044956_764x49_scrot.png]]
+
+..and also ..
+
+#+BEGIN_SRC bash
+tp_x250_08:55:56_Thu May 11: :~>file vmlinux
+vmlinux: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), statically linked, BuildID[sha1]=946bebf26fc4efe12e2fdf196657e99a2d36a0a1, stripped
+#+END_SRC
+
+So, I have extracted and saved the output content of the command in a file called
+*vmlinux* and we will be using this file to see the internals of it using various
+other assistive tools.
+
+Now,let's start with little things, *__initramfs_start* symbol. This is located in
+the *.init.data* section.And I am going to use a tool called /readelf/[fn:1]
+
+[[~/Pictures/Screenshots/2023-05-11-050035_970x43_scrot.png]]
+
+Now, I am going to use yet another popular tool call /*objdump*/[fn:2] and
+/*objcopy*/[fn:3] and there is a lot of churning among the kernel developers to
+improve its functionality[fn:4]
+
+I have made two videos about them, you can take a peek at [[https://youtu.be/4aGbI2SpEQY][Linux_Initrd_Initramfs_System_Disassemble_And_Rebuild ]]
+and [[https://youtu.be/zVQU-GN2yu8][Linux_Kernel_Binary_Disassembled]] on Youtube..
+
+
+Okay, here are some example of using those tools to extract more information from
+the binary we have.
+
+* How to disassemble the binary code with objdump tool
+
+#+BEGIN_SRC bash
+tp_x250_06:58:38_Thu May 11: :~>objdump -D vmlinux | less
+#+END_SRC
+
+..and the output would look like this:
+
+[[~/Pictures/Screenshots/2023-05-11-065753_1366x768_scrot.png]]
+
+I have snipped the output for brevity's sake and it is also quite long too. But,
+if you are curious to know, then by any means please run the command and read
+the output. It is needed little bit of understanding of /*assembly language*/[fn:5] to
+decipher the content of the output.
+
+
+* How to make objdump display all the headers
+
+Run this command on the terminal :
+
+#+BEGIN_SRC bash
+tp_x250_07:10:19_Thu May 11: :~>objdump -x vmlinux | less
+#+END_SRC
+
+..and the output should look like this :
+
+[[~/Pictures/Screenshots/2023-05-11-071212_1366x768_scrot.png]]
+
+Again! I have snipped the output and expect you to run this command on your
+machine by hand to see the entire output and read it.
+
+* How to make objdump display object format
+
+You need to run this command on the terminal, like others
+
+#+BEGIN_SRC bash
+tp_x250_07:17:13_Thu May 11: :~>objdump -p vmlinux | less
+#+END_SRC
+
+..and the output would look like this :
+
+[[~/Pictures/Screenshots/2023-05-11-071856_1366x768_scrot.png]]
+
+So much of the terse output producing by the /objdump/ binary,because it is a
+low-level tool and deals with the underlying mechanism of the computer format.
+
+Heads Up! If you compile the binary(which you decide to investigate with these
+tools and use some specific flags), then you need to compile the program with
+*debug* mechanism enable, then only you can see the output of those flags.And the
+example I am showing with a kernel binary,was not compiled with debug info,so
+the use of flags like *s and g* can not produce anything.
+
+I AM USING A DIFFERENT FILE WITH DEBUG FLAGS TO ENABLE BINARY FOR THE BELOW
+EXAMPLES.BECAUSE MY KERNEL BINARY IS DEVOID OF IT. SO, A LOT OF FEATURES AND
+FLAGS WILL NOT WORK WITHOUT DEBUG FLAG ENABLE.
+
+* Objcopy to simply copy object file, here is an example
+
+[[~/Pictures/Screenshots/2023-05-11-074243_524x306_scrot.png]]
+
+* Preserve timestamp with the p flag
+
+[[~/Pictures/Screenshots/2023-05-11-082503_540x306_scrot.png]]
+
+
+* Prefix symbol with a string by using --prefix-symbol argument
+
+[[~/Pictures/Screenshots/2023-05-11-082839_601x629_scrot.png]]
+
+Look closely at the above screenshot and you will the string prefix with
+symbols.
+
+* Prefix section name with a specified string, like above but for sections
+
+[[~/Pictures/Screenshots/2023-05-11-083636_610x224_scrot.png]]
+
+* Stripping symbol by using --strip-symbol
+
+I am going to remove this symbol
+
+[[~/Pictures/Screenshots/2023-05-11-084438_467x19_scrot.png]]
+
+.... this is how I have done it ..
+
+[[~/Pictures/Screenshots/2023-05-11-084654_582x622_scrot.png]]
+
+Compare the above two screenshots at the number 11 and you can see the striping.
+
+There are more and some important flags too. I highly recommend you delve
+into it, if your work involves this kind of low-level plumbing. Also,you can look
+into this article[fn:6] and this book[fn:7].
+
+
+* Footnotes
+
+[fn:1] Readelf Man Page https://www.man7.org/linux/man-pages/man1/readelf.1.html
+
+[fn:2] Objdump Man Page https://www.man7.org/linux/man-pages/man1/objdump.1.html
+
+[fn:3] Objcopy Man Page https://www.man7.org/linux/man-pages/man1/objcopy.1.html
+
+[fn:4] LWN Page about Objtool Interface Overhaul https://lwn.net/Articles/891305/
+
+[fn:5] Assembly Language Wikipedia Page https://en.wikipedia.org/wiki/Assembly_language
+
+[fn:6] Special Sections In Linux Binaries https://lwn.net/Articles/531148/
+
+[fn:7] Learning Linux Binary Analysis https://www.goodreads.com/book/show/29448891-learning-linux-binary-analysis
+
+# /home/bhaskar/Pictures/Screenshots/2023-05-11-044037_511x40_scrot.png http://unixbhaskar.files.wordpress.com/2023/05/2023-05-11-044037_511x40_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-05-11-044956_764x49_scrot.png http://unixbhaskar.files.wordpress.com/2023/05/2023-05-11-044956_764x49_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-05-11-050035_970x43_scrot.png http://unixbhaskar.files.wordpress.com/2023/05/2023-05-11-050035_970x43_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-05-11-065753_1366x768_scrot.png http://unixbhaskar.files.wordpress.com/2023/05/2023-05-11-065753_1366x768_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-05-11-071212_1366x768_scrot.png http://unixbhaskar.files.wordpress.com/2023/05/2023-05-11-071212_1366x768_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-05-11-071856_1366x768_scrot.png http://unixbhaskar.files.wordpress.com/2023/05/2023-05-11-071856_1366x768_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-05-11-074243_524x306_scrot.png http://unixbhaskar.files.wordpress.com/2023/05/2023-05-11-074243_524x306_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-05-11-082503_540x306_scrot.png http://unixbhaskar.files.wordpress.com/2023/05/2023-05-11-082503_540x306_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-05-11-082839_601x629_scrot.png http://unixbhaskar.files.wordpress.com/2023/05/2023-05-11-082839_601x629_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-05-11-083636_610x224_scrot.png http://unixbhaskar.files.wordpress.com/2023/05/2023-05-11-083636_610x224_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-05-11-084438_467x19_scrot.png http://unixbhaskar.files.wordpress.com/2023/05/2023-05-11-084438_467x19_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-05-11-084654_582x622_scrot.png http://unixbhaskar.files.wordpress.com/2023/05/2023-05-11-084654_582x622_scrot.png
