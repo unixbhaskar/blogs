@@ -20,8 +20,7 @@ make it a PID 1 of the system. Although, I like the idea but not yet found a
 feasible way for that kind of system use. The point I am talking about you can
 find in the below articles:
 
-Somebody tried to boot system directly into emacs and unfortunately I lost the
-link of that post.
+Somebody tried to boot system directly into emacs and you can see it [[http://informatimago.free.fr/i/linux/emacs-on-user-mode-linux.html][here]] .
 
 But do the same with vim, so you can see it [[https://raymii.org/s/blog/Vim_as_PID_1_Boot_to_Vim.html][here]] ...amazing. People do things,
 they are not supposed to do.
