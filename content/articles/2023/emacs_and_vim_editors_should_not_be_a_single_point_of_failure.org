@@ -1,0 +1,142 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1396
+#+title: Emacs And Vim Editors Should Not Be A Single Point Of Failure
+#+date: 2023-05-12
+#+tags: Technical Emacs Vim Editors Tools Opensource Linux
+
+I can not preach about another plethora of editors available in the market and
+importantly used by many other people. I have always stuck with these two and
+will be.
+
+The point I was making, as you read the title of this post is stem out of seeing
+from both the camps i.e. emacsian and vimers are equally guilty of pouring more
+stuff than required to operate on it. And that madness not stopped there, they
+went on going to promote all sorts of nonsense integration with their beloved
+editor and make it a bloated one. As a result, you hear more complaints of
+getting things bloated and slugging.
+
+Some of the crazy people went too far to integrate with Operating System and
+make it a PID 1 of the system. Although, I like the idea but not yet found a
+feasible way for that kind of system use. The point I am talking about you can
+find in the below articles:
+
+Somebody tried to boot system directly into emacs and unfortunately I lost the
+link of that post.
+
+But do the same with vim, so you can see it [[https://raymii.org/s/blog/Vim_as_PID_1_Boot_to_Vim.html][here]] ...amazing. People do things,
+they are not supposed to do.
+
+Now, some folks are a little more considerate, they don't poke at the system
+process but went on replace the /window manager/ with emacs, I am pointing at [[https://github.com/ch11ng/exwm][EXWM]] . Oh
+dear lord! Why they are doing that I don't know or have any frigging clue what
+purpose that solves. Now some fella, put up this as [[https://github.com/fireflowerr/vwm.vim][VWM]] .
+
+It not only stops there too. The other day, I stumbled upon a page,which allows
+the famous and lightweight music player to integrate with vim. A similar thing
+happened to emacs too in other forms.
+
+The pdf viewer is integrated with the editor in the name of efficiency
+enhancement,gosh!
+
+Now step back and think about it for a moment. What the heck will happen if the
+damn editor refuses to come up one fine day?? It is software and the update/upgrade
+policy is still flaky,so the chances are very probable. In the name efficiency
+you crammed everything into it and this damn thing will take down your machine
+with it, when misbehaving. And you are left with no option but to rue.
+
+Building something monolithic doesn't make much sense when the point of
+failure is omnipotent(directing to one direction and importantly one
+point). Now, you probably have an argument,look at the kernel. But, damn,kernel
+is a beast and built from the ground up to take more lethal blow than your
+editor could fathom.So, compared with the kernel doesn't stand on its knees.
+
+Oh,by the way, UKI(UniKernel is a bad idea and only feasible if you run a specific device
+with that), and the embedded system runs their own stuff for ages with heavily
+trimmed down version of the kernel.
+
+What is the solution then?
+
+Run important pieces of software for specific functions separately as most of
+them are designed to use. So, the beloved editors can be free from all the bloat
+and work best with what they are meant to build. And if you do, I can assure
+you, do not need a plethora of stuff to get on with your daily computing need. I
+have stated it many times in various places and well written about them. All you
+need to identify your core need and operations.
+
+Editing is an important job and the editors should excel on it, period. The more
+feature you need the problem it will present to you, sooner or later. If and
+only if, you are inclined to have some fancy thing at your disposal while
+editing, then look out for some IDE, which probably meets your demand.
+
+Let me give you an example, if you write something in the editor(because what
+pays your bill) then train and restrict it to do that best with it. Importantly,
+vim and emacs are powerful enough to give you what you need for that Not only
+that, but in other areas too. Say, if you do, programming, and generally people
+do a handful of things, then train your favorite editor to assist you best on
+that by restricting it to integrate only specific things. Again, both the
+mentioned editors are good and well equipped with the facility.
+
+I can understand the inclination to have and use fancy and eye candy stuff with
+them, because, they(editors) give you enough rope to hang yourself or shoot on
+the foot. Sometimes, bypassing the offering can be a boon in disguise. Think in
+that line(kinda analogy), life offers so many things, and sometimes we failed to
+attain those and other times we just don’t the attention to it.
+
+The more bells and whistle you opt for the more it takes a toll on your editor
+and that will hinder productivity in a big way. You need to take a hard call,
+you want fancy and glossy stuff which is capable of minimal work or you need
+something less fancy and powerful.
+
+Oh, by the way, both the mentioned editors are already capable enough to look
+fancy without much outside influence. I like Vim’s maintenance of keeping things
+tight, whereas Emacs seems too little laxer to integrate stuff with it. In the
+end, you made the thing you want, because both the editors are free and open
+source.
+
+The alluring nature of open source compels people to do so many things. Most of
+them are blinding good and we ordinary mortals are getting benefited out of
+those. Similarly, people take extremely bad decisions too. Above, I mentioned
+that people create things they should not do.
+
+Anyway, you can not stop people from doing crazy/stupid stuff. But, adopting
+things can be your choice, so invest a lot of thinking before opting for
+anything. There is a huge surge and inclination that people get influenced by
+seeing renowned people using something specific, so they often opted for
+it. But, believe me, most of them ended up in frustration because they are not
+the person, they try to impersonate. Their requirement could be altogether
+different than what they saw and bringing something into your life without
+having the understanding of the consequences of the failure leads to more
+frustration.
+
+I am happy with the way I have been using both the mentioned editors and in
+tandem for some years no. Associativity sends a lot of shortcomings into
+oblivion. This is exactly what happened to me. I gave sincere fuck to the shiny
+things and stick to my requirements and importantly I do not rue my choice. It’s
+been a long that I haven’t found something more enticing than what I opted for
+many moons ago. These serve me well in due course.
+
+It is the mental map, which plays a huge role in life and likewise in computing
+too. The thing about for a moment, again, why are so many tools created
+four-five decades back still going strong by standing the test of time? I am not
+against the newly born tools but if not all, majority of them are born out of
+accomplishment than of necessity. I am hoping you are seeing the point I am
+trying to make. I won’t if the tools are created out of necessity, it will be a
+welcome boost to productivity. Segregation is important for the tools to stand
+and survive in harsh environments. And computing environment, like life in
+general, is harsh, we need to adopt or create something that can stand the
+adversity, mostly.
+
+Outside influence(thing of integrating foreign)stuff into it and impose great
+rot and which might cause havoc. Using along together via some mechanism is
+perfectly fine(think of what UNIX pipe did to the tooling!! and still does), but
+fusing is some kind of brute force thing, which might not always be welcome.
+
+Also, I have mentioned many a time elsewhere, that dependency outside of the
+machine is a bad idea and generally fiddling with fire. Likewise, an
+unnecessarily heavy load of dependency inside the system is bad too. The only
+difference is that the in-machine dependency you can fix quicker than outside
+ones. And that matters a lot in terms of productivity.
+
+My editing configuration madness comes to a grinding halt once I realized this
+will not stop and I am in the process of getting rid of all the flab I have
+added to those in the past.
