@@ -1,0 +1,121 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1405
+#+title: Git Commit Messages In An Automated Way!
+#+date: 2023-05-16
+#+tags: Technical Git Automation Scripting Tools Opensource Bash
+
+Alright, here is the deal,I use /Git[fn:1]/ like everyone else in the wild for revision
+control systems. And the essence of it,is to *commit frequently* to the repository. But,
+doing so takes a little more effort to get things going and at some point it becomes an
+annoying fact.So, for impulsion, I went hunting(read spend some time) to figure
+out how could I make the damn thing in such a  way, that I don't have to intervene
+every time I made the changes and commit?
+
+Turns out for the simple thing I do, is pretty darn simple to achieve it. Nope, it
+is not a big deal for experts, because they might be achieving in other forms and
+can do various things with it. But, the thing I made for myself and for my work
+is pretty enjoyable.
+
+Importantly, it works! So, I decided to share with ya. Here is a small function I
+wrote to get it going, in bash
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+addcom ()
+{
+    git add .;
+    git ci "$@" 2> /dev/null;
+    if [[ "$@" == "" ]]; then
+        echo Not allowed empty commit msg...aborting;
+    fi
+}
+addcom "$@"
+#+END_SRC
+
+Ordinary? Right. It supposes to be and should be. Complexity always fails me. But,
+having said that, add complexity when it is needed to achieve better results.
+
+Explanations needed? Okay, it might help, if I do. So, it adds whatever newly
+shows up in the repository and add it. Then, that "ci"[fn:2] thing (in the second
+line) is nothing but,an alias of /git commit with signing with GPG key/ along with
+the message it gets as an argument. And then it checks, the argument, as the
+message is not provided it simply fails. What's the big deal?
+
+Now,this piece can be called a standalone from inside the git repository or can
+be embedded within other scripts. I have been using this in forms and it is
+pretty productive for me.
+
+But, while doing a simple or single thing putting a message by hand and feeding to
+this is okay, but not so okay when you embed this functionality to take into
+another script/program. You are supposed to provide some mechanism to get the
+/function argument in/ an automated way. Now, I have done it a little sloppy way as per
+my requirement. Here is an example of it inside a script,that updates my blog
+post in various ways in my system:
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+# Sync blogs in various places in the file system once then remote push to repositories
+
+source_dir="/home/bhaskar/blogs/content/articles/2023/"
+
+cd $source_dir || exit 1
+
+latest_file=$(find . -iname "*.org" -type f -newermt $(date '+%F') -ls | gawk '{ print $11 }' | sort -f -i -r | head -1 | tr -d "./")
+
+rm -f *.html
+rm -f .*.~undo-tree~
+
+
+# call up other script which sync with other with fzf integration
+sync_blog
+
+# This will automate git add and git commit with signing at once
+addcom "${latest_file}"
+
+# Pushing the latest file to the remote repositories
+git push
+
+# If the last command executed successfully then pop out the msg
+if [ "$(git push)" == 0 ];then
+	notify-send "Successfully pushed to remote repositories"
+else
+	notify-send "No,something went wrong, fix it!"
+
+fi
+
+#+END_SRC
+
+Look at the /latest_file/ variable,it simply gets the latest file added to the git
+repository and gets the file name of the commit cut to and save in that variable
+to be used as an argument to the called up function for it.You have to see just
+two lines in the above script, those are, as mentioned,the /latest_file/ variable and
+/addcom/ function call. I have added the entire script for the context. It is surely
+ugly but the damn thing works for me. I am yet to discover the failure mode.That
+kind of check should be added if the occasion arrived in the future.
+
+Oh, by the way, that /sync_blog/ just does *rsync* stuff to various locations in the
+system with /fzf/ integration, nothing fancy.I could have easily put that same
+code in this script, but refrained , because of the sake of portability and
+importantly, for the ease of maintainability.
+
+
+The git commit message is extremely important to let other collaborators what the
+changes are all about. What I did, while creating the file name, making sure the file
+name or changes sounds sane. That /latest_file/ variable could be your choice of
+thing, which you want to attach as a commit message,but please add some
+sensible thing for people to understand what it is all about.
+
+You probably wondering why I haven't done /git-hook[fn:3]/ integration with it? I am not
+yet done with it. I need to add a little more thing to put in as a /pre-commit/ hook
+to take over.
+
+
+
+* Footnotes
+
+[fn:1] https://en.wikipedia.org/wiki/Git
+
+[fn:2] alias.ci=!git commit  -s -m
+
+[fn:3] https://git-scm.com/docs/githooks
