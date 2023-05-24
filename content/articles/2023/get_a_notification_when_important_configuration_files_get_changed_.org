@@ -1,0 +1,73 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1420
+#+title: Get A Notification When Important Configuration Files Get Changed
+#+date: 2023-05-24
+#+tags: Technical Automation Bash Scripting Tools Opensource Vim
+
+Well, we deal with so many configuration files in our system every single
+day.But, not all of them are equally important in that respect, that messing
+with them might cause more headaches and malfunctioning of the specific
+applications or even the system itself.
+
+Did I scare you?? That would be a common ploy and probably useful to get some
+traction for this article. But, I am refraining so and instead show you, how
+easily you can get over this annoyance of fear.
+
+In my system and probably, many of yours too, there are certain sets of files
+that weigh more than others in terms of importance and I am going to focus on
+those. You might add to that list as per your liking by using this as a template
+to do better.
+
+Let me enlist the files first,
+
+[[~/Pictures/Screenshots/2023-05-24-141906_394x268_scrot.png]]
+
+Pretty simple, right? I have put the name of the files I am going to monitor
+for changes and it will show me the pop-up when it changes.
+
+Next, how to track configuration changes by simple bash[fn:1] script, here is
+the script which done the job for me :
+
+[[~/Pictures/Screenshots/2023-05-24-142453_743x634_scrot.png]]
+
+You see,pretty darn simple but ugly. Care to make it better, let me show your
+code in the comment section.
+
+Now, a bit of explanation of the script. The very first thing it does is, create
+an associative array of configuration files. Then track the latest file changes
+in the variable /filechange/ . It will essentially then, send a popup notification
+about the file, which has changed . And finally, it copied the changed state of
+the file in various locations in the file system for backup and safety.
+
+Nothing surprising! Not supposed to be.
+
+Changes have to be made inside the editor and I have chosen /Vim[fn:2]/ for that
+purpose to do the automated thing.Although it could be easily achieved for
+/Emacs[fn:3]/ too and I haven't felt the urge to do so yet. Anyway, I have some
+specific section of *autocommand[fn:4]* block inside the /.vimrc/ file which keep
+track of the proceeding of the changes of these files and do the needful by
+sending a popup of alert.
+
+Here is the section I am referring to in /.vimrc[fn:5]/ file :
+
+[[~/Pictures/Screenshots/2023-05-24-144132_622x220_scrot.png]]
+
+You see,all of them react to a specific event and that is *BufWritePost* . That
+means once the writing to those specific files is done or saved , the alarms
+then go off.This is a kind of reminder that should give you visual attention.
+
+* Footnotes
+
+[fn:1] https://www.gnu.org/software/bash/manual/bash.html
+
+[fn:2] https://www.vim.org/
+
+[fn:3] https://www.gnu.org/software/emacs/
+
+[fn:4] https://vimdoc.sourceforge.net/htmldoc/autocmd.html
+
+[fn:5] https://github.com/unixbhaskar/dotfiles/blob/master/.vimrc
+
+# /home/bhaskar/Pictures/Screenshots/2023-05-24-141906_394x268_scrot.png http://unixbhaskar.files.wordpress.com/2023/05/2023-05-24-141906_394x268_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-05-24-142453_743x634_scrot.png http://unixbhaskar.files.wordpress.com/2023/05/2023-05-24-142453_743x634_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-05-24-144132_622x220_scrot.png http://unixbhaskar.files.wordpress.com/2023/05/2023-05-24-144132_622x220_scrot.png
