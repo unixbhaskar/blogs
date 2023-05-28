@@ -1,0 +1,216 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1429
+#+title: Fix The Damn x264 Encode Decode Problem In OpenSUSE Way!
+#+date: 2023-05-28
+#+tags: Technical Bash Video Audio Codecs OpenSUSE Tumbleweed Linux Zypper
+
+Alright, on a boring afternoon I have given a shot to one of the popular Linux
+distributions, called /OpenSUSE-Tumbleweed/[fn:1] yet again after so many years
+used it in the past and abandoned it for some issues, which were bugging me
+constantly.
+
+So, why this turn around or lean on it again? Just to check, that the
+popularity made it change or remains the same. And to my surprise, at least most
+part of it looks familiar than foreign. Good sign! But, soon enough the thing, a
+little thing hit the ceiling and I had to take a discourse to resolve that
+annoyance with their(SUSE's) *recommended* way of fixing the damn thing.
+
+Beginning, just after the install(freshly one) and no other tweak and tried one
+of my program to do the job, which does for other four distributions I use.So,
+it complains that the *x264[fn:2] codec is unknown*. Pretty known problem, because, I have
+encounter it other distribution and I have written about it probably a year or a
+few months back(i.e. on Slakcware-current).
+
+After some hovering in the /SUSE Wiki[fn:3]/, I found the page that clearly
+tells exactly what needs to be performed, so I followed and voila!
+
+By default, what is coming in the stock /Main OSS and NON-OSS repo/ for that
+program I was trying i.e. *ffmpeg* to run from a script to do a specific work and
+the error halted that operation. So, went over few rudimentary steps out of
+intuition just to check if I am missing something needed by that piece of
+software. In fact, there is an *openh264* repository is installed and activated.
+
+#+BEGIN_SRC bash
+tp_x250_06:27:56_Sun May 28: :~>zypper lr | grep openh264
+7 | repo-openh264                    | Open H.264 Codec (openSUSE Tumbleweed) | Yes     | (r ) Yes  | Yes
+#+END_SRC
+
+So,still the things *failing* to get along to the job. As mentioned above,I did
+some hovering over the SUSE wiki and found it.(I AM WRITING THIS FOR PEOPLE WHO
+LIKE ME LACK PATIENCE ,AND TO GET THINGS FIXED FAST).
+
+I am putting all the steps in a script,so it would be convenient to run /at once/
+than to do it step by step.Here is the ordinary script:
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+echo Adding repo....
+
+sudo zypper ar -cfp 90 https://ftp.fau.de/packman/suse/openSUSE_Tumbleweed/ packman
+
+echo Rwefresing the repo ...
+
+zypper refresh
+
+echo Vendor change ....
+
+sudo zypper dist-upgrade --from packman --allow-vendor-change
+
+echo Get the actual packages for missing codes ...
+echo
+
+sudo zypper install --from packman ffmpeg gstreamer-plugins-{good,bad,ugly,libav} libavcodec-full
+#+END_SRC
+
+Do I have to explain it? I believe, those who decided to run this specific
+distribution have fair idea what is going on( I am taking the reader of this
+post for granted, not a good thing but a chance).
+
+In essence, it is saying(the script) that change or get the required thing from
+different repository than use the stuff that come along by default. This is a
+community maintained repository.
+
+After this endeavor, all the problem related to running ffmpeg is become
+smooth. You can alternatively seen the stuff you get in by the above script,
+like this :
+
+[[~/Pictures/Screenshots/2023-05-28-064047_587x632_scrot.png]]
+
+You can safely remove the *ffmpeg-6* stuff and let the other version do the job
+for you.
+
+Now, what we got to get it working ....
+
+
+#+BEGIN_SRC bash
+tp_x250_06:45:17_Sun May 28: :~>sudo zypper  info gstreamer-plugins-{good,bad,ugly,libav}
+Loading repository data...
+Reading installed packages...
+
+Information for package gstreamer-plugins-good:
+-----------------------------------------------
+Repository     : Main Repository (OSS)
+Name           : gstreamer-plugins-good
+Version        : 1.22.2-1.1
+Arch           : x86_64
+Vendor         : openSUSE
+Installed Size : 6.6 MiB
+Installed      : Yes (automatically)
+Status         : up-to-date
+Source package : gstreamer-plugins-good-1.22.2-1.1.src
+Upstream URL   : https://gstreamer.freedesktop.org
+Summary        : GStreamer Streaming-Media Framework Plug-Ins
+Description    :
+    GStreamer is a streaming media framework based on graphs of filters
+    that operate on media data. Applications using this library can do
+    anything media-related, from real-time sound processing to playing
+    videos. Its plug-in-based architecture means that new data types or
+    processing capabilities can be added simply by installing new plug-ins.
+
+
+Information for package gstreamer-plugins-bad:
+----------------------------------------------
+Repository     : Main Repository (OSS)
+Name           : gstreamer-plugins-bad
+Version        : 1.22.2-4.1
+Arch           : x86_64
+Vendor         : openSUSE
+Installed Size : 8.6 MiB
+Installed      : Yes (automatically)
+Status         : up-to-date
+Source package : gstreamer-plugins-bad-1.22.2-4.1.src
+Upstream URL   : https://gstreamer.freedesktop.org
+Summary        : GStreamer Streaming-Media Framework Plug-Ins
+Description    :
+    GStreamer is a streaming media framework based on graphs of filters
+    that operate on media data. Applications using this library can do
+    anything media-related,from real-time sound processing to playing
+    videos. Its plug-in-based architecture means that new data types or
+    processing capabilities can be added simply by installing new plug-ins.
+
+Information for package gstreamer-plugins-ugly:
+-----------------------------------------------
+Repository     : Main Repository (OSS)
+Name           : gstreamer-plugins-ugly
+Version        : 1.22.2-1.1
+Arch           : x86_64
+Vendor         : openSUSE
+Installed Size : 506.8 KiB
+Installed      : Yes
+Status         : up-to-date
+Source package : gstreamer-plugins-ugly-1.22.2-1.1.src
+Upstream URL   : https://gstreamer.freedesktop.org
+Summary        : GStreamer Streaming-Media Framework Plug-Ins
+Description    :
+    GStreamer is a streaming media framework based on graphs of filters
+    that operate on media data. Applications using this library can do
+    anything media-related, from real-time sound processing to playing
+    videos. Its plug-in-based architecture means that new data types or
+    processing capabilities can be added simply by installing newplug-ins.
+
+    This package contains well-written plug-ins that can\'t be shipped in
+    gstreamer-plugins-good because:
+    - the license is not LGPL
+    - the license of the library is not LGPL
+    - there are possible licensing issues with the code.
+
+
+Information for package gstreamer-plugins-libav:
+------------------------------------------------
+Repository     : Main Repository (OSS)
+Name           : gstreamer-plugins-libav
+Version        : 1.22.2-1.2
+Arch           : x86_64
+Vendor         : openSUSE
+Installed Size : 347.9 KiB
+Installed      : Yes
+Status         : up-to-date
+Source package : gstreamer-plugins-libav-1.22.2-1.2.src
+Upstream URL   : https://gstreamer.freedesktop.org
+Summary        : A ffmpeg/libav plugin for GStreamer
+Description    :
+    GStreamer is a streaming media framework, based on graphs of filters which
+    operate on media data. Applications using this library can do anything
+    from real-time sound processing to playing videos, and just about anything
+    else media-related. Its plugin-based architecture means that new data
+    types or processing capabilities can be added simply by installing new
+    plug-ins.
+
+    This plugin contains the FFmpeg codecs, containing codecs for most popular
+    multimedia formats.
+
+#+END_SRC
+
+Important things to get from the installed repository...
+
+[[~/Pictures/Screenshots/2023-05-28-070215_765x283_scrot.png]]
+
+As you can clearly see, I got the /binary/ of it and letter the "*i"* beside the
+package signify that. I also get these below stuffs, you might not...
+
+[[~/Pictures/Screenshots/2023-05-28-070610_1366x393_scrot.png]]
+
+..and please do not worry about the error you are seeing, that is
+inconsequential, as the specific package is NOT available there.
+
+Finally, we need to get these packages from *packman repository* ..
+
+#+BEGIN_SRC bash
+tp_x250_07:45:53_Sun May 28: :~>zypper --no-refresh se -si -r packman | awk '$1 ~ /^i/{print $3}' | grep x264
+libx264-164
+libx264-devel
+x264
+#+END_SRC
+
+* Footnotes
+
+[fn:1] https://get.opensuse.org/tumbleweed/
+
+[fn:2] https://en.wikipedia.org/wiki/X264
+
+[fn:3] https://en.opensuse.org/SDB:Installing_codecs_from_Packman_repositories
+
+# /home/bhaskar/Pictures/Screenshots/2023-05-28-064047_587x632_scrot.png http://unixbhaskar.files.wordpress.com/2023/05/2023-05-28-064047_587x632_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-05-28-070215_765x283_scrot.png http://unixbhaskar.files.wordpress.com/2023/05/2023-05-28-070215_765x283_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-05-28-070610_1366x393_scrot.png http://unixbhaskar.files.wordpress.com/2023/05/2023-05-28-070610_1366x393_scrot.png
