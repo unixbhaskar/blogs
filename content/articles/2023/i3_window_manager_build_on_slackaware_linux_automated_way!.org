@@ -1,0 +1,289 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1434
+#+title: I3 Window Manager Build on Slackware Linux Automated Way!
+#+date: 2023-06-01
+#+tags: Technical I3 Window_Manager Slackware Linux Automation Bash Scripting
+
+
+Okay, here is a little snippet that I use to build /I3 Window Manager[fn:1]/ on
+/Slackware Linux[fn:2]/. And I thought it would be good if someone looking for
+some cue, might either adopt it as it is or do their magic with their knowledge
+of it.
+
+But,wait,doesn't other popular third party /pkg-build/ software do the same?
+Surely,but this is how I do it. This script lacks some *expert stuff*, so take it
+with a pinch of salt. I have /*hard coed* a/ few things as per my system and
+importantly not to waste energy to get something pretty static. After all, you
+are not paranoid enough to build the damn window manager every second day. If
+you have that kind of requirement, then there are other methods to get that
+done, but certainly not this way.
+
+...and I not even bothered to find out the other way. So, here is the thing you
+need to build i3 from source with dependency.
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+# Author: Bhaskar Chowdhury
+# Email : unixbhaskar@gmail.com
+# Webiste: https://github.com/unixbhaskar
+# Time  : Thu 01 Jun 2023 07:49:32 AM IST
+
+# License (GPL v2.0)
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the # hope that it will be useful, but
+# WITHOUT ANY MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+
+# I3 window manager build from source on Slackware Linux
+
+
+# Dependencies to build i3 window manager as described in the below link
+# https://docs.slackware.com/howtos:window_managers:i3wm
+
+set -e
+set -u
+
+if test $UID -ne 0;then
+	echo Nope, you have to have the root privileged to run this script.
+	exit 1
+fi
+
+
+echo Building I3 Window Manager ....
+echo
+    inxi
+ if  test ! -d i3-build ;then
+	 mkdir -p i3-build
+ else
+	 exit 1
+ fi
+
+cd i3-build
+
+
+__go_to_build_manually() {
+
+	echo Hang on! We are getting everything and building it bit by bit....
+        echo
+	echo
+
+        _get_libev
+
+        _get_yajl
+
+        _get_dmenu
+
+        _get_perljsonxs
+
+        _get_perlanyevent
+
+        _get_i3
+}
+
+# libev  https://slackbuilds.org/libraries/libev/
+
+_get_libev() {
+
+# source
+wget -c http://dist.schmorp.de/libev/Attic/libev-4.33.tar.gz
+
+# Slackbuild files
+wget -c https://slackbuilds.org/slackbuilds/15.0/libraries/libev.tar.gz
+
+tar -xvzf libev.tar.gz
+
+mv libev-4.33.tar.gz libev/
+cd libev
+
+chmod +x libev.SlackBuild
+
+sh -c "./libev.SlackBuild"
+
+if test $? -eq 0 ; then
+	echo Build successful for libev
+else
+	echo Nope, something went wrong,please check the build log
+
+fi
+
+cd ..
+
+}
+
+
+# Yajl https://slackbuilds.org/repository/15.0/libraries/yajl/
+
+_get_yajl() {
+
+# source
+wget -c http://slackware.uk/sbosrcarch/by-md5/8/d/8df8a92a2799bc949577e8e7a9f43670/lloyd-yajl-2.1.0-0-ga0ecdde.tar.gz
+
+# Slackbuild files
+wget -c  https://slackbuilds.org/slackbuilds/15.0/libraries/yajl.tar.gz
+
+tar -xvzf yajl.tar.gz
+mv lloyd-yajl-2.1.0-0-ga0ecdde.tar.gz yajl/
+cd yajl
+chmod +x yajl.SlackBuild
+
+sh -c "./yajl.SlackBuild"
+
+if test $? -eq 0 ; then
+	echo Build successful for libev
+else
+	echo Nope, something went wrong,please check the build log
+
+fi
+
+cd ..
+
+}
+
+# dmenu https://slackbuilds.org/desktop/dmenu/
+
+_get_dmenu() {
+
+# source
+wget -c  http://dl.suckless.org/tools/dmenu-4.9.tar.gz
+
+# Slackbuild files
+wget -c  https://slackbuilds.org/slackbuilds/15.0/desktop/dmenu.tar.gz
+
+tar -xvzf dmenu.tar.gz
+mv dmenu-4.9.tar.gz dmenu/
+cd dmenu
+chmod +x dmenu.SlackBuild
+
+sh -c "./dmenu.SlackBuild"
+
+if test $? -eq 0 ; then
+	echo Build successful for libev
+else
+	echo Nope, something went wrong,please check the build log
+
+fi
+cd ..
+}
+
+# Perl JSON-XS https://slackbuilds.org/repository/14.1/perl/perl-JSON-XS/
+
+_get_perljsonxs() {
+
+# source
+wget -c   http://cpan.metacpan.org/authors/id/M/ML/MLEHMANN/JSON-XS-2.34.tar.gz
+
+# Slackbuild files
+wget -c  https://slackbuilds.org/slackbuilds/14.1/perl/perl-JSON-XS.tar.gz
+
+tar -xvzf perl-JSON-XS.tar.gz
+
+mv JSON-XS-2.34.tar.gz perl-JSON-XS/
+cd perl-JSON-XS
+chmod +x perl-JSON-XS.SlackBuild
+
+sh -c "./perl-JSON-XS.SlackBuild"
+
+if test $? -eq 0 ; then
+	echo Build successful for libev
+else
+	echo Nope, something went wrong,please check the build log
+
+fi
+cd ..
+
+}
+
+# Perl AnyEvent https://slackbuilds.org/repository/14.1/perl/perl-AnyEvent-I3/
+
+_get_perlanyevent() {
+
+# source
+wget -c   http://cpan.metacpan.org/authors/id/M/MS/MSTPLBG/AnyEvent-I3-0.15.tar.gz
+
+# Slackbuild files
+wget -c  https://slackbuilds.org/slackbuilds/14.1/perl/perl-AnyEvent-I3.tar.gz
+
+tar -xvzf perl-AnyEvent-I3.tar.gz
+mv AnyEvent-I3-0.15.tar.gz perl-AnyEvent-I3/
+cd perl-AnyEvent-I3
+chmod +x perl-AnyEvent-I3.SlackBuild
+
+ sh -c "./perl-AnyEvent-I3.SlackBuild"
+
+if test $? -eq 0 ; then
+	echo Build successful for libev
+else
+	echo Nope, something went wrong,please check the build log
+
+fi
+cd ..
+}
+
+# Get I3 now
+
+_get_i3() {
+
+# source
+wget -c  https://i3wm.org/downloads/i3-4.22.tar.xz
+
+# Slackbuild files
+wget -c https://slackbuilds.org/slackbuilds/15.0/desktop/i3.tar.gz
+
+tar -xvzf i3.tar.gz
+mv i3-4.22.tar.xz i3/
+cd i3
+chmod +x i3.SlackBuild
+
+sh -c "./i3.SlackBuild"
+
+if test $? -eq 0 ; then
+	echo Build successful for libev
+else
+	echo Nope, something went wrong,please check the build log
+
+fi
+cd ..
+
+}
+
+_main() {
+
+	if test "$( __go_to_build_manually)" -eq 0 ;then
+
+	       i3-config-wizard
+
+	else
+		Nope, build failed!
+	fi
+}
+
+_main
+
+#+END_SRC
+
+Don't you think the script shows the limitation of my imagination? IOW, it is so
+explicit that, I think it would be sheer babbling if I started to explain it to
+people, who probably have a way better understanding than me.
+
+In crux, there is each function dedicated to all the dependencies, and then it
+was called from the main function. Also, when it is successfully built, and then only
+call up the very first thing one should do to install it, called up the wizard
+to guide people to install it. /i3-config-wizard/ provided by the i3 and it generally
+resides in standard path locations like /usr/bin.
+
+Oh, you can change the version if a different version is available. I have
+picked up what is available in slackbuild[fn:3] right now.
+
+* Footnotes
+
+[fn:1] https://i3wm.org/
+
+[fn:2] http://www.slackware.com/
+
+[fn:3] https://slackbuilds.org/repository/15.0/desktop/i3/
