@@ -1,0 +1,214 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1442
+#+title: Linux Kernel Debugging Techniques Some Random Notes
+#+date: 2023-06-05
+#+tags: Technical Linux Kernel Debugging GDB
+
+
+Well, I have found some notes buried under some piles and thought to dish them out
+to public,if this frivolous thing can help other people to take a cue for the
+same purpose.These are accumulated from various articles,papers, and journals.
+
+Here are they, take it with a pinch of salt :)
+
+
+
+1) printk() works even the lock is held.
+
+2) printk() accepts /log levels/
+
+3) There are 8 different levels of log
+
+4) Default log level is WARNING
+
+5) Examples:
+• Printk(KERN_WARNING “This is a warning message!\n”); or you can use
+• Printk(“<4> This is a warning message!\n);
+• Printk(KERN_ALERT “DEBUG: %s %d \n”, __SOMEVAR1__, __SOMEVAR2)
+
+6) Loglevels are defined in <linux/kernel.h>
+
+7) Kernel messages are stored in LOG-BUF-LEN ,compile time configurator Also
+   CONFIG-LOG-BUF-SHIFT
+
+8) *Klog* is a daemon that retrieves the kernel messages from log buffer
+
+9) *Syslogd* provides two utilities to see logs /dmesg/ and "/var/log//messages" file
+
+10) Limitation of *GDB*  :
+
+    a) user space debugger peek into the address of running kernel
+    b) you can examine the content of the kernel space
+    c) can not set breakpoint
+    d) can not step through the kernel code
+
+11) Debugging with QEMU
+
+12) qemu-kvm –hda yourimage.qcow –m 512 redir tcp::[your_assigned_port]:22
+
+    then on another terminal run
+
+    ssh -p[your-port] -l [username] localhost
+
+13) s and S option freezes the CPU in the beginning of boot process ,to resume
+    press c
+
+14) copy the /vmlinux/ binary from qemu booted system to host machine
+
+15) Start gdb like this :
+
+    $gdb vmlinux
+
+16) Try setting breakpoint
+
+17) /add-symbol-file/ command in gdb allow to load a symbol table related to
+    module
+
+18) ADDR should be the agrument of the previous command , which is starting
+    address of the file
+
+19) /proc filesystem has module path
+
+* Absolutely dirty way of testing the newly built kernel with QEMU
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+#===============================================================================
+#
+#          FILE: rc-kernel-pull-build-boot.sh
+#
+#         USAGE: ./rc-kernel-pull-build-boot.sh
+#
+#   DESCRIPTION: This is automated script to check RC kernel ,build, compile,boot
+#
+#       OPTIONS: ---
+#  REQUIREMENTS: qemu
+#          BUGS: ---
+#         NOTES: mutt integration for sending mail of the result
+#        AUTHOR: Bhaskar Chowdhury (https://about.me/unixbhaskar), unixbhaskar@gmail.com
+#  ORGANIZATION: Independent
+#       CREATED: 03/17/2020 15:42
+#      REVISION: As per this : https://www.reddit.com/r/bash/comments/ry6u3d/how_to_fetchbuild_and_boot_rckernel_with_qemu/?utm_source=share&utm_medium=web2x&context=3
+#===============================================================================
+
+#set -o nounset                              # Treat unset variables as an error
+ker_source="/home/bhaskar/git-linux/linux"
+bzimage="$ker_source/arch/x86/boot/bzImage"
+rootfs="/home/bhaskar/git-linux/buildroot/output/images/rootfs.ext2"
+
+for cmd in qemu-system-x86_64 make zcat curl git notify-send; do
+  if ! command -v "${cmd}" >/dev/null 2>&1; then
+    failed_cmds="${failed_cmds},${cmd}"
+  fi
+done
+
+if (( "${#failed_cmds}" > 0 )); then
+  printf -- '%s\n' "The following required commands were not found:" "${failed_cmds/,/}" >&2
+  exit 1
+fi
+
+qemu() { qemu-system-x86 "${@}"; }
+
+get_mainline_kernel() {
+  curl -s https://www.kernel.org/ | grep -A1 'mainline:' | grep -oP '(?<=strong>).*(?=</strong.*)'
+}
+
+mainline_kernel=$(get_mainline_kernel)
+
+
+get_current_kernel() { uname -r; }
+
+current_kernel=$(get_current_kernel)
+
+if (( "${#mainline_kernel}" == 0 )); then
+  printf -- '%s\n' "Mainline kernel could not be determined" >&2
+  exit 1
+elif [[ "${mainline_kernel}" = "${current_kernel}" ]]; then
+  printf -- '%s\n' "No newer kernel found..." >&2
+  exit 1
+else
+    #notify-send --expire-time=5000 "New RC kernel available:" "${mainline_kernel}"
+    printf -- '%s\n' "We have a new RC kernel"
+fi
+
+
+# (
+#   cd "${ker_source}" || exit 1
+#   if ! git pull; then
+#     printf -- '%s\n' "Attemping 'git pull' again..."
+#     if ! git pull; then
+#       printf -- '%s\n' "Failure calling 'git pull'" >&2
+#       exit 1
+#     fi
+#   fi
+#   printf -- '%s\n' "We are fine, please proceed..."
+#   build_kernel_and_boot_with_qemu
+# )
+
+
+git_pull_retries() {
+  local retries
+  retries="${1:-3}"
+
+  for (( i=1; i<retries; ++i )); do
+    tput sc
+    printf -- '%s ' "'git pull' attempt [${i}/${retries}]"
+    if git pull; then
+      printf -- '%s\n' "suceeded!"
+      return 0
+    else
+      tput rc
+      printf -- '%s\n' "'git pull' failed [${i}/${retries}], retrying..."
+      sleep 1
+    fi
+  done
+  return 1
+}
+
+build_kernel_and_boot_with_qemu(){
+
+	make clean && make mrproper
+        zcat /proc/config.gz > .config
+	make olddefconfig
+	make V=1 ARCH=x86_64 -j$(getconf _NPROCESSORS_ONLN) LOCALVERSION=-$(hostname) | tee kernel_build.log
+	make modules
+	qemu-system-x86_64 -boot c -m 2049M -kernel $bzimage  -hda $rootfs -nographic -append "root=/dev/sda rw console=ttyS0"
+        return 0
+}
+
+
+main()
+{
+  cd "${ker_source}" || exit 1
+  git_pull_retries 2 || exit 1
+  printf -- '%s\n' "We are fine, please proceed..."
+  build_kernel_and_boot_with_qemu
+}
+
+main
+
+
+#boot_with_initrd(){
+
+#	$dracut -l -o $initrd
+#	$qemu -boot c -m 2049M -kernel $bzimage -initrd $initrd  -hda $rootfs -nographic -append "root=/dev/sda rw console=ttyS0"
+#        return 0
+#}
+
+
+#+END_SRC
+
+Importantly, enjoy your journey to exploring the Linux Kernel source and its
+mysteries.
+
+References:
+
+[[https://www.starlab.io/blog/using-gdb-to-debug-the-linux-kernel][Using GDB To Debug The Linux Kernel]]
+
+[[https://www.linuxjournal.com/content/oops-debugging-kernel-panics-0][Oops! Debugging Kernel Panics]]
+
+[[https://elinux.org/Debugging_The_Linux_Kernel_Using_Gdb][Debugging The Linux Kernel Using GDB]]
+
+[[https://blogs.oracle.com/linux/post/live-kernel-debugging-1][Live Debugging Techniques For The Linux Kernel]]
+
+[[https://git-scm.com/docs/git-bisect-lk2009][Git Bisection Is The Best Tool For Finding The Offending Commit]]
