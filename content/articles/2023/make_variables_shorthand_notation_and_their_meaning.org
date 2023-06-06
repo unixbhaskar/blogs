@@ -1,0 +1,43 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1445
+#+title: Makefile Variables Shorthand Notation And Their Meaning
+#+date: 2023-06-06
+#+tags: Technical Make GNU Variables Makefile
+
+So, it is pretty common that we all use *makefile/Makefile* at some point in our
+computing career to accomplish something more complicated at once. Or, probably
+used something provided by the software maker along with the software we chose
+to use. /Makefile/ is a kinda lingua-franca of the  software build process. Makefile has
+its own language to work on and so it has many variables to represent different
+information to represent inside the makefile.
+
+Here are a few command variables that might come in handy ...
+
+    $@: the target filename.
+
+    $*: the target filename without the file extension.
+
+    $<: the first prerequisite filename.
+
+    $^: the filenames of all the prerequisites, separated by spaces, discard
+    duplicates.
+
+    $+: similar to $^, but includes duplicates.
+
+    $?: the names of all prerequisites that are newer than the target, separated
+    by spaces.
+
+    $@: mute the command itself
+
+    $(info the message need to be printed)
+
+Now, you will no longer get surprised if you come across some makefile which is
+having those.
+
+I have made a video about it with some reference to real-life examples of using
+the makefile, [[https://youtu.be/eMfYyijl148][A Video About Makefile And Syntax Of it.]]
+
+
+References:
+
+https://www.gnu.org/software/make/manual/make.html
