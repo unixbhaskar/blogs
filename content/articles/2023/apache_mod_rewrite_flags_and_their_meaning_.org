@@ -1,0 +1,49 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1450
+#+title: Apache Mod-Rewrite Flags And Their Meaning
+#+date: 2023-06-07
+#+tags: Technical Apache Webserver mod-rewrite modules
+
+Demystifying the intricacies of some arcane stuff is the forte of goodwill. In
+this post, I will let you know/show what the common flags used to make
+manipulation to /Apache Web Server/ with *mod-rewrite[fn:1]* module built with it. It is
+extremely powerful to maneuver and get precisely the desired result. This
+will help people delve into web server management with various domains.
+
+So, here are they,read them for your own sake ..
+
+*[R]	 Redirect you can add an =301 or =302 to change the type.*
+
+*[F]	 Forces the url to be forbidden. 403 header*
+
+*[G]	 Forces the url to be gone 401 header*
+
+*[L]	 Last rule. (You should use this on all your rules that don't link together)*
+
+*[N]	 Next round. Rerun the rules again from the start*
+
+*[C]	 Chains a rewrite rule together with the next rule.*
+
+*[T]	 use T=MIME-type to force the file to be a mime type*
+
+*[NS]	 Use if no sub request is requested*
+
+*[NC]	 Makes the rule case insensitive*
+
+*[QSA]	 Query String Append use to add to an existing query string*
+
+*[NE]	 Turns of normal escapes that are default in the rewrite-rule*
+
+*[PT]	 Pass through to the handler (together with mod alias)*
+
+*[S]	 Skip the next rule S=3 skips the next 3 rules*
+
+*[E]	 E=var sets an environmental variable*
+
+
+Generally, people write these rules inside the /.htaccess/ file or in the /apache
+config file/, whatever way is convenient for you.
+
+* Footnotes
+
+[fn:1] [[https://httpd.apache.org/docs/current/mod/mod_rewrite.html][Apache Mod-Rewrite Module]]
