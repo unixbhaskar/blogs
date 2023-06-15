@@ -1,0 +1,198 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1456
+#+title: Cscope and Ctags Are Two Bloody Indispensable Tools
+#+date: 2023-06-15
+#+tags: Technical Tools Linux UNIX Code Search Terminal Kernel
+
+Alrighto! While in computing you are supposed to be aware of some age old but
+*extremely useful tools* to maneuver through your project,large or medium, doesn't
+matter really.Nope, small projects might not see the benefit or usefulness of
+these tools in the proper way, although you can use these if you want.
+
+Here I shall be showing you, how I use it day to day basis and get the best of
+it.
+
+* Cscope
+
+First glean on Cscope[fn:1] ...
+
+This is a tool to use to /browse the source code/ in any specific project.All you
+have to *build the database* of files as per your requirement and invoke this
+command on the project directory to use various options provided by this command
+to navigate through your project efficiently.
+
+But how do you create the *database of files* ?? Pretty simple,you need to run this
+specific command /inside/ the project directory ...
+
+#+BEGIN_SRC bash
+find . -name "*.c" -o -name "*.cpp" -o -name "*.h"  > cscope.files
+#+END_SRC
+
+..and once it gathers all the relevant files in that file, then you have to
+run the below command to build it ..
+
+#+BEGIN_SRC bash
+cscope -q -R -b -i cscope.files
+#+END_SRC
+
+That's all for the building. Now it is time to explore the database with the
+facility it offers. How do you invoke the facility? Simply typing this in the
+project directory ...
+
+#+BEGIN_SRC bash
+cscope -d
+#+END_SRC
+
+.....and you will be presented with the interface on the terminal like this :
+
+#+BEGIN_SRC bash
+Find this C symbol:
+Find this global definition:
+Find functions called by this function:
+Find functions calling this function:
+Find this text string:
+Change this text string:
+Find this egrep pattern:
+Find this file:
+Find files #including this file:
+#+END_SRC
+
+
+Okay, you could have built the database of files by a simple bash script[fn:2]
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+#===============================================================================
+#
+#          FILE: cscope_database_create.sh
+#
+#         USAGE: ./cscope_database_create.sh
+#
+#   DESCRIPTION: Search and build cscope database for linux kernel
+#       OPTIONS: ---
+#  REQUIREMENTS: ---
+#          BUGS: ---
+#         NOTES: Found it here : https://courses.cs.washington.edu/courses/cse451/12sp/tutorials/tutorial_cscope.html
+#        AUTHOR: Bhaskar Chowdhury (https://about.me/unixbhaskar), unixbhaskar@gmail.com
+#  ORGANIZATION: Independent
+#       CREATED: 03/02/2023 17:32
+#      REVISION:  ---
+#===============================================================================
+
+set -o nounset                              # Treat unset variables as an error
+
+LNX="."
+
+echo "Finding relevant source files..."
+find $LNX                                                                \
+    -path "$LNX/arch/*" ! -path "$LNX/arch/x86*" -prune -o               \
+    -path "$LNX/include/asm-*" ! -path "$LNX/include/asm-generic*"       \
+                               ! -path "$LNX/include/asm-x86*" -prune -o \
+    -path "$LNX/tmp*" -prune -o                                          \
+    -path "$LNX/Documentation*" -prune -o                                \
+    -path "$LNX/scripts*" -prune -o                                      \
+    -name "*.[chxsS]" -print > $LNX/cscope.files
+
+echo "Building cscope database..."
+time cscope -q -k -b -i cscope.files
+
+exit 0
+
+#+END_SRC
+
+
+Okay,I ran that script on my /Linux Kernel Source Tree/ to build the database[fn:3], and
+then I use that information to my benefit.
+
+* Using Cscope with Vim
+
+So, it offers the integration with editor and for that, you simply need to either:
+
+a) Compile the Vim source code with /--enable-cscope/ option, which is what I do.
+
+b) Download the [[https://cscope.sourceforge.net/cscope_maps.vim][Vim Cscope Map file]] and put it in Vim's plugin folder to use
+the bindings.
+
+c) Make sure you have installed the /Cscope/ package in your system.
+
+
+I have made a video about accessing it,you can take a peek at it [[https://youtu.be/1wDP1-IwwQ4][Vim Integration
+With Cscope]] .
+
+
+* Using Cscope with Emacs
+
+a) You need to follow this page, which is what I did [[https://www.emacswiki.org/emacs/CScopeAndEmacs][Cscope integration with
+Emacs]]
+
+b) And I have this piece of code in my *dot emacs file*[fn:4] :
+
+#+BEGIN_SRC emacs-lisp
+;; Linux kernel development settings
+(setq c-default-style "linux")
+(require 'xcscope)
+(cscope-setup)
+#+END_SRC
+
+
+* Ctags
+
+Now, let us glean on *Ctags* [fn:5] .....
+
+It helps you navigate between the present file with other files for /functions
+and structures/. It can make things very easy to jump over to various places in a
+quick time in a large project.
+
+Again,it is possible to integrate with editors like Vim and Emacs and I have
+both.
+
+a) I use a /plugin/ inside Vim called *Tagbar* [fn:6] , which simply open a pane to
+show the tags.
+
+b) Like Cscope you need to build the tag file by running it inside the project
+folder like this :
+
+#+BEGIN_SRC sh
+ctags -R *
+#+END_SRC
+
+Vim has its specific binding to hover through the tag file to find tags. You
+need to look into the footnote link to that page to learn it.
+
+But you can start with a simple form :
+
+#+BEGIN_SRC sh
+vim -t <tagname>
+#+END_SRC
+
+Now for emacs, you need to do it in emacs way by using a specific binary name
+*etags* [fn:7]
+
+You need to build the stuff like this in the project directory like this with
+etags:
+
+#+BEGIN_SRC bash
+find . -type f -iname "*.[chS]" | xargs etags -a
+#+END_SRC
+
+...and inside emacs there are ways to access the tags and the key binds
+generally attached to it, starting with /C-s s/ prefix.
+
+
+
+
+* Footnotes
+
+[fn:1] [[https://cscope.sourceforge.net/][Cscope Homepage]]
+
+[fn:2] [[https://courses.cs.washington.edu/courses/cse451/12sp/tutorials/tutorial_cscope.html][University of Washington Cscope Tutorial Page]]
+
+[fn:3] [[https://cscope.sourceforge.net/large_projects.html][Using Cscope on Large Project Like Linux Kernel]]
+
+[fn:4] [[https://github.com/unixbhaskar/dotfiles/blob/master/.emacs][My Dot Emacs File]]
+
+[fn:5] [[https://courses.cs.washington.edu/courses/cse451/12sp/tutorials/tutorial_ctags.html][Ctags Tutorial]]
+
+[fn:6] [[https://vimawesome.com/plugin/tagbar][Vim Tagbar Plugin For Ctags]]
+
+[fn:7] [[https://www.emacswiki.org/emacs/BuildTags][Etags for Emacs]]
