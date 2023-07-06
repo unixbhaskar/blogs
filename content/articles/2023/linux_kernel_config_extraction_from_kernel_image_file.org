@@ -1,0 +1,42 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1460
+#+title: Linux Kernel Config Extraction From Kernel Image
+#+date: 2023-07-06
+#+tags: Technical Linux Kernel GNU Tools
+
+Sometimes little tools can help immensely to find out the esoteric thing in
+complex stuff.
+
+Well, to decipher the above statement, let me put it across straight,kernel
+developers have written so many little tools for their convenience and we as end
+users might take advantage of those tools, if we want. And I think we must.
+
+Let me give you more context, so it will be vivid to you. For instance, for some
+unknown reason or probably a deep reason, we want to see what are components
+help build the kernel we're probably running.
+
+If you have the /Linux Kernel Source Tree/ deflated, and you look directory into
+the top-level *scripts* directory, then you must see a script name *extract-ikonfig*
+. The name of the script says it all,if you pronounce it twice.
+
+Anyway, this script needs a /kernel binary image file/ to operate on. And you can
+easily provide that from your *boot* directory, which should be having one.
+
+Here is a little demo [[https://asciinema.org/a/594993][Kernel Config Extraction From Kernel Image File]].
+
+Now, as you can gather from the above demo, I have directly run that from a
+different directory or /home/ directory. That is because I have copied the script
+to the standard PATH from the kernel source tree scripts directory. But, that is
+strictly not required to do so and people often run it from the source tree
+itself.I did it for my convenience.
+
+
+#+BEGIN_SRC bash
+tp_x250_13:30:30_Thu Jul 06: :~>extract-ikconfig <name_of_the_kernel_image_file>
+#+END_SRC
+
+Here is what the scripts directory under the kernel source tree looks like :
+
+[[~/Pictures/Screenshots/2023-07-06-133429_1364x355_scrot.png]]
+
+# /home/bhaskar/Pictures/Screenshots/2023-07-06-133429_1364x355_scrot.png http://unixbhaskar.files.wordpress.com/2023/07/2023-07-06-133429_1364x355_scrot.png
