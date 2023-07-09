@@ -1,0 +1,86 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1465
+#+title: What The Heck Is Linter? And How Do You Use It?
+#+date: 2023-07-09
+#+tags: Technical Lint Linter Programming UNIX Linux Software Tools Opensource
+
+Well, if you write software for any amount of time then you should have come
+across and used *Linter*[fn:1]. And this /static analyzer tool/ has different
+variants and use,which you can see here[fn:2].
+
+Alright, /lint/ has a modern version, which is called *splint*[fn:3]. It is
+available on most Linux systems.
+
+It all started when *Stephen C. Johnson* at Bell Labs wrote the /lint/ program for
+/yacc[fn:4]/ program checking.
+
+There is a piece of wonderful information about, how to use lint on the C
+program. You can take a peek at it here[fn:5].
+
+Various other languages also has /linter/ for language specific findings,for
+instance Perl has its own, You can get it here[fn:6] and *Perl Analyzer*[fn:7].
+
+There is a nice book[fn:8] from  O'Reilly .
+
+Now, all the references out of the way, let me give you little example of using
+/splint/ with some C program .
+
+First, once you installed /splint/ you need to run the /help/ flags with it
+to see the options it provides.
+
+[[~/Pictures/Screenshots/2023-07-09-090905_491x352_scrot.png]]
+
+
+Now, let me get into one of my old repo, which is having some C files lying
+around, and I am going to run /splint/ on them.
+
+[[~/Pictures/Screenshots/2023-07-09-091820_695x315_scrot.png]]
+
+So, you can clearly see that the linter spit out some verbiage about the code in
+that file. This information can greatly help to fix the /coding style issue/.
+
+If you look at the first screenshot on this page, I ran help, and it produces
+various topics. I urge you to please run help against those topics to learn more
+about how you can take advantage of this tool.
+
+* GCC has a flag called -fanalyzer[fn:9]
+
+Which greatly helps to figure out the stuff while compiling the file. Here is a
+small take on it.
+
+HEADS UP!!
+
+*In technical terms, it performs coverage-guided symbolic execution of the code
+being compiled. It is neither sound nor complete: it can have false positives
+and false negatives. It is a bug-finding tool, rather than a tool for proving
+program correctness.*
+
+This flag has so many levels of options attached to it, please go through
+those for your betterment's sake.
+
+* CLANG has a Static analyzer too,LLVM[fn:10]
+
+* Footnotes
+
+[fn:1] [[https://en.wikipedia.org/wiki/List_of_tools_for_static_code_analysis][Wikipedia Page About Lint]]
+
+[fn:2] [[https://en.wikipedia.org/wiki/List_of_tools_for_static_code_analysis][List of tools for static code analysis]]
+
+[fn:3] [[https://en.wikipedia.org/wiki/Splint_(programming_tool)][Splint]]
+
+[fn:4] [[https://en.wikipedia.org/wiki/Yacc][Yacc]]
+
+[fn:5] [[http://www2.phys.canterbury.ac.nz/dept/docs/manuals/unix/DEC_4.0e_Docs/HTML/APS30DTE/DOCU_015.HTM][Checking C program with Lint]]
+
+[fn:6] [[https://metacpan.org/pod/Perl::Lint][Perl Linter]]
+
+[fn:7] [[https://technix.github.io/Perl-Analyzer/][Perl Analyzer]]
+
+[fn:8] [[https://www.google.com/books/edition/Checking_C_Programs_with_Lint/vweTteq3OLQC?hl=en][Book Checking C Program With Lint]]
+
+[fn:9] [[https://gcc.gnu.org/onlinedocs/gcc/Static-Analyzer-Options.html][GCC Static Analysing flag]]
+
+[fn:10] [[https://clang-analyzer.llvm.org/index.html][CLANG static analyzer]]
+
+# /home/bhaskar/Pictures/Screenshots/2023-07-09-090905_491x352_scrot.png http://unixbhaskar.files.wordpress.com/2023/07/2023-07-09-090905_491x352_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-07-09-091820_695x315_scrot.png http://unixbhaskar.files.wordpress.com/2023/07/2023-07-09-091820_695x315_scrot.png
