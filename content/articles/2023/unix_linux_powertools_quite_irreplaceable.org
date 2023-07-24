@@ -1,0 +1,95 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1468
+#+title: UNIX Linux Power Tools Are Quite Irreplaceable
+#+date: 2023-07-24
+#+tags: Technical UNIX Linux GNU Tools Opensource
+
+Well, if something lives for over 40 long years and doing the same thing what it
+was meant to do at the time of creation, importantly without deviations, then I
+must say that is a commendable achievement.
+
+I am referring to the *tools that* come bundled with the proprietary UNIX or free
+and open Linux. And the supply is quite ingrained with the operating system very
+closely.
+
+Haven't we all used *Grep,Sed,Awk(variants of it),sort,* to name a few? There are
+other equally important and frequently used tools come bundled with /GNU
+Toolchaiin[fn:1]/. Plus few of them can be available over the internet in various
+known places for ages.
+
+The point I am coming to is that these tools are quite /irreplaceable/ as per my
+understanding. I am well aware, that a few enthusiasts people are inclined to
+write few of the utility(they already did) in popular programming languages(I am
+referring to Rust). But, unfortunately, old ones are so stable and such a
+workhorse for a long that I don't think people in sane minds could afford to
+replace them with something /newly developed/ stuff.
+
+Also, there is some collection of *binary utilities[fn:2]* maintained by the gnu
+folks for a long time. These tools are generally specific to certain sections of
+people using computers.More so targeted to developers and system administrators.
+
+The compiler that is most dominant is called *GCC: GNU Compiler Collection[fn:3]*
+and available on all open systems.
+
+Glibc[fn:4], is such an important component of the system to function properly
+and when you build stuff it assist you build thing with it. It is called *GNU C
+Library* , as the name suggest it is essentially a C library implementation.
+
+Another piece of important tool is called *GNU Autotools*[fn:5],it helps build
+the system with some specified tools, like *Autoconf,Automake and Libtool* .
+
+Here is a list of *basic UNIX tools[fn:6]* we all use day to day basis.
+
+The list of all *UNIX commnads*[fn:7], which might come in handy, in case you want
+to refer back.
+
+Likewise,a few of the tools are pretty new but widely popular, which are
+available somewhere not so well known places.
+
+For instance, *sysstat[fn:8]* is quite an indispensable tool to have in your
+toolbox, especially if you maintain servers running Linux.
+
+For instance, you can get *Atop[fn:9]* an extensive top like interface to give you
+much more insight into the system activity..
+
+*Clang[fn:10]* is gaining popularity in compiler tooling space and now almost
+become toe to toe with GCC.
+
+*OpenSSh[fn:11]* is undeniably the single most protocol to use access remote
+server for manageability.
+
+*GnuPG[fn:12]* is used quite universally to encrypt and sign data and
+communications,such an important tool.
+
+I am enlisting these tools here because their presence in the open system is
+bloody prominent. So,with these tools you can manage some stuff by yourself
+without venturing out into the wild and looking for something fancy and fragile.
+
+The mentioned tools plus a few more, which probably I am missing at this moment
+stood the test of time and provide what it supposes to provide.
+
+* Footnotes
+
+[fn:1] [[https://en.wikipedia.org/wiki/GNU_toolchain][GNU Toolchain]]
+
+[fn:2] [[https://www.gnu.org/software/binutils/][GNU Binutils]]
+
+[fn:3] [[https://en.wikipedia.org/wiki/GNU_Compiler_Collection][GNU Compiler Collection]]
+
+[fn:4] [[https://en.wikipedia.org/wiki/Glibc][Glibc]]
+
+[fn:5] [[https://en.wikipedia.org/wiki/GNU_Autotools][GNU Autotools]]
+
+[fn:6] [[https://www.cs.toronto.edu/~maclean/csc209/unixtools.html][University Of Toronto UNIX basic tools]]
+
+[fn:7] [[https://en.wikipedia.org/wiki/List_of_Unix_commands][List Of UNIX Commands]]
+
+[fn:8] [[http://sebastien.godard.pagesperso-orange.fr/][Sysstat]]
+
+[fn:9]  [[https://www.atoptool.nl/][Atop]]
+
+[fn:10] [[https://clang.llvm.org/][Clang]]
+
+[fn:11] [[https://www.openssh.com/][OpenSSH]]
+
+[fn:12] [[https://www.gnupg.org/index.html][GnuPG]]
