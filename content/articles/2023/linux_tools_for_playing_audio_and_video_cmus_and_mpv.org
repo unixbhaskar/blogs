@@ -1,0 +1,389 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1485
+#+title: Linux Tools For Playing Audio And Video CMUS And MPV
+#+date: 2023-08-05
+#+tags: Technical Opensource Audio Video Tools Linux
+
+So, all of us has the fondness to listen to music and watch video of
+varieties. While you are sitting on *Linux*, that means, on *Linux Desktop* then you
+have to have some convenient tools to get that experience better.Also, if those
+tools are /lightweight/ then it adds even more value to have those in the armory.
+
+I have been personally /using and sticking with/ the *CMUS[fn:1]* for music playing and
+*MPV[fn:2]* for video related stuff. I have made a video about my work related to these
+activity and you can take a peek at it *[[https://youtu.be/nkqxIHk6Fao ][here*]].
+
+So, what I will do, to give you my settings, which are pretty ordinary, if you
+haven't discovered it by other means.
+
+You can get CMUS and MPV from your OS package manager, most the Linux
+distribution generally package these, if not, then you have to get it from the
+actual source, which I have give link in the footnotes and install. Although it
+is very trivial to installed those applications.
+
+* CMUS configurations
+
+I have a *.cmus* directory under my home folder and which contains these files:
+
+[[~/Pictures/Screenshots/2023-08-05-040457_779x42_scrot.png]]
+
+..and in general my CMUS interface look like this :
+
+[[~/Pictures/Screenshots/2023-08-05-040817_1366x768_scrot.png]]
+
+Here is the /saved configurations/ of the present interface I have :
+
+#+BEGIN_SRC bash
+set aaa_mode=album
+set altformat_current= %F
+set altformat_playlist= %F%= %d
+set altformat_title=%f
+set altformat_trackwin= %F%= %d
+set auto_expand_albums_follow=true
+set auto_expand_albums_search=true
+set auto_expand_albums_selcur=true
+set auto_reshuffle=true
+set buffer_seconds=10
+set color_cmdline_attr=default
+set color_cmdline_bg=default
+set color_cmdline_fg=default
+set color_cur_sel_attr=default
+set color_error=160
+set color_info=136
+set color_separator=240
+set color_statusline_attr=default
+set color_statusline_bg=black
+set color_statusline_fg=37
+set color_titleline_attr=default
+set color_titleline_bg=black
+set color_titleline_fg=136
+set color_trackwin_album_attr=bold
+set color_trackwin_album_bg=default
+set color_trackwin_album_fg=default
+set color_win_attr=default
+set color_win_bg=default
+set color_win_cur=33
+set color_win_cur_attr=default
+set color_win_cur_sel_attr=default
+set color_win_cur_sel_bg=black
+set color_win_cur_sel_fg=33
+set color_win_dir=33
+set color_win_fg=default
+set color_win_inactive_cur_sel_attr=default
+set color_win_inactive_cur_sel_bg=default
+set color_win_inactive_cur_sel_fg=125
+set color_win_inactive_sel_attr=default
+set color_win_inactive_sel_bg=default
+set color_win_inactive_sel_fg=125
+set color_win_sel_attr=default
+set color_win_sel_bg=black
+set color_win_sel_fg=166
+set color_win_title_attr=default
+set color_win_title_bg=black
+set color_win_title_fg=64
+set confirm_run=true
+set continue=true
+set continue_album=true
+set device=/dev/cdrom
+set display_artist_sort_name=false
+set dsp.alsa.device=
+set dsp.jack.resampling_quality=2
+set dsp.jack.server_name=
+set dsp.oss.device=
+set follow=true
+set format_current=%F
+set format_playlist=%F
+set format_playlist_va=%F
+set format_statusline= %{status} %{?show_playback_position?%{position} %{?duration?/ %{duration} }?%{?duration?%{duration} }}- %{total} %{?bpm>0?at %{bpm} BPM }%{?volume>=0?vol: %{?lvolume!=rvolume?%{lvolume},%{rvolume} ?%{volume} }}%{?stream?buf: %{buffer} }%{?show_current_bitrate & bitrate>=0? %{bitrate} kbps }%=%{?repeat_current?repeat current?%{?play_library?%{playlist_mode} from %{?play_sorted?sorted }library?playlist}} | %1{continue}%1{follow}%1{repeat}%1{shuffle}
+set format_title=%F
+set format_trackwin=%F
+set format_trackwin_album=%l
+set format_trackwin_va=%F
+set format_treewin=%F
+set format_treewin_artist=%a
+set icecast_default_charset=ISO-8859-1
+set id3_default_charset=ISO-8859-1
+set input.aac.priority=50
+set input.cue.priority=50
+set input.ffmpeg.priority=30
+set input.mad.priority=55
+set input.vorbis.priority=50
+set input.wav.priority=50
+set lib_add_filter=
+set lib_sort=albumartist date album discnumber tracknumber title filename play_count
+set mixer.alsa.channel=
+set mixer.alsa.device=
+set mixer.oss.channel=PCM
+set mixer.oss.device=
+set mixer.pulse.restore_volume=1
+set mouse=false
+set mpris=false
+set output_plugin=pulse
+set passwd=
+set pl_sort=
+set play_library=false
+set play_sorted=false
+set repeat=true
+set repeat_current=false
+set replaygain=disabled
+set replaygain_limit=true
+set replaygain_preamp=0.000000
+set resume=false
+set rewind_offset=5
+set scroll_offset=2
+set set_term_title=true
+set show_all_tracks=true
+set show_current_bitrate=false
+set show_hidden=true
+set show_playback_position=true
+set show_remaining_time=true
+set shuffle=false
+set skip_track_info=false
+set smart_artist_sort=true
+set softvol=false
+set softvol_state=0 0
+set start_view=tree
+set status_display_program=cmus-status-display
+set stop_after_queue=false
+set time_show_leading_zero=true
+set tree_width_max=0
+set tree_width_percent=33
+set wrap_search=true
+bind browser backspace browser-up
+bind browser i toggle show_hidden
+bind browser space win-activate
+bind browser u win-update
+bind common ! push shell
+bind common + vol +10%
+bind common , seek -1m
+bind common - vol -10%
+bind common . seek +1m
+bind common / search-start
+bind common 1 view tree
+bind common 2 view sorted
+bind common 3 view playlist
+bind common 4 view queue
+bind common 5 view browser
+bind common 6 view filters
+bind common 7 view settings
+bind common = vol +10%
+bind common ? search-b-start
+bind common C toggle continue
+bind common D win-remove
+bind common E win-add-Q
+bind common F push filter
+bind common G win-bottom
+bind common I echo {}
+bind common L push live-filter
+bind common M toggle play_library
+bind common N search-prev
+bind common P win-mv-before
+bind common U win-update-cache
+bind common [ vol +1% +0
+bind common ] vol +0 +1%
+bind common ^B win-page-up
+bind common ^C echo Type :quit<enter> to exit cmus.
+bind common ^D win-half-page-down
+bind common ^E win-scroll-down
+bind common ^F win-page-down
+bind common ^L refresh
+bind common ^R toggle repeat_current
+bind common ^U win-half-page-up
+bind common ^Y win-scroll-up
+bind common a win-add-l
+bind common b player-next
+bind common c player-pause
+bind common delete win-remove
+bind common down win-down
+bind common e win-add-q
+bind common end win-bottom
+bind common enter win-activate
+bind common f toggle follow
+bind common g win-top
+bind common h seek -5
+bind common home win-top
+bind common i win-sel-cur
+bind common j win-down
+bind common k win-up
+bind common l seek +5
+bind common left seek -5
+bind common m toggle aaa_mode
+bind common mlb_click_selected win-activate
+bind common mouse_scroll_down win-down
+bind common mouse_scroll_up win-up
+bind common n search-next
+bind common o toggle play_sorted
+bind common p win-mv-after
+bind common page_down win-page-down
+bind common page_up win-page-up
+bind common q quit -i
+bind common r toggle repeat
+bind common right seek +5
+bind common s toggle shuffle
+bind common space win-toggle
+bind common t toggle show_remaining_time
+bind common tab win-next
+bind common u update-cache
+bind common up win-up
+bind common v player-stop
+bind common x player-play
+bind common y win-add-p
+bind common z player-prev
+bind common { vol -1% -0
+bind common } vol -0 -1%
+fset 90s=date>=1990&date<2000
+fset classical=genre="Classical"
+fset missing-tag=!stream&(artist=""|album=""|title=""|tracknumber=-1|date=-1)
+fset mp3=filename="*.mp3"
+fset ogg=filename="*.ogg"
+fset ogg-or-mp3=ogg|mp3
+fset unheard=play_count=0
+factivate
+#+END_SRC
+
+* MPV configurations
+
+I have a *.mplayer* directory under my home folder and it contains these files:
+
+[[~/Pictures/Screenshots/2023-08-05-044003_336x32_scrot.png]]
+
+..and here is *gui config* file contents:
+
+#+BEGIN_SRC bash
+cache=no
+cache_size=2048
+vf_pp=no
+autosync=no
+autosync_size=0
+ao_volnorm=no
+ao_surround=no
+ao_extra_stereo=no
+ao_extra_stereo_coefficient=1.000000
+enable_audio_equ=no
+equ_band_00=0.000000
+equ_band_01=0.000000
+equ_band_02=0.000000
+equ_band_03=0.000000
+equ_band_04=0.000000
+equ_band_05=0.000000
+equ_band_06=0.000000
+equ_band_07=0.000000
+equ_band_08=0.000000
+equ_band_09=0.000000
+equ_band_10=0.000000
+equ_band_11=0.000000
+equ_band_12=0.000000
+equ_band_13=0.000000
+equ_band_14=0.000000
+equ_band_15=0.000000
+equ_band_16=0.000000
+equ_band_17=0.000000
+equ_band_18=0.000000
+equ_band_19=0.000000
+equ_band_20=0.000000
+equ_band_21=0.000000
+equ_band_22=0.000000
+equ_band_23=0.000000
+equ_band_24=0.000000
+equ_band_25=0.000000
+equ_band_26=0.000000
+equ_band_27=0.000000
+equ_band_28=0.000000
+equ_band_29=0.000000
+equ_band_30=0.000000
+equ_band_31=0.000000
+equ_band_32=0.000000
+equ_band_33=0.000000
+equ_band_34=0.000000
+equ_band_35=0.000000
+equ_band_36=0.000000
+equ_band_37=0.000000
+equ_band_38=0.000000
+equ_band_39=0.000000
+equ_band_40=0.000000
+equ_band_41=0.000000
+equ_band_42=0.000000
+equ_band_43=0.000000
+equ_band_44=0.000000
+equ_band_45=0.000000
+equ_band_46=0.000000
+equ_band_47=0.000000
+equ_band_48=0.000000
+equ_band_49=0.000000
+equ_band_50=0.000000
+equ_band_51=0.000000
+equ_band_52=0.000000
+equ_band_53=0.000000
+equ_band_54=0.000000
+equ_band_55=0.000000
+equ_band_56=0.000000
+equ_band_57=0.000000
+equ_band_58=0.000000
+equ_band_59=0.000000
+replay_gain=no
+replay_gain_adjustment=0
+playbar=yes
+load_fullscreen=no
+show_videowin=yes
+gui_save_pos=yes
+gui_main_pos_x=926
+gui_main_pos_y=648
+gui_video_out_pos_x=0
+gui_video_out_pos_y=33
+idle=yes
+gui_tv_digital=yes
+gui_skin=default
+stopxscreensaver=yes
+cdrom_device=/dev/cdrom
+dvd_device=/dev/dvd
+osd_level=1
+vo_driver=vdpau
+vf_autoq=0
+vo_direct_render=no
+vo_doublebuffering=yes
+vo_panscan=0.000000
+v_flip=-1
+v_framedrop=0
+v_idx=-1
+v_ni=no
+softvol=no
+sub_auto_load=yes
+sub_overlap=no
+sub_pos=100
+sub_unicode=no
+sub_utf8=no
+font_factor=0.750000
+font_text_scale=3.500000
+font_osd_scale=4.000000
+font_blur=2.000000
+font_outline=2.000000
+font_autoscale=3
+ass_enabled=no
+ass_use_margins=no
+ass_top_margin=0
+ass_bottom_margin=0
+playlist_support=no
+#+END_SRC
+
+The MPV insterface look like this :
+
+[[~/Pictures/Screenshots/2023-08-05-044550_1366x768_scrot.png]]
+
+I haven't tweak it and using almost stock stuff, which is good enough for
+me.YMMV.
+
+PS: I have tight integration with /i3 window manager[fn:3]/, which is sole window maker
+I am using as the basis for this.
+
+* Footnotes
+
+[fn:1] [[https://cmus.github.io/][CMUS]]
+
+[fn:2] [[https://mpv.io/][MPV]]
+
+[fn:3] [[https://i3wm.org/][I3 Window Manager]]
+
+# /home/bhaskar/Pictures/Screenshots/2023-08-05-040457_779x42_scrot.png http://unixbhaskar.files.wordpress.com/2023/08/2023-08-05-040457_779x42_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-08-05-040817_1366x768_scrot.png http://unixbhaskar.files.wordpress.com/2023/08/2023-08-05-040817_1366x768_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-08-05-044003_336x32_scrot.png http://unixbhaskar.files.wordpress.com/2023/08/2023-08-05-044003_336x32_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-08-05-044550_1366x768_scrot.png http://unixbhaskar.files.wordpress.com/2023/08/2023-08-05-044550_1366x768_scrot.png
