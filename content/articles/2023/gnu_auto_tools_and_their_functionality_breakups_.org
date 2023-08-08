@@ -1,0 +1,348 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1500
+#+title: GNU AutoTools And Their Functionality Breakups
+#+date: 2023-08-08
+#+tags: Technical GNU Tools Automation Opensource
+
+Well, we all use *GNU Autotools[fn:1]* some way or other. It has become part and parcel
+of our open-source software building journey.Here in this brief post I will show
+you each of the tools involved and what functionality they perform.
+
+Here is the breakup ...take a peek
+
+#+BEGIN_SRC bash
+Tool	          Description	                                                      Requires	                        Produces
+autoscan	generates template configure.ac based on your application source	                            configure.scan
+autoheader	generates a header that can contains platform specific constants	                          configure.ac	config.h.in
+autoconf	generates the configure shell script that will be used for system profiling	             configure.ac  config.h.in	configure, config.h
+automake	works in conjunction with autoconf to produce Makefiles	               autoconf                       Makefile.am  Makefile.in
+(g)libtoolize	copies scripts to package to enable the building of shared libraries                                  shared linraries, .so
+aclocal	        creates a file containing macros required for automake          configure.ac, Makefile.am	         aclocal.m4
+autoreconf	runs  autoconf, autoheader, aclocal, automake, libtoolize         all of the above	                configure
+#+END_SRC
+
+So, you can see these tools are kind of /chained together/ to produce ultimately
+the *configure* script, which is the first step to build any software from
+source.Then in the process we use *make* which in tern use autoconf and automake
+as you see in the above table.
+
+* System checks (autoscan, autoheader, autoconf)
+
+[[~/Pictures/Screenshots/2023-08-08-142126_721x88_scrot.png]]
+
+You can see in the above screenshot that once I ran the /autoscan/, it produces
+two files in the directory, name *autoscan-2.71.log* and *configure.scan*. Those are
+basically scanned result of the system file locations.If I look through the
+/configure.scan/ file :
+
+#+BEGIN_SRC bash
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
+
+AC_PREREQ([2.71])
+AC_INIT([FULL-PACKAGE-NAME], [VERSION], [BUG-REPORT-ADDRESS])
+AC_CONFIG_SRCDIR([buggy.c])
+AC_CONFIG_HEADERS([config.h])
+
+# Checks for programs.
+AC_PROG_CXX
+AC_PROG_AWK
+AC_PROG_CC
+AC_PROG_CPP
+AC_PROG_INSTALL
+AC_PROG_LN_S
+AC_PROG_MAKE_SET
+AC_PROG_RANLIB
+
+# Checks for libraries.
+
+# Checks for header files.
+AC_CHECK_HEADERS([unistd.h])
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_CHECK_HEADER_STDBOOL
+AC_C_INLINE
+AC_TYPE_SIZE_T
+
+# Checks for library functions.
+AC_FUNC_MALLOC
+AC_CHECK_FUNCS([memset])
+
+AC_OUTPUT
+
+#+END_SRC
+
+So,it checks through some development tools presence in the system and some
+libraries and importantly some headers too.
+
+Now, I have to /move/ configure.scan to as configure.ac, that step is needed to
+run the /autoheader/ , because you have noticed in the configure.scan file there
+is a mention of *config.h* file that has to produced and the way it has to be
+produce is by running the *autoheader* script and that script will read thorough
+that configure.ac file.
+
+Here is the visual representation what I said above:
+
+[[~/Pictures/Screenshots/2023-08-08-143708_913x67_scrot.png]]
+
+Okay, here is the content of the *config.h* file :
+
+#+BEGIN_SRC bash
+/* config.h.  Generated from config.h.in by configure.  */
+/* config.h.in.  Generated from configure.ac by autoheader.  */
+
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#define HAVE_DLFCN_H 1
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#define HAVE_INTTYPES_H 1
+
+/* Define to 1 if your system has a GNU libc compatible `malloc' function, and
+   to 0 otherwise. */
+#define HAVE_MALLOC 1
+
+/* Define to 1 if you have the <memory.h> header file. */
+#define HAVE_MEMORY_H 1
+
+/* Define to 1 if you have the `memset' function. */
+#define HAVE_MEMSET 1
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#define HAVE_STDINT_H 1
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#define HAVE_STDLIB_H 1
+
+/* Define to 1 if you have the <strings.h> header file. */
+#define HAVE_STRINGS_H 1
+
+/* Define to 1 if you have the <string.h> header file. */
+#define HAVE_STRING_H 1
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#define HAVE_SYS_STAT_H 1
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#define HAVE_SYS_TYPES_H 1
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#define HAVE_UNISTD_H 1
+
+/* Define to 1 if the system has the type `_Bool'. */
+#define HAVE__BOOL 1
+
+/* Define to the sub-directory where libtool stores uninstalled libraries. */
+#define LT_OBJDIR ".libs/"
+
+/* Name of package */
+#define PACKAGE "experiment_with_autotools"
+
+/* Define to the address where bug reports for this package should be sent. */
+#define PACKAGE_BUGREPORT "unixbhaskar@gmail.com"
+
+/* Define to the full name of this package. */
+#define PACKAGE_NAME "experiment_with_autotools"
+
+/* Define to the full name and version of this package. */
+#define PACKAGE_STRING "experiment_with_autotools 1.0"
+
+/* Define to the one symbol short name of this package. */
+#define PACKAGE_TARNAME "experiment_with_autotools"
+
+/* Define to the home page for this package. */
+#define PACKAGE_URL ""
+
+/* Define to the version of this package. */
+#define PACKAGE_VERSION "1.0"
+
+/* Define to 1 if you have the ANSI C header files. */
+#define STDC_HEADERS 1
+
+/* Version number of package */
+#define VERSION "1.0"
+
+/* Define to `__inline__' or `__inline' if that's what the C compiler
+   calls it, or to nothing if 'inline' is not supported under any name.  */
+#ifndef __cplusplus
+/* #undef inline */
+#endif
+
+/* Define to rpl_malloc if the replacement function should be used. */
+/* #undef malloc */
+
+/* Define to `unsigned int' if <sys/types.h> does not define. */
+/* #undef size_t */
+
+#+END_SRC
+
+..and here is the *config.h.in* file content :
+
+#+BEGIN_SRC bash
+/* config.h.in.  Generated from configure.ac by autoheader.  */
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#undef HAVE_INTTYPES_H
+
+/* Define to 1 if your system has a GNU libc compatible `malloc' function, and
+   to 0 otherwise. */
+#undef HAVE_MALLOC
+
+/* Define to 1 if you have the `memset' function. */
+#undef HAVE_MEMSET
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdio.h> header file. */
+#undef HAVE_STDIO_H
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#undef HAVE_STDLIB_H
+
+/* Define to 1 if you have the <strings.h> header file. */
+#undef HAVE_STRINGS_H
+
+/* Define to 1 if you have the <string.h> header file. */
+#undef HAVE_STRING_H
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#undef HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#undef HAVE_SYS_TYPES_H
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H
+
+/* Define to 1 if the system has the type `_Bool'. */
+#undef HAVE__BOOL
+
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#undef PACKAGE_NAME
+
+/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING
+
+/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME
+
+/* Define to the home page for this package. */
+#undef PACKAGE_URL
+
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION
+
+/* Define to 1 if all of the C90 standard headers exist (not just the ones
+   required in a freestanding environment). This macro is provided for
+   backward compatibility; new code need not use it. */
+#undef STDC_HEADERS
+
+/* Define to `__inline__' or `__inline' if that's what the C compiler
+   calls it, or to nothing if 'inline' is not supported under any name.  */
+#ifndef __cplusplus
+#undef inline
+#endif
+
+/* Define to rpl_malloc if the replacement function should be used. */
+#undef malloc
+
+/* Define to `unsigned int' if <sys/types.h> does not define. */
+#undef size_t
+
+#+END_SRC
+
+But still the last step to generate the *configure* script is to run the *autoconf*
+tool...
+
+[[~/Pictures/Screenshots/2023-08-08-144818_985x66_scrot.png]]
+
+Now, you can see the *configure* script in the directory.
+
+* Automake
+
+It needs a file in the project directory, which is named as *Makefile.am* and the content
+of it :
+
+#+BEGIN_SRC bash
+AUTOMAKE_OPTIONS = foreign
+#SUBDIRS = src
+
+lib_LTLIBRARIES = libbinfmt_elf_fdpic.la
+
+CFLAGS = -Wall -O2
+LD_FLAGS = -all-static
+ACLOCAL_AMFLAGS = -I m4
+libdir= ${abs_top_builddir}/lib
+binfmt_elf_fdpic_la_SOURCES = binfmt_elf_fdpic.c
+binfmt_elf_fdpic_la_LDFLAGS = -module -avoid-version -shared
+#+END_SRC
+
+Alright, we have defined our Makefile as per the project requirement. we have
+defined out library name with an extension *.la* and that*--all-static* forces it
+to build statically linked library.
+
+* Libtoolize
+
+This is to run to gather all the libraries to build the shared libraries.
+
+[[~/Pictures/Screenshots/2023-08-08-153501_544x156_scrot.png]]
+
+so, the output suggest to add some stuff in the /configure.ac/ file and rerun it
+for the betterment.
+
+So, I added *LT_INIT* and *AC_CONFIG_MACRO_DIRS([m4])* these two variable in the
+/configure.ac/ file and rerun the *libtoolize* and it now ready to run the next
+script.
+
+* Aclocal
+
+It created file containing macros required for automake to use.
+
+#+BEGIN_SRC bash
+tp_x250_15:42:19_Tue Aug 08: :~/testing_gnu_autotools>aclocal
+#+END_SRC
+
+So,now have to run the *automake*
+
+* Automake
+
+Final straw...
+
+[[~/Pictures/Screenshots/2023-08-08-160554_553x46_scrot.png]]
+
+...and the final state of the project directory looks like this :
+
+[[~/Pictures/Screenshots/2023-08-08-160726_986x44_scrot.png]]
+
+
+Now, you can safely run the standard commands for installing software:
+
+#+BEGIN_SRC bash
+tp_x250_16:12:19_Tue Aug 08: :~/testing_gnu_autotools>./configure
+....
+....
+....
+tp_x250_16:13:25_Tue Aug 08: :~/testing_gnu_autotools>make
+.....
+.....
+.....
+
+tp_x250_16:14:37_Tue Aug 08: :~/testing_gnu_autotools>make install
+.....
+.....
+.....
+#+END_SRC
+
+* Footnotes
+
+[fn:1] [[https://www.gnu.org/software/automake/manual/html_node/Autotools-Introduction.html][GNU Autotools]]
+
+# /home/bhaskar/Pictures/Screenshots/2023-08-08-142126_721x88_scrot.png http://unixbhaskar.files.wordpress.com/2023/08/2023-08-08-142126_721x88_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-08-08-143708_913x67_scrot.png http://unixbhaskar.files.wordpress.com/2023/08/2023-08-08-143708_913x67_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-08-08-144818_985x66_scrot.png http://unixbhaskar.files.wordpress.com/2023/08/2023-08-08-144818_985x66_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-08-08-153501_544x156_scrot.png http://unixbhaskar.files.wordpress.com/2023/08/2023-08-08-153501_544x156_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-08-08-160554_553x46_scrot.png http://unixbhaskar.files.wordpress.com/2023/08/2023-08-08-160554_553x46_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-08-08-160726_986x44_scrot.png http://unixbhaskar.files.wordpress.com/2023/08/2023-08-08-160726_986x44_scrot.png
