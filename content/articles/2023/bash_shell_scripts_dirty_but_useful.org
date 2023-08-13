@@ -1,0 +1,369 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1503
+#+title: Bash Shell Scripts Dirty But Useful Part-I
+#+date: 2023-08-13
+#+tags: Technical Bash Shell Tools Opensource Linux
+
+Well, today is Sunday, and I am bored and nothing seems working. So,thought to
+share some /dirty and useful for me/ kinda enlisting of /bash scripts/ I have
+written over the years. People might take cues from these.
+
+*HEADS UP!  Bash script experts,If these scripts make you feel disgusted and you*
+*fret,it will be entirely your fault, not mine :) Your cursing will not solve my
+*inability.*
+
+* Cloning git repository with dmenu prompt
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+#download_url=$1
+# grab_url=$(ps -ef | grep (wget\|curl\|git) | head -1 | gawk ' { print $10 }')
+
+clone_url=$( echo | dmenu -p "Give Git Clone Url:" )
+
+nourl() {
+if [[ "$clone_url" == "" ]];then
+     notify-send "It seems, you forgot to provide the URL .."
+    exit 1
+fi
+}
+
+cloning_git_repo() {
+         cd $HOME/git-linux && git clone "$clone_url"
+	# wget $download_url 2>&1 | sed -u 's/.* \([0-9]\+%\)\ \+\([0-9.]\+.\) \(.*\)/\1\n# Downloading at \2\/s, ETA \3/'
+}
+
+cloning() {
+
+if [[ "$clone_url" != "" ]];then
+
+        notify-send "Cloning this: $clone_url"
+        cloning_git_repo
+        cd "$(basename $clone_url .git)" && bash -
+else
+	nourl
+fi
+
+}
+
+cloning
+
+#+END_SRC
+
+* Gentoo packages enlisting
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+ emerge &>/dev/null $(eix -c --pure-packages |  grep I | grep -v N | dmenu -l 30 -p "Gentoo Packages:" | cut -d ' ' -f2)
+#+END_SRC
+
+* Network bounce if the connection goes down
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+rm -f /var/lib/dhcpcd/wlan0-gnu_linux1.lease
+rm -f /var/lib/dhcpcd/wlp3s0-gnu_linux1.lease
+
+if test "$(uname -n)" == "Gentoo";then
+            /etc/init.d/net.lo restart
+          /etc/init.d/wpa_supplicant restart
+elif test "$(uname -n)" == "Slackware";then
+	    /etc/rc.d/rc.inet1 restart
+    else
+	    :
+fi
+#+END_SRC
+
+* Browse Arch Linux Packages with fzf
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+pacman -Qq | fzf --preview 'pacman -Qil {}' --layout=reverse --bind 'enter:execute(pacman -Qil {} | less)'
+#+END_SRC
+
+* Add bookmark with help of dmenu prompt
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+#set -vx
+if [[ -z "$1" ]]; then
+#  printf "Search query: ";
+  query=$( echo | dmenu -p "Add Bookmark Url:" )
+else
+	query="$1"
+fi
+
+#query="${query// /_}"
+#echo "$query"
+
+if [[ "$query" == "" ]];then
+	exit 1
+else
+
+#setsid -f $(command -v vimb) $query
+echo "$query" >> ~/.config/vimb/bookmark
+notify-send "Bookmark Added for this URL : "$query" "
+fi
+
+#+END_SRC
+
+* Local port discover without tools
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+printf "Assuming the system doesn't have tools installed....so...\n\n"
+
+echo "TCP ports"
+
+cat /proc/net/tcp
+
+echo "UDP ports"
+
+cat /proc/net/udp
+#+END_SRC
+
+* Add shebang to the file
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+head -1 "$1" | if ! grep -q '^#!' "$1"; then echo -e "#!/bin/bash\n$(cat $1)" > "$1" ; fi
+#+END_SRC
+
+* Missing command check
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+my_needed_commands="$1"
+
+missing_counter=0
+for needed_command in $my_needed_commands; do
+  if ! hash "$needed_command" >/dev/null 2>&1; then
+    printf "Command not found in PATH: %s\n" "$needed_command" >&2
+    ((missing_counter++))
+  fi
+done
+
+if ((missing_counter > 0)); then
+  printf "Minimum %d commands are missing in PATH, aborting\n" "$missing_counter" >&2
+  exit 1
+fi
+#+END_SRC
+
+* Software install on fresh installed Linux system
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+#===============================================================================
+#
+#          FILE: software_install.sh
+#
+#         USAGE: ./software_install_.sh
+#
+#   DESCRIPTION: This script will fetch and build software on freshly install
+#                system
+#
+#       OPTIONS: ---
+#  REQUIREMENTS: ---
+#          BUGS: ---
+#         NOTES: Set up for minimal productivity environment
+#        AUTHOR: Bhaskar Chowdhury (https://about.me/unixbhaskar), unixbhaskar@gmail.com
+#  ORGANIZATION: Independent
+#       CREATED: 02/08/2021 20:31
+#      REVISION:  ---
+#===============================================================================
+
+#set -o nounset                              # Treat unset variables as an error
+
+pkgs="i3 i3block i3lock vim scrot zathura screen git newsboat
+calcurse htop lsof feh  mutt postfix lynx w3m pass gpg2 curl wget
+syslog-ng iptraf-ng moreutils findutils dhcp dhcpcd wpa_supplicant sudo
+mpv ffmpeg isync cmus cronie imgmagick zip xz psutils xclip xsel xdotool
+clipmenu clipmenud tcpdump ipcalc sysstats etckeeper aspell emacs"
+
+
+if [[ $UID != 0 ]];then
+    echo "You have to be superuser to run this script."
+    exit 1
+fi
+
+printf "\n\n\t Installing minimal environment for the productivity on $hostname.... \n\n"
+
+software_install() {
+	printf "Which distro [G/D/S/A] : %s"
+	read -r distro
+	if [[ $distro == "G" ]];then
+		install_on_gento
+		pull_down_my_settings_from_github
+	elif [[ $distro  == "D" ]];then
+	        install_on_debian
+		pull_down_my_settings_from_github
+	elif [[ $distro == "S" ]];then
+		install_on_slackware
+		pull_down_my_settings_from_github
+	elif [[ $distro == "A" ]];then
+		install_on_arch
+		pull_down_my_settings_from_github
+	else
+		echo Nothing Chosen..aborting!
+		exit 1
+	fi
+}
+
+# Dotfiles
+pull_down_my_settings_from_github() {
+
+printf "Getting the dotfiles from GitHub....\n"
+
+git clone --recurse-submodules --remote-submodules git@github.com:unixbhaskar/dotfiles.git
+cd dotfiles
+cp -v * $HOME/
+
+}
+
+# Fetch st from my github repo
+
+fetch_st() {
+  git clone git@github.com:unixbhaskar/st_terminal_build
+  cp st_terminal_build/st_sol $HOME/bin/
+  cp st_terminal_build/st_gruvbox $HOME/bin/
+}
+
+# Fetch vimb from github
+
+fetch_vimb() {
+  git clone git@github.com:unixbhaskar/vimb_build
+  cp vimb_build/vimb $HOME/bin/
+}
+
+# Fetch dmenu from github
+
+fetch_dmenu() {
+  git clone git@github.com:unixbhaskar/dmenu_build
+  cp dmenu_build/dmenu $HOME/bin/
+  cp dmenu_build/dmenu_run $HOME/bin/
+  cp dmenu_build/dmenu_path $HOME/bin/
+}
+
+install_on_gentoo() {
+
+if [[ $(command -v emerge) != "" ]];then
+	emerge -vt ${pkgs}
+else
+	echo This is not a Gentoo system
+	exit 1
+fi
+}
+
+install_on_debian() {
+if [[ $(command -v apt-get) != "" ]];then
+      apt-get install ${pkgs} --yes
+else
+	echo This is not a Debian system
+	exit 1
+fi
+}
+
+install_on_slackware() {
+if [[ $(command -v slackpkg) != "" ]];then
+	slackpkg install ${pkgs} --yes
+else
+	echo This is not a Slackware system
+	exit 1
+fi
+}
+
+
+install_on_arch() {
+if [[ $(command -v pacman) != "" ]];then
+	pacman -S ${pkgs} --noconfirm
+else
+	echo This is not a Arch linux system
+	exit 1
+fi
+}
+
+
+software_install
+
+#+END_SRC
+
+* What am I running?
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+pgrep -u bhaskar --list-name
+
+#+END_SRC
+
+* Emacs system config feature
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+emacs -batch --eval="(prin1 system-configuration-features)"; echo
+#+END_SRC
+
+* Backup file
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+fl=$1
+backup() {
+
+	cp -v "$fl"{,.$(date +'%F_%T')}
+}
+backup
+
+#+END_SRC
+
+* Trailing space removed
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+filename=$1
+awkpat=$(command -v gawk)
+
+if [[ $# -eq 0 ]];then
+    echo "You need to specify the file name"
+    exit 1
+else
+
+ $awkpat '{gsub(/[ \t]*$/, "");print}' $filename
+fi
+
+vim -c ":set list!" $filename
+#+END_SRC
+
+* Latest dotfiles changes
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+# This is to delete old stale file with a date range
+
+list_dot_files() {
+	find $(pwd) -maxdepth 1 -name ".*"  -type f -newermt $(date '+%F') -ls
+
+}
+list_dot_files
+#+END_SRC
+
+* Monitor file directory changes in specific location
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+# inotifywait -m -e modify,create,delete,move -r /home/bhaskar/bin/ && \/home/bhaskar/bin/copy_local_bin
+inotifywatch -v -e modify,create,delete,move -t 60 -r /home/bhaskar/bin/
+
+#+END_SRC
+
+
+Enough!!! There are thousands of them and at this moment I just don't want to
+share with you,some other time.
