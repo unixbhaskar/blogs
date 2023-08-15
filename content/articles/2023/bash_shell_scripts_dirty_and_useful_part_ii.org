@@ -1,0 +1,731 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1506
+#+title: Bash Shell Scripts Dirty But Useful Part-II
+#+date: 2023-08-15
+#+tags: Technical Bash Scripting Script Automation Opensource Linux Tools
+
+Alright, if your ignorance has not allowed you to see the [[https://unixbhaskar.wordpress.com/2023/08/13/bash-shell-scripts-dirty-but-useful-part-i/][First Part]] of this series,
+then looking back at it might help to get the connection better.
+
+In this post, I am gonna dish out a few more /rudimentary and useful/ scripts,
+which might come in handy to other people.
+
+*I would like to know your enhanced/better version of each of these below scripts,if you bother.*
+
+* Package install irrespective of the Linux distribution you are sitting on
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+#===============================================================================
+#
+#          FILE: pkg_install.sh
+#
+#         USAGE: ./pkg_install.sh
+#
+#   DESCRIPTION: Various distribution package manager facility to install
+#   packages.
+#
+#       OPTIONS: Pull in another script to check stuff missing_command_check
+#  REQUIREMENTS: ---
+#          BUGS: ---
+#         NOTES: Wrapper over distributions package managers
+#        AUTHOR: Bhaskar Chowdhury (https://about.me/unixbhaskar), unixbhaskar@gmail.com
+#  ORGANIZATION: Independent
+#       CREATED: 07/14/2022 09:40
+#      REVISION:  ---
+#===============================================================================
+
+source ~/bin/missing_command_check
+
+pkgname=$1
+
+if [[ $UID -ne 0 ]];then
+	echo Nope,you are suppose to have superuser privilege.
+	exit 1
+fi
+
+usage(){
+   echo You are suppose to provide pkgname as an argument.
+   echo Like this : $(basename $0) pkgname
+}
+
+package_install() {
+	if [[ $(uname -n) == "Gentoo" ]] && [[ $(missing_command_check emerge) == ""  ]];then
+	emerge -av $pkgname
+       elif [[ $(uname -n) == "debian" ]] && [[ $(missing_command_check apt-get) == ""  ]];then
+	apt-get install $pkgname
+       elif [[ $(uname -n) == "Slackware" ]] && [[ $(missing_command_check slackpkg) == "" ]];then
+	slackpkg install $pkgname
+       elif [[ $(uname -n) == "ArchLinux" ]] && [[ $(missing_command_check pacman) == "" ]];then
+	pacman -S $pkgname
+else
+        echo
+fi
+}
+
+download_now() {
+
+	if [[ "$pkgname" != "" ]];then
+		package_install
+	else
+		usage
+	fi
+	}
+
+download_now
+
+#+END_SRC
+
+* Archiving as per the file extension and mechanism
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+filename=$1
+
+folder=$2
+
+usage() {
+
+
+	echo "$(basename $0) filename > filename.zip ---> Zip"
+	echo "$(basename $0) filename > filename.gz ---> gz"
+	echo "$(basename $0) filename.tar.gz  directory_name ---> Tar Gz"
+	echo "$(basename $0) filename.bz2 OR  directory_name ---> Bunzip2"
+	echo "$(basename $0)  directory_name ---> XZ"
+}
+
+if [[ "$filename" == ""  ]]; then
+	echo You are suppose provide filename or directory
+	usage
+	exit 1
+fi
+
+#filenameext="${filename##*.}"
+
+declare -a compress=(zip gz tar.gz bz2 xz)
+printf '%s\n' "${compress[@]}"
+
+
+printf "Which compression method : %s"
+read -r com
+
+if [[ $com == "zip" ]];then
+	echo You want a zip archive
+	echo
+	command -v zip "$filename"
+	echo
+	echo $(file $filename.zip)
+elif  [[ $com == "gz" ]];then
+	echo You want  a gz archive
+	echo
+      command -v gzip -9  "$filename"
+      echo
+      echo $(file $filename.gz)
+elif [[ $com  == "tar.gz" ]] && [[ $# -eq 2 ]];then
+	echo You want a tar gz archive
+	echo
+	command -v tar -cvzf "$filename" "$folder"
+	echo
+      echo $(file  $filename)
+elif [[ $com == "bz2" ]];then
+	echo You want a bunzip archive
+	echo
+	command -v bzip2 -p  "$filename"
+	echo
+      echo $(file $filename.bz2)
+elif [[ $com  == "xz" ]];then
+	echo You want a xz archive
+	echo
+      command -v xz "$filename"
+	echo
+      echo $(file $filename.xz)
+else
+		usage
+fi
+#+END_SRC
+
+* Unarchive as per the file extension
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+archived_file=$1
+# latest_file=$(find $HOME/Downloads/ \( -iname \*.zip -o -iname \*.tar.gz -o -iname \*.tgz -o -iname \*.xz -o -iname \*.tar.bz2 \) -type f -newermt $(date '+%F') -ls | gawk '{ print $11}' | sort -f -i -r | head -1 )
+
+extension="${archived_file##*.}"
+extension2="${archived_file#*.}"
+
+filename="${archived_file%.*}"
+filename2=$(basename -- "${filename%.*}")
+
+usage() {
+	if [[ "$archived_file" ==  "" ]];then
+		echo "You are suppose to use: $(basename $0) filename.[zip|tar.gz|tgz|bz2|xz]"
+		exit 1
+	fi
+}
+
+if [[ "$extension" == "zip" ]];then
+       command -v unzip "$archived_file"
+elif [[ "$extension2" == "tar.gz" ]];then
+	command -v tar xvzf "$archived_file" >/dev/null 2>&1
+elif [[ "$extension2" == "tgz" ]];then
+	command -v tar xvzf "$archived_file" >/dev/null 2>&1
+elif [[ "$extension2" == "tar.xz" ]];then
+	command -v tar xvJf "$archived_file" >/dev/null 2>&1
+elif [[ "$extension" == "gz" ]];then
+	command -v gzip -d "$archived_file" >/dev/null 2>&1
+elif [[ "$extension" == "bz2" ]];then
+	command -v tar xvjf "$archived_file" >/dev/null 2>&1
+elif [[ "$extension" == "xz" ]];then
+	command -v unxz "$archived_file" >/dev/null 2>&1
+else
+	      echo Archiving has failed
+              usage
+fi
+#+END_SRC
+
+* GPG-Agent daemon restart
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+killall gpg-agent
+gpg-agent --daemon  --pinentry-program /usr/local/bin/pinentry  2>&1 >/dev/null
+#+END_SRC
+
+* Reverse the string
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+printf "\n Please provide the sting to reverse: %s"
+read -r str
+
+echo "$str" | sed -E 's/(.*)\.(.*)\.(.*)/\3.\2.\1/'
+
+#+END_SRC
+
+* Local search from command line
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+check_git="git -C $PWD rev-parse"
+
+usage()
+{
+	echo Provide name with regex delimeters.
+	echo Example : $(basename $0) \"*bash*\"
+}
+
+if [ $# -eq 0 ];then
+	usage
+	exit 1
+fi
+
+local_search()
+{
+
+	 if [[ ! -d .git ]];then
+
+		 find "$PWD" -type f,d -name "$1" -ls
+
+	 elif [[ "$(eval "$check_git")" == "" ]];then
+
+		git grep -n "$1"
+        else
+		:
+       fi
+}
+
+local_search "$@"
+
+
+#+END_SRC
+
+* Vim help from command line
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+vim -c "help $1"
+#+END_SRC
+
+* I3 window manager window list
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+wmctrl -l | gawk '{ print $2"  "$4 }' | dmenu -l 10 -p "Workspaces:" | xargs -I {} wmctrl -s {}
+
+#+END_SRC
+
+* Show latest screenshot
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+latest_file=$(find $HOME/Pictures/Screenshots/ -iname "*.png" -type f -newermt $(date '+%F') -ls | gawk '{ print $11}' | sort -f -i -r | head -1)
+
+$(command -v sxiv) "$latest_file"
+#+END_SRC
+
+* Extract email address
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+filename=$1
+
+egrep -o  "\b[a-zA-Z0-9.-]+@[a-zA-Z0-9.-]+.[a-zA-Z0-9.-]\b+" $filename
+#+END_SRC
+
+* Enlist dotfiles
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+list_dot_files() {
+	find ${PWD} -maxdepth 1 -name ".*"  -type f  -ls
+
+}
+list_dot_files
+#+END_SRC
+
+* Download progress
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+#download_url=$1
+# grab_url=$(ps -ef | grep wget | head -1 | gawk ' { print $10 }')
+
+download_url=$( echo | dmenu -p "Give Download Url:" )
+
+nourl() {
+if [[ "$down_url" == "" ]];then
+     notify-send "It seems, you forgot to provide the URL .."
+    exit 1
+fi
+}
+
+download() {
+
+	 wget $download_url 2>&1 | sed -u 's/.* \([0-9]\+%\)\ \+\([0-9.]\+.\) \(.*\)/\1\n# Downloading at \2\/s, ETA \3/'
+        notify-send "Downloading this: $download_url"
+}
+
+main() {
+
+if [[ "$download_url" != "" ]];then
+
+      download
+else
+	nourl
+fi
+
+}
+
+main
+
+
+#+END_SRC
+
+* Extract url by AWK
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+filename=$1
+
+if [[ $1 == "" ]];then
+	echo you need to provide the filename.
+	exit 1
+	fi
+
+
+sed -ne 's/.*\(http[^"]*\).*/\1/p'  < $filename
+#+END_SRC
+
+* Linux Kernel compile time
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+#===============================================================================
+#
+#          FILE: kernel_compile_time.sh
+#
+#         USAGE: ./kernel_compile_time.sh
+#
+#   DESCRIPTION: Show, how much time kernel compile takes.
+#
+#       OPTIONS: ---
+#  REQUIREMENTS: Run this script in a for do loop
+#          BUGS: ---
+#         NOTES: ---
+#        AUTHOR: Bhaskar Chowdhury (https://about.me/unixbhaskar), unixbhaskar@gmail.com
+#  ORGANIZATION: Independent
+#       CREATED: 08/16/2019 18:13
+#      REVISION:  ---
+#===============================================================================
+
+set -o nounset                              # Treat unset variables as an error
+#start_process=$(date +'%T')
+pid=$($HOME/Adm_scripts/process_elapsed_time | pgrep build_and_install_kernel | gawk '{ print $1 }' | head -1)
+elapsed_time=$($HOME/Adm_scripts/process_elapsed_time | grep make | gawk '{ print "Elapsed Time:"  $8 }' | head -1)
+process_time=$(echo "PID:" $pid $elapsed_time)
+#duration=$("$elapsed_time" - "$start_process" | bc)
+#echo $process_time
+
+if [[ $pid -eq 0 ]] ;then
+
+	trap EXIT
+fi
+/usr/bin/notify-send --expire-time=60000 --urgency=normal "The kernel has been compiling for..." "$process_time"
+
+
+#+END_SRC
+
+* Capture the screen area
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+scrot -e 'mv $f ~/Pictures/Screenshots'
+#+END_SRC
+
+* Defrag XFS
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+diskdrive=$1
+
+xfs_fsr $diskdrive
+#+END_SRC
+
+* XFS stat
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+printf "XFS stats... \n\n"
+
+sudo cat /proc/fs/xfs/stat
+#+END_SRC
+
+* System utils menu
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+# SCRIPT  : system_util_menu
+# PURPOSE : A menu driven Shell script using dialog utility
+#           which has following options:
+#           Display Today's Date and Time.
+#           Kernel version display.
+#           Process hogging cpu.
+#           Display calendar.
+#           Delete selected file from supplied directory.
+#           List of users currently logged in
+#           Disk Statistics
+#           Exit
+# THIS IS A MODIFIED VERSION OF THE ACTUAL SCRIPT WRITTEN BY SOMEBODY ELSE
+# IF YOU FOUND THE ORGINAL AUTHOR,PLEASE PROVIDE CREDIT.
+##############################################################################
+#                 Checking availability of dialog utility                    #
+##############################################################################
+
+# dialog is a utility installed by default on all major Linux distributions.
+# But it is good to check availability of dialog utility on your Linux box.
+
+which dialog &> /dev/null
+
+[ $? -ne 0 ]  && echo "Dialog utility is not available, Install it" && exit 1
+
+##############################################################################
+#                      Define Functions Here                                 #
+##############################################################################
+
+###################### deletetempfiles function ##############################
+
+# This function is called by trap command
+# For conformation of deletion use rm -fi *.$$
+
+deletetempfiles()
+{
+    rm -f *.$$
+}
+
+
+######################## Show_time function #################################
+
+# Shows today's date and time
+
+show_time()
+{
+   dialog --backtitle "SYSTEM OPERATIONS" --title "DATE & TIME" \
+   --msgbox "\n        Today's Date:   $(date +"%d-%m-%Y") \n\n \
+       Today's Time:   $(date +"%r %Z")" 10 60
+}
+
+####################### show_cal function ###################################
+
+# Shows current month calendar
+
+show_cal()
+{
+   dialog --backtitle "SYSTEM OPERATIONS" --title "CALENDAR" \
+   --msgbox "$(cal)" 12 25
+}
+
+# Showing IO stats
+show_io_stat()
+{
+   dialog --backtitle "SYSTEM OPERATIONS" --title "IOSTATS" \
+   --msgbox "$(iostat)" 12 85
+}
+
+####################### deletefile function #################################
+
+# Used to delete file under supplied directory, not including sub dirs.
+
+deletefile()
+{
+
+   dialog --backtitle "SYSTEM OPERATIONS" --title "Directory Path" \
+   --inputbox "\nEnter directory path (Absolute or Relative) \
+\nPress just Enter for current directory" 12 60 2> temp1.$$
+
+   if [ $? -ne 0 ]
+   then
+       rm -f temp1.$$
+       return
+   fi
+
+   rmdir=$(cat temp1.$$)
+
+   if [ -z "$rmdir" ]
+   then
+       dirname=$(pwd)                  # You can also use $(pwd)
+       rmdir=$dirname/*
+   else
+
+       # remove trailing * and / from directory path
+
+       echo "$rmdir" | grep "\*$" &> /dev/null && rmdir=${rmdir%\*}
+       echo "$rmdir" | grep "/$" &> /dev/null && rmdir=${rmdir%/}
+
+       # Check supplied directory exist or not
+
+       ( cd $rmdir 2>&1 | grep "No such file or directory" &> /dev/null )
+
+       # Above codeblock run in sub shell, so your current directory persists.
+
+       if [ $? -eq 0 ]
+       then
+           dialog --backtitle "SYSTEM OPERATIONS" \
+           --title "Validating Directory" \
+           --msgbox "\n $rmdir: No such file or directory \
+\n\n Press ENTER to return to the Main Menu" 10 60
+           return
+       fi
+
+       # Do you have proper permissions ?
+
+       ( cd $rmdir 2> /dev/null )
+
+       if [ $? -ne 0 ]
+       then
+           dialog --backtitle "SYSTEM OPERATIONS" \
+           --title "Checking Permissions" \
+           --msgbox "\n $rmdir:  Permission denied to access this directory \
+\n\n Press ENTER to return to the Main Menu" 10 60
+           return
+       fi
+
+       if [ ! -r $rmdir ]
+       then
+           dialog --backtitle "SYSTEM OPERATIONS" \
+           --title "Checking Permissions" \
+           --msgbox "\n $rmdir:  No read permission \
+\n\n Press ENTER to return to the Main Menu" 10 60
+           return
+       fi
+
+   dirname=$rmdir
+   rmdir=$rmdir/*             # get all the files under given directory
+
+   fi
+
+   for i in $rmdir            # process each file
+   do
+
+      # Store all regular file names in temp2.$$
+
+      if [ -f $i ]
+      then
+          echo " $i delete? " >> temp2.$$
+      fi
+
+   done
+
+   if [ -f temp2.$$ ]
+   then
+       dialog --backtitle "SYSTEM OPERATIONS" \
+       --title "Select File to Delete" \
+       --menu "Use [UP/DOWN] keys to move, then press enter \
+\nFiles under directory $dirname:" 18 60 12 \
+       $(cat temp2.$$) 2> file2delete.$$
+   else
+     dialog --backtitle "SYSTEM OPERATIONS" --title "Select File to Delete" \
+      --msgbox "\n\n There are no regular files in $dirname directory" 10 60
+      return
+   fi
+
+   rtval=$?
+
+   file2remove=$(cat file2delete.$$)
+
+   case $rtval in
+
+       0) dialog --backtitle "SYSTEM OPERATIONS" --title "ARE YOU SURE" \
+          --yesno "\nDo you Want to Delete File: $file2remove" 7 70
+
+
+          if [ $? -eq 0 ]
+          then
+              rm -f $file2remove 2> Errorfile.$$
+
+              # Check file successfully deleted or not.
+
+              if [ $? -eq 0 ]
+              then
+                  dialog --backtitle "SYSTEM OPERATIONS" \
+                  --title "Information : FILE DELETED" \
+                  --msgbox "\nFile : $file2remove deleted" 8 70
+             else
+                 dialog --backtitle "SYSTEM OPERATIONS" \
+                 --title "Information : ERROR ON DELETION" \
+                 --msgbox "\nProblem in Deleting File: $file2remove \
+\n\nError: $(cat Errorfile.$$) \n\nPress ENTER to return to the Main Menu" 12 70
+             fi
+
+          else
+              dialog --backtitle "SYSTEM OPERATIONS" \
+              --title "Information : DELETION ABORTED" \
+              --msgbox "Action Aborted: \n\n $file2remove not deleted" 8 70
+          fi  ;;
+
+      ,*)  deletetempfiles               # Remove temporary files
+          return ;;
+   esac
+
+   deletetempfiles                      # remove temporary files
+   return
+}
+
+########################## current users function ############################
+
+currentusers()
+{
+   who > userslist.$$
+   dialog --backtitle "SYSTEM OPERATIONS" \
+   --title "CURRENTLY LOGGED IN USERS LIST" \
+   --textbox userslist.$$ 12 60
+}
+
+############################ diskstats function #############################
+
+diskstats()
+{
+   df -h | grep "^/" > statsfile.$$
+   dialog --backtitle "SYSTEM OPERATIONS" \
+   --title "DISK STATISTICS" \
+   --textbox statsfile.$$ 10 60
+}
+
+##################################Kernel version ##############################
+
+show_kernel()
+{
+   uname -rn > kernel.$$
+   dialog --backtitle "SYSTEM OPERATIONS" \
+   --title "KERNEL VERSION" \
+   --textbox kernel.$$ 11 60
+}
+
+######################Cpu process hogs #######################################
+
+processhoggingcpu()
+{
+ ps aux | sort -nr -k 3 | gawk -F: '{ print $1 $3 }' > cpuprocesshogs.$$
+ dialog --backtitle "SYSTEM OPERATIONS" \
+ --title "PROCESS HOGS CPU" \
+ --textbox cpuprocesshogs.$$ 7 90
+ }
+##############################################################################
+#                           MAIN STRATS HERE                                 #
+##############################################################################
+
+trap 'deletetempfiles'  EXIT     # calls deletetempfiles function on exit
+
+while :
+do
+
+# Dialog utility to display options list
+
+    dialog --clear --backtitle "SYSTEM MAINTENANCE" --title "MAIN MENU" \
+    --menu "Use [UP/DOWN] key to move" 12 60 6 \
+    "DATE_TIME" "TO DISPLAY DATE AND TIME" \
+    "KERNEL_VERSION" "TO SHOW KERNEL VERSION" \
+    "PROCESS_HOGS_CPU" "TO SHOW PROCESS HOGGING CPU" \
+    "CALENDAR"  "TO DISPLAY CALENDAR" \
+    "IOSTATS"  "TO DISPLAY IO STATS" \
+    "DELETE"    "TO DELETE FILES" \
+    "USERS"     "TO LIST CURRENTLY LOGGED IN USERS" \
+    "DISK"      "TO DISPLAY DISK STATISTICS" \
+    "EXIT"      "TO EXIT" 2> menuchoices.$$
+
+    retopt=$?
+    choice=$(cat menuchoices.$$)
+
+    case $retopt in
+
+           0) case $choice in
+
+                  DATE_TIME)  show_time ;;
+		  KERNEL_VERSION) show_kernel;;
+		  PROCESS_HOGS_CPU) processhoggingcpu;;
+                  CALENDAR)   show_cal ;;
+		  IOSTATS)   show_io_stat;;
+                  DELETE)     deletefile ;;
+                  USERS)      currentusers ;;
+                  DISK)       diskstats ;;
+                  EXIT)       clear; exit 0;;
+
+              esac ;;
+
+          ,*)clear ; exit ;;
+    esac
+
+done
+
+#+END_SRC
+
+* Leading trailing whitespaces delete
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+filename=$1
+awkpat=$(command -v gawk)
+
+if [[ $# -eq 0 ]];then
+   echo "Provide a file name to work on."
+   exit 1
+else
+
+  $awkpat '{gsub(/^[ \t]+|[ \t]+$/,"")};1' $filename
+
+fi
+#+END_SRC
