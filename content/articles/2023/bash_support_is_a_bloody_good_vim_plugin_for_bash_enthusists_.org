@@ -1,0 +1,29 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1510
+#+title: Bash Support Is A Bloody Good Vim Plugin For Bash Enthusiasts
+#+date: 2023-08-18
+#+tags: Technical Bash Scripting Tools Opensource Linux Shell
+
+Well, getting help is not a bad thing initially or even when you are versed with
+the subject for little and redundant things is a super time saver and useful.What
+am I talking about? As you can read/see the title explicitly mentioned it.
+
+*A Vim plugin to assist get going with common things in bash scripting* ...and
+that's that. Period.
+
+If you are ignorant as ever and missed the thing you are supposed to watch about
+it like I did with it [[https://youtu.be/DPfUWIJa254][*here*]]. :)
+
+However, few things which might come in handy, and you can certainly find the
+things here *Bash Support Plugin*[fn:1].
+
+See, I have inducted those plugin bindings in my help system ..
+
+[[~/Pictures/Screenshots/2023-08-18-084139_1366x768_scrot.png]]
+
+
+* Footnotes
+
+[fn:1] [[https://vimawesome.com/plugin/bash-support-vim][Bash Support Plugin]]
+
+# /home/bhaskar/Pictures/Screenshots/2023-08-18-084139_1366x768_scrot.png http://unixbhaskar.files.wordpress.com/2023/08/2023-08-18-084139_1366x768_scrot.png
