@@ -1,0 +1,128 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1519
+#+title: Fzf Is A Well Known Tool Now
+#+date: 2023-08-19
+#+tags: Technical Tools Fzf Opensource Shell Linux Fuzzy Scripting
+
+..and it provides enough eye-candy stuff to tempt you to try it out. And damn!
+You will get stick with once you used it once. Why? Apart from the quality
+mentioned it makes things easy with little bit script-ability and mesh with
+other existing tools well enough.
+
+But, is it the only reason? Certainly not, but boy! That is the /predominant
+one/. So, embrace it for your convenience's sake.
+
+I have been messing around with it for quite some time now and integrated with
+almost similar kind of activity, although you could do with varied other things
+, which I haven't bother to or have need to.
+
+Let me give you few of the thing I have been using it get the convenience out of
+it.
+
+* Gentoo Package Views
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+# Gentoo Linux installed packages previews with Fzf
+
+eix -c --pure-packages | grep I | grep -v N | gawk '{ print $2  }' | fzf --preview='eix -F {}' --layout=reverse
+#+END_SRC
+
+
+See, it just a one-liner and it does the job for me. I have made a video about
+it. You might take a peek at it [[https://youtu.be/hXency4odmI][Gentoo Linux Installed Package Browse With Fzf]]
+
+Likewise, for /Slackware Linux/ ,the treatment is similar with different command
+form:
+
+* Slackware Linux Installed Package Previews with Fzf
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+# Slackware installed packages previews with fzf
+
+basedir=/var/lib/pkgtools/packages/
+
+cd $basedir
+ls | gawk '{print $1 }' | fzf --preview='slackpkg info {}' --layout=reverse
+#+END_SRC
+
+Pretty ordinary! Right? But damn useful.
+
+* Arch Linux package Preview With Fzf
+
+#+BEGIN_SRC bash
+#!/bin/bash
+
+pacman -Qq | fzf --preview 'pacman -Qil {}' --layout=reverse --bind 'enter:execute(pacman -Qil {} | less)'
+#+END_SRC
+
+Nice and easy. You can take a peek at the video I made [[https://www.youtube.com/watch?v=6eykE9w2onk][Arch Linux Package
+Preview With Fzf]]
+
+But wait....it not ends here,while installing it on the system you have the
+options to integrate with command line system in two very common key binds(out
+of three, because one key bind is already occupied by something else), which are
+*CTRL-R* ,that is for /reverse search/ on the command line. And *CTRL-T* which enlist
+the files on the present directory in fuzzy searching way. Extremely useful and
+saves lot of time to hover in the large directory(I have few swelling dirs in
+the system).
+
+Let me give you some glimpse of these two commands :
+
+*CTRL-R*
+
+[[~/Pictures/Screenshots/2023-08-19-124215_1364x327_scrot.png]]
+
+*CTRL-T*
+
+[[~/Pictures/Screenshots/2023-08-19-124355_1365x328_scrot.png]]
+
+In fact, you can use it left and right(means, as ways you can visualize it) and
+the damn thing has so many options to manipulate the outlook and
+outcome. Although I have restricted myself with the limited use, which are good
+enough for me.
+
+When you installed it on the system, it created *dot fzf* directory underneath
+your home directory and some sub directories for the specific need. I highly
+encourage you look into those files, and you can be able to tweak more as per
+your requirement.
+
+Here is how the directory structure look like in my system...
+
+[[~/Pictures/Screenshots/2023-08-19-125012_1359x64_scrot.png]]
+
+You can find the /binary in the *bin* directory. Copy that binary to a known path/
+in the system, where it can be easily found.
+
+Before, I let you go, one final example, which come to my mind. I have little
+thing in my /.bashrc/ which helps me choose file open with specific editor with
+the help of fzf.
+
+Here are the pictures of it :
+
+[[~/Pictures/Screenshots/2023-08-19-131718_1362x131_scrot.png]]
+
+Here is enlisting after pressing enter in the previous prompt ....
+
+[[~/Pictures/Screenshots/2023-08-19-131728_1366x768_scrot.png]]
+
+Okay, if you are surprise about the *file_open* command in the above screenshot,
+then here is the ingredient of it:
+
+[[~/Pictures/Screenshots/2023-08-19-132227_1365x68_scrot.png]]
+
+If you haven't get it from your Operating system package default repositories,
+then look at [[https://github.com/junegunn/fzf][Fzf Github page]]
+
+You should and must read through *fzf --help* and *man fzf* and it is not too
+long,so easily consumable.
+
+# /home/bhaskar/Pictures/Screenshots/2023-08-19-124215_1364x327_scrot.png http://unixbhaskar.files.wordpress.com/2023/08/2023-08-19-124215_1364x327_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-08-19-124355_1365x328_scrot.png http://unixbhaskar.files.wordpress.com/2023/08/2023-08-19-124355_1365x328_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-08-19-125012_1359x64_scrot.png http://unixbhaskar.files.wordpress.com/2023/08/2023-08-19-125012_1359x64_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-08-19-131718_1362x131_scrot.png http://unixbhaskar.files.wordpress.com/2023/08/2023-08-19-131718_1362x131_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-08-19-131728_1366x768_scrot.png http://unixbhaskar.files.wordpress.com/2023/08/2023-08-19-131728_1366x768_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-08-19-132227_1365x68_scrot.png http://unixbhaskar.files.wordpress.com/2023/08/2023-08-19-132227_1365x68_scrot.png
