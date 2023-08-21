@@ -1,0 +1,244 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1530
+#+title: Linux Scripts Mostly Oneliner Help Yourself Kinda Stuffs
+#+date: 2023-08-21
+#+tags: Technical Shell Commandline Opensource Tools Linux Scripting
+
+No big deal,whoever spends a few years on *Linux/UNIX* systems, they bound to have
+some sort of repository of their own scripts. Strictly private and useful and
+save the butt many a times.
+
+But having said that, I am going to disclose a few of my absolute trash and
+an atrociously written piece just for me and it worked well over the years.
+
+Then why bother making it public? Because, it might help someone else to draw
+better understanding and produce even better things, which might help more
+people.
+
+Alright, I am done with my lecture, let's show some stuff...if you get
+disappointed by seeing these, it will be absolutely your fault :)
+
+* Enlist all the kernel modules of the running kernel in the system
+
+[[~/Pictures/Screenshots/2023-08-21-150651_710x272_scrot.png]]
+(sniped)
+
+..and code that produces the above output is this :
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+ awk '{print $1}' "/proc/modules" | xargs modinfo | awk '/^(filename|desc|depends)/'
+#+END_SRC
+
+* Find the INIT system you are running
+
+[[~/Pictures/Screenshots/2023-08-21-151209_797x124_scrot.png]]
+
+
+* Find orphan files
+
+[[~/Pictures/Screenshots/2023-08-21-151449_460x108_scrot.png]]
+
+* Generate Self Signed certificate
+
+[[~/Pictures/Screenshots/2023-08-21-151716_806x203_scrot.png]]
+
+* Httpd/Apache restart
+
+[[~/Pictures/Screenshots/2023-08-21-152041_727x374_scrot.png]]
+
+* Memory hogging process
+
+[[~/Pictures/Screenshots/2023-08-21-152338_793x128_scrot.png]]
+
+* Nagios downtime CLI
+
+[[~/Pictures/Screenshots/2023-08-21-152835_1364x177_scrot.png]]
+
+* Nagios install script(Modified version)
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+# This script will install Nagios from source along with the plugins.
+
+dir=/usr/local/nagios
+if [[ ! -d $dir ]]
+then
+  echo "Creating the directory to hold nagios.."
+   mkdir -p $dir
+   echo "..Done"
+echo
+echo
+
+echo " Getting the nagios tarball along with plugins from Sourceforge site....please be patience"
+echo
+
+wget http://osdn.dl.sourceforge.net/sourceforge/nagios/nagios-3.0.6.tar.gz
+wget http://osdn.dl.sourceforge.net/sourceforge/nagiosplug/nagios-plugins-1.4.11.tar.gz
+
+echo " Just checking the version of Redhat.."
+
+grep -i “red hat” /etc/issue>>/dev/null2>>&1
+
+if [ `echo $? ` = 0 ];then
+
+echo " If the previos stat return true then..addming user and group to it.."
+useradd nagios
+else
+groupadd nagios
+useradd -G nagios nagios
+fi
+echo " Extracting the nagios plugins...."
+
+tar xzf nagios-plugins-1.4.11.tar.gz
+echo " Now getting into that untared dir.."
+
+cd nagios-plugins-1.4.11
+echo " Time to configure the plugins with proper options"
+./configure –prefix=/usr/local/nagios –enable-redhat-pthread-workaround
+echo
+echo " Making it..."
+
+make
+
+echo " Installing it..."
+make install
+
+echo "..Done."
+cd ..
+echo " Untarting the nagios from source tarball..."
+tar xzf nagios-3.0.6.tar.gz
+echo "Getting into the new untar nagios dir..."
+cd nagios-3.0.6
+echo " Time to do all the configure,make and other stuff to do..."
+./configure –prefix=/usr/local/nagios
+make install
+make install-init
+make install-config
+make install-commandmode
+make install-webconf
+# make sure xinetd is installed.
+echo ” nrpe  5666/tcp  #nrpe” »» /etc/services
+echo "Changing ownership of the dir..."
+chown -R nagios.nagios /usr/local/nagios
+echo " Start the xinetd service...."
+service xinetd [...]
+#+END_SRC
+
+* Octopus Merge in Git(Linus Torvalds shared it on some public forum and I stole it from there)
+
+[[~/Pictures/Screenshots/2023-08-21-153426_769x74_scrot.png]]
+
+* Sign multiple rpm in single step
+
+#+BEGIN_SRC bash
+rpm --resign `find . -name *.rpm`
+#+END_SRC
+
+* Change space to underscore in file name
+
+#+BEGIN_SRC bash
+find . -depth -name '* *' | while IFS= read -r f ; do mv -i "$f" "$(dirname "$f")/$(basename "$f"|tr ' ' _)" ; done
+#+END_SRC
+
+* Top 10 largest files
+
+#+BEGIN_SRC bash
+#!/bin/bash
+
+lsof / | awk '{ if($7 > 1048576) print $7/1048576 "MB" " " $9 " " $1 }' | sort -n -u | tail
+
+#+END_SRC
+
+* Vgrant with Vbox setup automation
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+MODPROBE=/usr/sbin/modprobe
+
+MODINFO=/usr/sbin/modinfo
+
+VAGRANT=/usr/bin/vagrant
+
+
+printf " Flight checks ..."
+
+whereis virtualbox;whereis vagrant
+
+echo
+
+printf "Running on `hostname` on `date` .... \n\n."
+
+
+print "Is the present user part of vboxusers group? checking .... \n\n"
+
+id $USER
+
+if [ ! grep vboxusers /etc/group ]
+then
+
+useradd -aG vboxusers $USER
+
+else
+
+echo "$USER is part of vboxusers group"
+echo
+
+fi
+
+
+printf " Loading the necessary module to start vagrant with virtualbox....checking... \n\n"
+
+
+$MODPROBE vboxdrv
+
+echo " Loaded ...vboxdrv..."
+echo
+
+$MODINFO vboxdrv
+
+echo
+echo
+
+$MODPROBE vboxnetflt
+echo
+echo " Loaded .....vboxnetflt..."
+echo
+
+$MODINFO vboxnetflt
+
+echo
+echo
+
+$MODPROBE vboxnetadp
+
+echo
+echo
+echo " Loaded....vboxnetadp.."
+
+
+$MODINFO vboxnetadp
+
+
+echo
+echo
+
+printf " Calling up vagrant ... \n\n"
+
+
+$VAGRANT up
+
+#+END_SRC
+
+
+These are randomly chosen ones from the directory.
+
+# /home/bhaskar/Pictures/Screenshots/2023-08-21-150651_710x272_scrot.png http://unixbhaskar.files.wordpress.com/2023/08/2023-08-21-150651_710x272_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-08-21-151209_797x124_scrot.png http://unixbhaskar.files.wordpress.com/2023/08/2023-08-21-151209_797x124_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-08-21-151449_460x108_scrot.png http://unixbhaskar.files.wordpress.com/2023/08/2023-08-21-151449_460x108_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-08-21-151716_806x203_scrot.png http://unixbhaskar.files.wordpress.com/2023/08/2023-08-21-151716_806x203_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-08-21-152041_727x374_scrot.png http://unixbhaskar.files.wordpress.com/2023/08/2023-08-21-152041_727x374_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-08-21-152338_793x128_scrot.png http://unixbhaskar.files.wordpress.com/2023/08/2023-08-21-152338_793x128_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-08-21-152835_1364x177_scrot.png http://unixbhaskar.files.wordpress.com/2023/08/2023-08-21-152835_1364x177_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-08-21-153426_769x74_scrot.png http://unixbhaskar.files.wordpress.com/2023/08/2023-08-21-153426_769x74_scrot.png
