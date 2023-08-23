@@ -1,0 +1,261 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1545
+#+title: Linux And The Importance Of Shell Aliases
+#+date: 2023-08-23
+#+tags: Technical Shell Linux Opensource Commandline Tools
+
+Well, working from a /command line/ is a lingua franca for all the nerds sitting
+on open systems like Linux/UNIX. But sitting on and typing along all day long is
+a joy lasted very few days or at most months. Sooner or later they find a way to
+accomplish the same thing with less typing, in fact,with minimal
+keystrokes. For some, it enhances the productivity by leaps and bounds and for
+others it brings down much cursed forgetfulness of the actual thing.
+
+Let me trace the last sentence of the above vignette a bit,so you can understand
+what it meant to be. Alias is a *mechanism* to use /long typed or complicated
+commands/ with few keystrokes. But, while doing so, it might work perfectly well,
+like all good things, people tend to forget what is there underneath the
+shorthand version aka alias. Although, I haven't heard too many complaints about
+that missing part, because those who made it and inducted it in their *shell
+initialization file* ,certainly know how to grepping through it to find out
+damming one.
+
+I have personally enjoyed this facility for a long time and saves a hell of a
+time for to do bring complicated work. Although I have a knack for giving the
+alias as human or specific names like my file names, so just remembering what I
+am going to accomplish will fetch me the keystrokes from my memory. Yes, after
+using those for a certain time it is bound to get etched in the memory. If not,
+there are other mechanisms to keep the damn thing brought in front of your
+eyes. One of them mentioned is grepping and other methods are available and I do
+have those.
+
+I am not going talk about the other method I used to keep refreshing my memories
+about them but to mention the most predominant one just by grepping the shell
+initialization file.
+
+One more prominent reason could be typing the long and I mean really long complex
+command. And I bet, most people do not use that kind of command day to day
+basis, or if they do, then the alias is there to rescue for the fat finger
+effect. Oftentimes, when writing a long command on the command line , we
+generally put that command into an editor to fix it and once saved and done it
+execute the long command. The common way to get into a specific editor while typing
+a long command at the command line is by pressing *CTRL -X CTRL -E*, this command
+will put you in your designated editor, so you can use the facility editor
+provide to fix your command and once you are done, save it, and voila! That
+command gets executed.
+
+So,because you haven't had given a glance at my *.bashrc* file, which contains all
+the aliased I have, so I am enlisting here for your lazy viewing experience:
+
+#+BEGIN_SRC sh
+grep alias /home/bhaskar/.bashrc
+
+test -s ~/.alias && . ~/.alias || true
+alias ls="ls --color=always"
+alias l="ls -lathr"
+alias grep="grep --color"
+alias mount="mount | column -t"
+alias ports='netstat -tulanp'
+alias fp="ps -ef | grep $1"
+alias meminfo='free -m -l -t'
+alias psmemhog='ps auxf | sort -nr -k 4'
+alias pscpuhog='ps auxf | sort -nr -k 3'
+alias fetch='wget -c'
+alias rsync='rsync --progress --stats -ravz'
+alias c="clear"
+alias d='cd ~/Downloads'
+alias p='cd ~/Pictures'
+alias linuxgit='cd ~/git-linux/linux/'
+alias boot='cd /boot'
+alias music='cd ~/Music'
+alias admscripts='cd ~/Adm_scripts'
+alias docu='cd ~/Documents'
+alias dstat='dstat -afv 2>/dev/null'
+alias root="sudo su -"
+alias sstatus="sudo systemctl status"
+alias srestart="sudo systemctl restart"
+alias diskinfo="df -h"
+alias iptlist='sudo /sbin/iptables -L -n -v --line-numbers'
+alias iptlistin='sudo /sbin/iptables -L INPUT -n -v --line-numbers'
+alias iptlistout='sudo /sbin/iptables -L OUTPUT -n -v --line-numbers'
+alias iptlistfw='sudo /sbin/iptables -L FORWARD -n -v --line-numbers'
+alias vpn_start='sudo /home/bhaskar/vpn_connect'
+alias dmesg='sudo dmesg -H -T'
+alias copy_to='sudo cp -v'
+alias week='date +%V'
+alias filepath='ls | sed "s:^:`pwd`/:"'
+alias abspath='find $PWD -maxdepth 1 | xargs ls -ld'
+alias i3configfiles="cd ~/.config/i3"
+alias v="vim -u ~/.vimrc"
+alias v1="vim -u ~/.vimrc_gruvbox"
+alias sshot="cd ~/Pictures/Screenshots"
+alias github_repo='/home/bhaskar/bin/github_repo'
+alias see_log='sudo tail -f /var/log/messages || journalctl -f -q 2>/dev/null'
+alias gitlog=gitlog
+alias git_repo_create=grc
+alias dmesg_err='sudo dmesg -H -T -l err'
+alias ip='ip --color=auto'
+alias journal_clear="sudo journalctl --vacuum-size=50000"
+alias shortcut_pages="cd $HOME/shortcut/pages && ls | basename -s .md * | less"
+alias githublinux="cd $HOME/git-linux/linux_github_fork"
+alias githubgit="cd $HOME/git-linux/git_github_fork"
+alias gcl=gclone
+alias githubi3="cd $HOME/git-linux/i3"
+alias update_buildroot="cd $HOME/git-linux/buildroot && git pull && cd ~"
+alias docs-next-update="cd $HOME/git-linux/docs-next && git pull && cd ~"
+alias calendar="/usr/local/bin/calcurse -C $HOME/.calcurse"
+alias ulb="ls /usr/local/bin"
+alias lbin="ls $HOME/bin"
+alias h="history"
+alias fastping="ping -c 10 -i.2 google.com"
+alias kbuild_update="cd $HOME/git-linux/linux-kbuild && git pull && cd ~"
+alias kbuild_source="cd $HOME/git-linux/linux-kbuild && tig"
+alias docsnext_source="cd $HOME/git-linux/docs-next && tig"
+alias buildroot_source="cd $HOME/git-linux/buildroot && tig"
+alias linux_source="cd ~/git-linux/linux && tig"
+alias linuxnet_source="cd $HOME/git-linux/linux-net && tig"
+alias wiki="vim $HOME/vimwiki/index.md"
+alias notification="$HOME/bin/notification > /dev/null 2>&1"
+alias gitconfig="git config --global --edit"
+alias vimrc="vim ~/.vimrc"
+alias muttrc="vim ~/.muttrc"
+alias reload_bashrc="source ~/.bashrc"
+alias bashrc="vim ~/.bashrc && source ~/.bashrc"
+alias cat="bat"
+alias videodl="/home/bhaskar/bin/yt-dlp_linux -f 18 $1"
+alias mp3dl="$HOME/bin/youtube_video_to_mp3_conv.sh $1"
+alias path="echo $PATH"
+alias i3config="vim ~/.ithreeconfig"
+alias blogs="cd /home/bhaskar/blogs/content/articles/2023/"
+alias nyxtconfig="vim ~/.nyxt_config.lisp"
+alias orgfiles="cd /home/bhaskar/.emacs.d/OrgFiles/"
+alias linux-next="cd $HOME/git-linux/linux-next && git pull"
+alias profile="vim ~/.profile"
+alias i3blocks="vim ~/.ithreeblocksconfig"
+alias scriptsgit="cd ~/git-linux/AdminScripts"
+alias lt="cd ~/LaTeX_Workouts"
+alias vimplugin=vimplugin_install
+alias archlinux_update="cd $HOME/git-linux/ArchLinux_Kernel && git pull && cd ~"
+alias gentoo_update="cd $HOME/git-linux/gentoo && git pull && cd ~"
+alias slackware_update="cd ~/git-linux/SlackBuilds && git pull && cd ~"
+alias debian_update="cd ~/git-linux/debian_linux && git pull && cd ~"
+alias gdb="gdb --tui --quiet --statistics $1"
+alias photo="sxiv $1"
+alias vimpull="cd ~/git-linux/vim && git pull && cd ~"
+alias screenrc="vim $HOME/screenrc"
+alias vimb_config="vim ~/.config/vimb/config"
+alias newsboat_config="vim ~/.newsboat/config"
+alias feeds="$(command -v newsboat)"
+alias style_vimb="vim ~/.config/vimb/style.css"
+alias vim_plugin_list="grep  Plugin ~/.vimrc | grep -v '^\"'"
+alias keybinds_i3="grep bindsym ~/.config/i3/config | grep -v ^# | less"
+alias mpv="mpv --ytdl-format=best --no-audio-display"
+alias menu="dmenufm -d -f -D -F -r $1"
+alias vim_plugins_update="v +PluginUpdate +qa"
+alias vim_plugins_install="v +PluginInstall +qa"
+alias list_dir="ls -ad */"
+alias systemd_running_services="command systemctl --no-page --no-legend --plain -t service --state=running"
+alias which_arch="getconf LONG_BIT"
+alias check_bad_sector="sudo badblocks -n -s -b 2048 $1"
+alias aspell="aspell -d \"en_US.multi\" -c $1"
+alias pdf_open="$(command -v zathura) $1"
+alias mycalstart=mycalservice
+alias mycalstatus="systemctl --user status mycal"
+alias mycalrestart="systemctl --user restart mycal.timer && systemctl --user restart mycal.service"
+alias user_daemon_reload="systemctl --user daemon-reload"
+alias daemon_reload="sudo systemctl daemon-reload"
+alias user_systemd_dir="cd ~/.local/share/systemd/user/"
+alias mailsyncstart=mailsynclocally
+alias mailsyncstatus="systemctl --user status mailsync"
+alias mailsyncrestart="systemctl --user restart mailsync.timer && systemctl --user restart mailsync.service"
+alias list_user_timers="systemctl --user list-timers --all"
+alias list_system_timers="systemctl  list-timers --all"
+alias keyboard_key_values="xmodmap -pke | less"
+alias fix_spell="$HOME/git-linux/linux/scripts/checkpatch.pl -f --terse --nosummary --types=typo_spelling $1"
+alias build=build
+alias localmail="mutt -F $HOME/.muttrc.local"
+alias enable_config="scripts/config --enable $1"
+alias disable_config="scripts/config --disable $1"
+alias who="git blame $1"
+alias econfig="vim -O ~/.emacs ~/.orgemacs"
+alias magit="vim -c MagitOnly"
+alias tsm="transmission-remote"
+alias tl="transmission-remote -l"
+alias tsmadd="transmission-remote -a $1"
+alias taskrc="vim ~/.taskrc"
+alias taskopenrc="vim ~/.taskopenrc"
+alias fetch_info="onefetch $1"
+alias githome="cd $HOME/git-linux && ls"
+alias newsboat_urls="vim /home/bhaskar/.newsboat/urls"
+alias gitgraph="git log --all --decorate --oneline --graph"
+alias i3edit="vim -O ~/.ithreeconfig ~/.orgithreeconfig"
+alias edit-archives="vim -O ~/bin/archive ~/bin/extract_archive"
+alias git_optimize="git reflog expire --all --expire=now; git gc --prune=now --aggressive"
+alias vig="vim_with_gruvbox $1"
+alias gentoo_features="portageq envvar FEATURES | xargs -n 1"
+alias pkg_mask="vim /etc/portage/package.mask/$1"
+alias pkg_unmask="vim /etc/portage/package.unmask/$1"
+alias pkg_keyword="vim /etc/portage/package.accept_keywords"
+alias pkg_use="vim /etc/portage/package.use/$1"
+alias yt_video="vim ~/bin/my_yt_videos"
+alias installpkg="sudo emerge -av $1"
+alias removepkg="sudo emerge -ac $1"
+alias g2="mutt -F /home/bhaskar/.muttrc.gmail2"
+alias world="vim /var/lib/portage/world"
+alias emerge_log="sudo $(command -v elogv)"
+alias vih="vih $1"
+alias eqf='equery f' #list all files installed by PKG
+alias equ='equery u' #display USE flags for PKG
+alias eqh='equery h' #list all packages that have USE flag
+alias eqa='equery a' #list all packages for matching ENVIRONMENT data stored in /var/db/pkg
+alias eqb='equery b' #list what package FILES belong to
+alias eql='equery l' #list package matching PKG
+alias eqd='equery d' #list all packages directly depending on ATOM
+alias eqg='equery g' #display a tree of all dependencies for PKG
+alias eqk='equery k' #verify checksums and timestamps for PKG
+alias eqm='equery m' #display metadata about PKG
+alias eqy='equery y' #display keywords for specified PKG
+alias eqs='equery s' #display total size of all files owned by PKG
+alias eqw='equery w' #print full path to ebuild for PKG
+alias owner="/home/bhaskar/git-linux/linux/scripts/get_maintainer.pl $1"
+alias e='emacsclient --tty'
+alias eg='emacsclient -c'
+# alias notes="vim ~/Notes/index.md"
+#+END_SRC
+
+Alternatively, you should use the command at the command line *alias -p* to see
+the enlisting.
+
+Look, these damn things are accumulated over the years and I haven't had the
+time to clean things up. In essence, I am trying to tell you that, I do not use
+many of those mentioned. But I do use quite a lot of them to date.
+
+
+Sometimes, running the command directly can be beneficial in two ways, one, it
+gives you a clear view of what you are firing at and you can edit it,if you want
+to.
+
+* Check the expand_alias variable , whether it is set or not
+
+#+BEGIN_SRC bash
+tp_x250_13:35:29_Wed Aug 23: :~>shopt expand_aliases
+expand_aliases  on
+#+END_SRC
+
+In my case,it is ON, because I am using an *interactive shell*.
+
+* Check for the $BASH_ALIASES environment variable and it contains key-value pair of aliases.
+
+You can *Unalias* any of the created alias by simply running this on terminal :
+
+
+#+BEGIN_SRC sh
+tp_x250_13:37:51_Wed Aug 23: :~>unalias --help
+unalias: unalias [-a] name [name ...]
+    Remove each NAME from the list of defined aliases.
+
+    Options:
+      -a        remove all alias definitions
+
+    Return success unless a NAME is not an existing alias.
+#+END_SRC
