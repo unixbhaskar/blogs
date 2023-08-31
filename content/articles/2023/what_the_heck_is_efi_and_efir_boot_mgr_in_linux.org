@@ -1,0 +1,269 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1553
+#+title: What The Heck Is EFI And EfiBootMgr In Linux
+#+date: 2023-08-31
+#+tags: Technical EFI BootManager UEFI Architechture Linux Bootloader Shell Opensource Tools
+
+
+Let me start by deciphering the abbreviation *EFI[fn:1]*, which is aptly named as
+*Extensible Firmware Interface*. Period.  But, what the heck it is?
+
+EFI is a /firmware standard/ developed by INTEL to enhance BIOS and other
+interface. It could be applied to other interfaces too. It is also called *UEFI*,
+which stand for *Universal Extensible Firmware Interface*.
+
+This primarily has these features:
+
+ - Getting rid of the boot loader, allowing the firmware to select the operating
+   system.
+
+ - EFI enables vendors to create drivers that cannot be reverse engineered.
+
+ - Contains a small shell that runs at boot, allowing a small and manageable
+   working environment without anything on the computer.
+
+Wondering why people are not sure about it and come up with lots of
+assumptions. This is such an easy and *single point of thing* that probably
+entices people to think that the default thing. Basically, some people enable it
+for you, so you never realize that it has to be enabled.
+
+Now,that the brief introduction goes out of the way, we can concentrate on Linux
+related stuff,which is what probably interests most of you reading this post.
+
+It all began in 2011, when some kernel developers decided to get it baked into
+the Linux kernel and they started to merge patches into it. Here is a glimpse of
+it:
+
+[[~/Pictures/Screenshots/2023-08-31-033148_1358x730_scrot.png]]
+(snipped picture)
+...and you can find entire changes here[fn:2].
+
+Well,something called *EFI Boot Stub*[fn:3] has to be configured when building the
+kernel from the source, so that the resulting image of the kernel will be
+treated as EFI image.
+
+This is an informative page about EFI on Linux by Rod Smith[fn:4].
+
+Okay, I have randomly grepped from the running kernel, and it looks like this :
+
+[[~/Pictures/Screenshots/2023-08-31-035113_835x590_scrot.png]]
+
+EFI comes with a little shell, from there you can load/run the kernel directly
+without involving the bootloader. Here is how you can do that:
+
+ - [[https://www.intel.com/content/www/us/en/docs/programmable/683134/current/booting-from-the-uefi-shell.html][INTEL Documentation Booting From UEFI Shell]]
+
+ - How to boot Linux from the UEFI shell,see below:
+
+I have these scripts that end up in *.nsh* extensions and reside in the *EFI*
+partition, like this :
+
+[[~/Pictures/Screenshots/2023-08-31-040743_1366x78_scrot.png]]
+
+..and this :
+
+[[~/Pictures/Screenshots/2023-08-31-042916_695x592_scrot.png]]
+
+Once I landed in the UEFI shell and got the *FS0:* prompt, then I could call one of
+those nsh scripts without the dot nsh extension to load the kernel and as well as
+the initrd if that kernel demands so.I have copied the *freeBSD* image into the
+efi directory and made an entry.
+
+You might look into the process I went through [[https://github.com/unixbhaskar/UEFI_Linux_Boot_Process_From_Userland][UEFI Linux Boot Process From Userland]].
+
+Now, the second part is how we manage the UEFI/EFI thing in our machine. To do
+exactly that there is a user space tool available and, it is called
+*efibootmgr*[fn:5]
+
+This tool provide all the necessary facility to manipulate and get on with the
+efi/uefi related stuff.
+
+* View the existing EFI settings
+
+[[~/Pictures/Screenshots/2023-08-31-042138_1366x618_scrot.png]]
+
+Alright....alright, it is ugly but if you look close, you can read the required
+information.
+
+Gentoo[fn:6] has a fantastic page about it, optimum and to the point.
+
+This might come in handy if you are interested in low level stuff about efi variables[fn:7]
+
+* Check your machine is booted with EFI or not
+
+#+BEGIN_SRC bash
+tp_x250_04:45:48_Thu Aug 31: :~>dmesg | grep -i "EFI v"
+[    0.000000] efi: EFI v2.3.1 by Lenovo
+#+END_SRC
+
+* Check EFI variables with efivar tool
+
+#+BEGIN_SRC bash
+tp_x250_04:47:33_Thu Aug 31: :~>efivar -l
+4a67b082-0a4c-41cf-b6c7-440b29bb8c4f-LoaderTimeExecUSec
+4a67b082-0a4c-41cf-b6c7-440b29bb8c4f-LoaderRandomSeed
+4a67b082-0a4c-41cf-b6c7-440b29bb8c4f-LoaderEntrySelected
+4a67b082-0a4c-41cf-b6c7-440b29bb8c4f-LoaderTimeMenuUSec
+4a67b082-0a4c-41cf-b6c7-440b29bb8c4f-LoaderEntries
+(snipped)
+#+END_SRC
+
+* Check EFI variables manually in /proc file system
+
+#+BEGIN_SRC bash
+tp_x250_04:51:19_Thu Aug 31: :~>ls /sys/firmware/efi/efivars/
+68F728BA8FFB-937fe521-95ae-4d1a-8929-48bcd90ad31a                  LenovoConfig-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65
+AcpiGlobalVariable-c020489e-6db2-4ef2-9aa5-ca06fc11d36a            LenovoFprData-867eff85-1886-4a9e-a74f-ab374360e719
+AcpiProtocolSetupVar-1054354b-b543-4dfe-558b-a7ad6351c9d8          LenovoFunctionConfig-580020c3-6c9c-4f93-8008-7fadc1fcfedd
+BiosSetup-0b7646a4-6b44-4332-8588-c8998117f2ef                     LenovoHiddenSetting-1827cfc7-4e61-4273-b796-d35f4b0c88fc
+Boot0000-8be4df61-93ca-11d2-aa0d-00e098032b8c                      LenovoLoginTypeVar-58db3a8b-7e15-4112-ba47-301e1b42058b
+Boot0001-00000000-0000-0000-0000-000000000000                      LenovoPsInfoBlock-a1b8ec86-4129-49f6-ac3f-a87afe34ebbe
+Boot0001-8be4df61-93ca-11d2-aa0d-00e098032b8c                      LenovoScratchData-67c3208e-4fcb-498f-9729-0760bb4109a7
+Boot0002-8be4df61-93ca-11d2-aa0d-00e098032b8c                      LenovoSecurityConfig-a2c1808f-0d4f-4cc9-a619-d1e641d39d49
+Boot0003-8be4df61-93ca-11d2-aa0d-00e098032b8c                      LenovoSystemConfig-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65
+Boot0004-00000000-0000-0000-0000-000000000000                      LenovoThermalShutdown-943d1460-da6e-499a-af6d-4593b12bc4d7
+Boot0004-8be4df61-93ca-11d2-aa0d-00e098032b8c                      LenovoWmaSupport-286091ef-33a8-48e6-af77-1e03344c7a18
+Boot0005-8be4df61-93ca-11d2-aa0d-00e098032b8c                      LenovoWolInfo-0af4027f-9b58-41c0-b62f-cd3a1cef54ee
+Boot0006-8be4df61-93ca-11d2-aa0d-00e098032b8c                      LnvActivationVar-e5bbf7be-2417-499b-97db-39f4896391bc
+Boot0007-8be4df61-93ca-11d2-aa0d-00e098032b8c                      LnvOA3ID-e5bbf7be-2417-499b-97db-39f4896391bc
+Boot0008-8be4df61-93ca-11d2-aa0d-00e098032b8c                      LnvOSLicDesc-e5bbf7be-2417-499b-97db-39f4896391bc
+Boot0009-8be4df61-93ca-11d2-aa0d-00e098032b8c                      LoaderDevicePartUUID-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f
+Boot000A-8be4df61-93ca-11d2-aa0d-00e098032b8c                      LoaderEntries-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f
+Boot000B-8be4df61-93ca-11d2-aa0d-00e098032b8c                      LoaderEntryRebootReason-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f
+Boot000C-8be4df61-93ca-11d2-aa0d-00e098032b8c                      LoaderEntrySelected-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f
+Boot000D-8be4df61-93ca-11d2-aa0d-00e098032b8c                      LoaderFeatures-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f
+Boot000E-8be4df61-93ca-11d2-aa0d-00e098032b8c                      LoaderFirmwareInfo-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f
+Boot000F-8be4df61-93ca-11d2-aa0d-00e098032b8c                      LoaderFirmwareType-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f
+Boot0010-8be4df61-93ca-11d2-aa0d-00e098032b8c                      LoaderImageIdentifier-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f
+Boot0011-8be4df61-93ca-11d2-aa0d-00e098032b8c                      LoaderInfo-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f
+Boot0013-8be4df61-93ca-11d2-aa0d-00e098032b8c                      LoaderRandomSeed-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f
+Boot0015-00000000-0000-0000-0000-000000000000                      LoaderSystemToken-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f
+BootAllCDROM-0b7646a4-6b44-4332-8588-c8998117f2ef                  LoaderTimeExecUSec-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f
+BootAllHDD-0b7646a4-6b44-4332-8588-c8998117f2ef                    LoaderTimeInitUSec-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f
+BootAllPciLan-0b7646a4-6b44-4332-8588-c8998117f2ef                 LoaderTimeMenuUSec-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f
+BootCurrent-8be4df61-93ca-11d2-aa0d-00e098032b8c                   LocalSecurityVars-47355e9f-0857-45e1-8a6f-a4f5eda89a77
+BootMenu-0b7646a4-6b44-4332-8588-c8998117f2ef                      MTC-eb704011-1402-11d3-8e77-00a0c969723b
+BootOptionNo_01-0b7646a4-6b44-4332-8588-c8998117f2ef               MailBoxQ-67c3208e-4fcb-498f-9729-0760bb4109a7
+BootOptionNo_02-0b7646a4-6b44-4332-8588-c8998117f2ef               MeBiosExtensionSetup-1bad711c-d451-4241-b1f3-8537812e0c70
+BootOptionNo_03-0b7646a4-6b44-4332-8588-c8998117f2ef               MeSetup-fb7b1de3-295b-433c-95a2-091fe3218bf9
+BootOptionSupport-8be4df61-93ca-11d2-aa0d-00e098032b8c             MemRestoreVariable-608dc793-15de-4a7f-a0c5-6c29beaf5d23
+BootOrder-8be4df61-93ca-11d2-aa0d-00e098032b8c                     MemoryOverwriteRequestControl-e20939be-32d4-41be-a150-897f85d49829
+BootOrderDefault-0b7646a4-6b44-4332-8588-c8998117f2ef              MemoryTypeInformation-4c19049f-4137-4dd3-9c10-8b97a83ffdfa
+BuildTime-e5bbf7be-2417-499b-97db-39f4896391bc                     MemoryTypeInformationBackup-4c19049f-4137-4dd3-9c10-8b97a83ffdfa
+ClientId-9fb9a8a1-2f4a-43a6-889c-d0f7b6c47ad5                      OsIndications-8be4df61-93ca-11d2-aa0d-00e098032b8c
+ConIn-8be4df61-93ca-11d2-aa0d-00e098032b8c                         OsIndicationsSupported-8be4df61-93ca-11d2-aa0d-00e098032b8c
+ConInDev-8be4df61-93ca-11d2-aa0d-00e098032b8c                      PBRDevicePath-a9b5f8d2-cb6d-42c2-bc01-b5ffaae4335e
+ConOut-8be4df61-93ca-11d2-aa0d-00e098032b8c                        PbaStatusVar-0ec1a7f5-4904-40a0-8eab-4bcc4666da45
+ConOutDev-8be4df61-93ca-11d2-aa0d-00e098032b8c                     PchPolicyVar-e274d08e-69b6-4497-a4eb-d39c4b2f9fcb
+ConsoleLock-368cda0d-cf31-4b9b-8cf6-e7d1bfff157e                   PlatformLang-8be4df61-93ca-11d2-aa0d-00e098032b8c
+CpuPpiSetupVar-d1b99f1a-084b-49c3-b88e-378abefa118b                PlatformLangCodes-8be4df61-93ca-11d2-aa0d-00e098032b8c
+CpuProtocolSetupVar-7d4adce1-930d-40c7-9cd2-6d2148413dc7           PreBootEventLogReset-8b604cac-3c4f-4e6c-862e-00b8b7436e5f
+DIAGSPLSHSCRN-a7d8d9a6-6ab0-4aeb-ad9d-163e59a7a380                 PreviousBoot-36d08fa7-cf0b-42f5-8f14-68df73ed3740
+DisplaySaveStateVar-be3e3f80-7aca-4101-852d-7616929094d9           ProtectedBootOptions-0b7646a4-6b44-4332-8588-c8998117f2ef
+EDD30-964e5b21-6459-11d2-8e39-00a0c969723b                         PwdStatusVar-3e72b3ad-2b91-424a-ad73-c3270e91ed88
+ESRTPLATFORMENTRY-999ba178-e3fc-4d86-b95c-0383aae6c8a4             SMBIOSELOG000-c3eeae98-23bf-412b-ab60-efcbb48e1534
+ErrOutDev-8be4df61-93ca-11d2-aa0d-00e098032b8c                     SMBIOSELOGNUMBER-c3eeae98-23bf-412b-ab60-efcbb48e1534
+FirmwarePerformanceDataTable-9dab39a4-3f8a-47ac-80c3-400729332c81  SMBIOSMEMSIZE-c3eeae98-23bf-412b-ab60-efcbb48e1534
+GopConfigSetupVar-6e61d5b9-70d0-4c18-8af2-f1ccde2d88cf             SaPpiSetupVar-7da81437-866b-4143-8e08-a25c6ef0fa5b
+IEIT-955b9041-133a-4bcf-90d1-97e1693c0e30                          SaProtocolSetupVar-34f73d4d-963e-4c65-b3b3-515e720175d6
+IccString-c1e2774b-9ed4-4103-aefa-33b8149eccf6                     SctHotkey-4650c401-93f1-4aeb-b87d-c8204c047dec
+Key0000-8be4df61-93ca-11d2-aa0d-00e098032b8c                       SecureBoot-8be4df61-93ca-11d2-aa0d-00e098032b8c
+Key0001-8be4df61-93ca-11d2-aa0d-00e098032b8c                       SecureBootOption-955b9041-133a-4bcf-90d1-97e1693c0e30
+Key0002-8be4df61-93ca-11d2-aa0d-00e098032b8c                       Setup-4dfbbaab-1392-4fde-abb8-c41cc5ad7d5d
+Key0003-8be4df61-93ca-11d2-aa0d-00e098032b8c                       SetupHotKey-a7d8d9a6-6ab0-4aeb-ad9d-163e59a7a380
+Key0004-8be4df61-93ca-11d2-aa0d-00e098032b8c                       SetupMode-8be4df61-93ca-11d2-aa0d-00e098032b8c
+Key0005-8be4df61-93ca-11d2-aa0d-00e098032b8c                       SignatureSupport-8be4df61-93ca-11d2-aa0d-00e098032b8c
+Key0006-8be4df61-93ca-11d2-aa0d-00e098032b8c                       SioPolicy-729c67cc-e109-4bc7-97b5-fa7c386e387d
+LBC-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65                           Smst-2a3cfebd-27e8-4d0a-8b79-d688c2a3e1c0
+LBL-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65                           SpeakerMuteAndVolume-68ff2659-86dd-425f-9a42-c9884ff9c2f2
+LBOL-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65                          SplashLogoPackage-e5bbf7be-2417-499b-97db-39f4896391bc
+LBOP0000-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65                      System-e947fcf9-dd01-4965-b808-32a7b6815657
+LBOP0001-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65                      SystemSecure-3aec3e3f-5342-4e4b-b465-b9699b7376ba
+LBOP0002-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65                      Time-470733de-df43-448b-8b45-4eeb0df8c812
+LBOP0003-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65                      Timeout-8be4df61-93ca-11d2-aa0d-00e098032b8c
+LBOP0004-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65                      TpAcpiNvs-e6f014ab-cb0e-456e-8af7-7221edb702f7
+LBOP0005-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65                      TpmAcpiData-6403753b-abde-4da2-aa11-6983ef2a7a69
+LBOP0006-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65                      TpmLastOperation-753ab903-444c-41f8-a235-569e8341147e
+LBOP0007-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65                      TpmNextOperation-753ab903-444c-41f8-a235-569e8341147e
+LBOP0008-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65                      TpmOperationResult-753ab903-444c-41f8-a235-569e8341147e
+LBOP0009-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65                      TpmSaveState-5e724c0c-5c03-4543-bcb6-c1e23de24136
+LBOP000A-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65                      TpmSetup-753ab903-444c-41f8-a235-569e8341147e
+LBOP000B-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65                      UCR-14a22a97-8424-489e-9ead-dc09255658b5
+LBOP000C-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65                      lBoot0000-146b234d-4052-4e07-b326-11220f8e1fe8
+LBOP000D-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65                      lBoot0001-146b234d-4052-4e07-b326-11220f8e1fe8
+LBOP000E-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65                      lBoot0002-146b234d-4052-4e07-b326-11220f8e1fe8
+LBOP000F-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65                      lBoot0003-146b234d-4052-4e07-b326-11220f8e1fe8
+LBOP0010-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65                      lBoot0004-146b234d-4052-4e07-b326-11220f8e1fe8
+LBOP0011-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65                      lBoot0005-146b234d-4052-4e07-b326-11220f8e1fe8
+LBOP0013-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65                      lBoot0006-146b234d-4052-4e07-b326-11220f8e1fe8
+LFS-90564d52-f26b-4fac-8d16-7a51422c51f1                           lBoot0007-146b234d-4052-4e07-b326-11220f8e1fe8
+LKOP0000-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65                      lBoot0008-146b234d-4052-4e07-b326-11220f8e1fe8
+LKOP0001-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65                      lBoot0009-146b234d-4052-4e07-b326-11220f8e1fe8
+LKOP0002-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65                      lBoot000A-146b234d-4052-4e07-b326-11220f8e1fe8
+LKOP0003-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65                      lBoot000B-146b234d-4052-4e07-b326-11220f8e1fe8
+LKOP0004-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65                      lBoot000C-146b234d-4052-4e07-b326-11220f8e1fe8
+LKOP0005-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65                      lBoot000D-146b234d-4052-4e07-b326-11220f8e1fe8
+LKOP0006-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65                      lBoot000E-146b234d-4052-4e07-b326-11220f8e1fe8
+LWO-2a4dc6b7-41f5-45dd-b46f-2dd334c1cf65                           lBoot000F-146b234d-4052-4e07-b326-11220f8e1fe8
+LastBootCurrent-0b7646a4-6b44-4332-8588-c8998117f2ef               lBoot0010-146b234d-4052-4e07-b326-11220f8e1fe8
+LastBootOrder-0b7646a4-6b44-4332-8588-c8998117f2ef                 lBoot0011-146b234d-4052-4e07-b326-11220f8e1fe8
+LenovoBDG-49ad5446-9d32-4455-af9b-d774bda2cf8b                     lBoot0013-146b234d-4052-4e07-b326-11220f8e1fe8
+
+#+END_SRC
+
+* Better view with efibootmgr tool
+
+#+BEGIN_SRC bash
+tp_x250_05:00:13_Thu Aug 31: :~>efibootmgr -v | grep -v dp
+BootCurrent: 0009
+Timeout: 0 seconds
+BootOrder: 0009,0013,000A,000B,000C,000D,0007,0008
+Boot0000  Setup FvFile(721c8b66-426c-4e86-8e99-3457c46ab0b9)
+Boot0001  Boot Menu     FvFile(126a762d-5758-4fca-8531-201a7f57f850)
+Boot0002  Diagnostic Splash Screen      FvFile(a7d8d9a6-6ab0-4aeb-ad9d-163e59a7a380)
+Boot0003  Lenovo Diagnostics    FvFile(3f7e615b-0d45-4f80-88dc-26b234958560)
+Boot0004  Startup Interrupt Menu        FvFile(f46ee6f4-4785-43a3-923d-7f786c3c8479)
+Boot0005  Rescue and Recovery   FvFile(665d3f60-ad3e-4cad-8e26-db46eee9f1b5)
+Boot0006  MEBx Hot Key  FvFile(ac6fd56a-3d41-4efd-a1b9-870293811a28)
+Boot0007* USB CD        VenMsg(bc7838d2-0f82-4d60-8316-c068ee79d25b,86701296aa5a7848b66cd49dd3ba6a55)
+Boot0008* USB FDD       VenMsg(bc7838d2-0f82-4d60-8316-c068ee79d25b,6ff015a28830b543a8b8641009461e49)
+Boot0009* ATA HDD0      VenMsg(bc7838d2-0f82-4d60-8316-c068ee79d25b,91af625956449f41a7b91f4f892ab0f600)
+Boot000A* ATA HDD1      VenMsg(bc7838d2-0f82-4d60-8316-c068ee79d25b,91af625956449f41a7b91f4f892ab0f601)
+Boot000B* ATA HDD2      VenMsg(bc7838d2-0f82-4d60-8316-c068ee79d25b,91af625956449f41a7b91f4f892ab0f602)
+Boot000C* USB HDD       VenMsg(bc7838d2-0f82-4d60-8316-c068ee79d25b,33e821aaaf33bc4789bd419f88c50803)
+Boot000D* PCI LAN       VenMsg(bc7838d2-0f82-4d60-8316-c068ee79d25b,78a84aaf2b2afc4ea79cf5cc8f3d3803)
+Boot000E* IDER BOOT CDROM       PciRoot(0x0)/Pci(0x16,0x2)/Ata(0,1,0)
+Boot000F* IDER BOOT Floppy      PciRoot(0x0)/Pci(0x16,0x2)/Ata(0,0,0)
+Boot0010* ATA HDD       VenMsg(bc7838d2-0f82-4d60-8316-c068ee79d25b,91af625956449f41a7b91f4f892ab0f6)
+Boot0011* ATAPI CD      VenMsg(bc7838d2-0f82-4d60-8316-c068ee79d25b,aea2090adfde214e8b3a5e471856a354)
+Boot0013* Linux Boot Manager    HD(1,GPT,baefa4f1-9fe1-2345-b909-f849859262ab,0x800,0x200000)/File(\EFI\systemd\systemd-bootx64.efi)
+
+#+END_SRC
+
+* Simply create an EFi entry in partition number one and give a lebel to that partition
+
+#+BEGIN_SRC bash
+ efibootmgr --create --part 1 --label "Linux" --loader '\efi\boot\bootx64.efi'
+#+END_SRC
+
+* Footnotes
+
+[fn:1] [[https://en.wikipedia.org/wiki/UEFI][UEFI Page At Wikipedia]]
+
+[fn:2] [[https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=291f36325f9f252bd76ef5f603995f37e453fc60&id2=55839d515495e766605d7aaabd9c2758370a8d27][EFI Patches To The Linux Kernel]]
+
+[fn:3] [[https://docs.kernel.org/admin-guide/efi-stub.html][Linux Kernel EFI Boot Stub]]
+
+[fn:4] [[https://www.rodsbooks.com/efi-bootloaders/index.html][Managing EFI Bootloader For Linux]]
+
+[fn:5] [[https://linux.die.net/man/8/efibootmgr][EfiBootMgr Man Page]]
+
+[fn:6] [[https://wiki.gentoo.org/wiki/Efibootmgr][Gentoo efibootmgr page]]
+
+[fn:7] [[https://www.systutorials.com/docs/linux/man/3-efi_get_variable/][Efi Get Variable Manual Page]]
+
+# /home/bhaskar/Pictures/Screenshots/2023-08-31-033148_1358x730_scrot.png http://unixbhaskar.files.wordpress.com/2023/08/2023-08-31-033148_1358x730_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-08-31-035113_835x590_scrot.png http://unixbhaskar.files.wordpress.com/2023/08/2023-08-31-035113_835x590_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-08-31-040743_1366x78_scrot.png http://unixbhaskar.files.wordpress.com/2023/08/2023-08-31-040743_1366x78_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-08-31-042916_695x592_scrot.png http://unixbhaskar.files.wordpress.com/2023/08/2023-08-31-042916_695x592_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-08-31-042138_1366x618_scrot.png http://unixbhaskar.files.wordpress.com/2023/08/2023-08-31-042138_1366x618_scrot.png
