@@ -1,0 +1,82 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1561
+#+title: Linux And Glibc Juxtaposed
+#+date: 2023-09-08
+#+tags: Technical Linux Glibc libc Opensource Kernel Tools
+
+Well, busting the myths about the misconception or vaguely understood relation
+between those pieces of software is much vaunted.
+
+So, here in this short post, I shall be giving you little but to the point
+explanations of what it looks like from an end user perspective.
+
+*GLIBC --> GNU C Standard Library[fn:1]*.
+
+*Linux Kernel Interface API*[fn:2].
+
+Let's start with a blunt truth *They are NOT dependent on each other* and have
+*never been*.Period.
+
+In fact,a few of the /glibc/ components depend of the way the kernel interacts
+with the stuff former offered.Let me touch upon a couple of them,so they will be
+more vivid to you.
+
+For instance, /malloc/ system provided by the glibc has nothing to do with /kmalloc/
+we have in the linux kernel. Similarly, /kfree/ has the same treatment in the
+kernel.
+
+Glibc[fn:3] provides a wrapper to the common system calls for better management
+of the software.But, the /Linux kernel[fn:4]/ has most of its own functions
+written from the ground up, as per the requirement.It comes with various
+libraries not limited to C but expands to math too.
+
+You could build separate /glibc/ or build multiple of various versions of it in the
+same machine and use it as per your requirements.
+
+The beauty of /glibc,/ as the core library that its developers made sure that
+older program works with the newer version.Why? Because,*glibc supports symbol
+versioning*[fn:5].
+
+Note that in Linux it is the combination of the kernel and glibc that provides
+the POSIX API. Glibc adds a decent amount of value - not every POSIX function is
+necessarily a system call[fn:6], and for the ones that are, the kernel behavior
+isn't always POSIX conforming.
+
+There is a stark difference between calling a normal function and calling a
+system call[fn:7],the involvement with the kernel is NOT normal.So, it has to
+have a way to attach the facility to call those system calls, mainly due to the
+*linker* complaint about unresolved stuff.Every system call is *architecture
+specific assembly language thunks is used to call in the kernel*. Glibc provides
+the mechanism underneath to deal with that complexity. If you are inclined, you
+might implement your own way of calling those stuff or use some other
+alternatives to do the same.
+
+But, the application that is supposed to run and build probably has a much
+greater effect of /glibc/ than anything else. However, you could use other
+variants of it, like *Musl*[fn:8].
+
+Finally, I want to leave you with a cautionary note about the *glibc upgrade* ,it
+has been reported many times by end users that fiddling with it breaks the
+system consistency left and right. So, if you have that kind of inclination
+about the dealing with stuff, probably you don't know, then go ahead. Otherwise,
+please give yourself some *peace of mind* by sticking with the distribution's way
+of doing things. At least, people are paid to fix the damn thing,if the hell
+broke and certainly not your problem.
+
+* Footnotes
+
+[fn:1] [[https://en.wikipedia.org/wiki/Glibc][Glibc Wikipedia Page]]
+
+[fn:2] [[https://en.wikipedia.org/wiki/Linux_kernel_interfaces#Linux_API][Linux Kernel Interface API]]
+
+[fn:3] [[https://www.gnu.org/software/libc/][The GNU C Library]]
+
+[fn:4] [[https://www.kernel.org/][Linux Kernel]]
+
+[fn:5] [[https://mirrors.edge.kernel.org/pub/software/libs/glibc/hjl/compat/][The GNU C Library With Versioned Interface]]
+
+[fn:6] [[https://www.linux.it/~rubini/docs/ksys/ksys.html][Kernel System Calls]]
+
+[fn:7] [[https://en.wikipedia.org/wiki/System_call][System Call]]
+
+[fn:8] [[https://musl.libc.org/][Musl libc]]
