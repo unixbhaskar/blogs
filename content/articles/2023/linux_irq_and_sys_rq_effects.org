@@ -1,0 +1,104 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1569
+#+title: Linux IRQ And SysRq Effects
+#+date: 2023-09-14
+#+tags: Technical Linux Opensource Kernel Tools Internals
+
+Well, the topic of this post is a little dense and important. But, I am not sure
+how much I shall be able to dish out to you for comfort.So, take it with a pinch
+of salt. :)
+
+IRQ --> Interrupt Request.
+
+What is an IRQ?[fn:1].
+
+In a computer, an interrupt request (or IRQ) is a hardware signal sent to the
+processor that temporarily stops a running program and allows a special program,
+an interrupt handler, to run instead. Hardware interrupts are used to handle
+events such as receiving data from a modem or network card, key presses, or
+mouse movements.[fn:2]
+
+
+Okay, you can see the IRQs in Linux system like this :
+
+[[~/Pictures/Screenshots/2023-09-14-084348_1366x768_scrot.png]]
+
+Running **irqtop**[fn:3] shows like this :
+
+[[~/Pictures/Screenshots/2023-09-14-085122_1366x768_scrot.png]]
+
+So, user space tools can be a great help, provided you can parse the output
+properly, not only in this case, but with most of the user space tool's output.
+But for that interpretation to take effect, you need to armed yourself with the
+understanding of how things work underneath. It will help you to decipher the
+essence of the result and help you to make the decision on the basis of it.
+
+This is a bloody good pointer on /interrups/[fn:4]. There are various kinds of
+interrupts and system reacts to them differently. Here is the category I have
+picked out of that reference for the lazy :)
+
+  - Exceptions
+  - Interrupt request OR Hardware Interrupt
+    - IRQ Lines OR Pin-based IRQ
+    - Message Signaled Interrupt
+  - Software Interrupt
+
+The IRQ related stuffs are resides in the Linux kernel like this :
+
+[[~/Pictures/Screenshots/2023-09-14-093547_1192x60_scrot.png]]
+
+Go and explore it.
+
+*SysRq[fn:5]* is a mechanism to achieve some specific system level action, while the
+system is running or freezing.
+
+*Linux Kernel compiled with the “CONFIG_MAGIC_SYSRQ” option enabled*.
+
+* How do you invoke it??
+
+Simply pressing *ALT + SysRq + command key* .
+
+* You can cross check your running system kernel for the SysRq key
+
+[[~/Pictures/Screenshots/2023-09-14-105610_597x72_scrot.png]]
+
+* Check whether the mechanism activated or not
+
+[[~/Pictures/Screenshots/2023-09-14-110056_472x77_scrot.png]]
+
+* The values of the SysRq
+
+#+BEGIN_SRC bash
+0 - disable sysrq completely
+1 - enable all functions of sysrq
+2 - enable control of console logging level
+4 - enable control of keyboard (SAK, unraw)
+8 - enable debugging dumps of processes etc.
+16 - enable sync command
+32 - enable remount read-only
+64 - enable signaling of processes (term, kill, oom-kill)
+128 - allow reboot/poweroff
+256 - allow nicing of all RT tasks
+#+END_SRC
+
+Please consult Linux Kernel Documentations Page for SysRq Keys[fn:6].
+
+* Footnotes
+
+[fn:1] [[https://www.kernel.org/doc/html/latest/core-api/irq/concepts.html][IRQ Definition]]
+
+[fn:2] [[https://en.wikipedia.org/wiki/Interrupt_request][Wikipedia Define IRQ]]
+
+[fn:3] [[https://www.man7.org/linux/man-pages/man1/irqtop.1.html][IRQtop man page]]
+
+[fn:4] [[https://wiki.osdev.org/Interrupts][Interrupts on OSDev Wiki]]
+
+[fn:5] [[https://en.wikipedia.org/wiki/Magic_SysRq_key][Magic SysRq Key]]
+
+[fn:6] [[https://www.kernel.org/doc/html/latest/admin-guide/sysrq.html][Linux Kernel Documentation Page About SysRq Keys]]
+
+# /home/bhaskar/Pictures/Screenshots/2023-09-14-084348_1366x768_scrot.png http://unixbhaskar.files.wordpress.com/2023/09/2023-09-14-084348_1366x768_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-09-14-085122_1366x768_scrot.png http://unixbhaskar.files.wordpress.com/2023/09/2023-09-14-085122_1366x768_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-09-14-093547_1192x60_scrot.png http://unixbhaskar.files.wordpress.com/2023/09/2023-09-14-093547_1192x60_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-09-14-105610_597x72_scrot.png http://unixbhaskar.files.wordpress.com/2023/09/2023-09-14-105610_597x72_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-09-14-110056_472x77_scrot.png http://unixbhaskar.files.wordpress.com/2023/09/2023-09-14-110056_472x77_scrot.png
