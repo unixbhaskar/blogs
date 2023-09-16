@@ -1,0 +1,178 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1588
+#+title: Git: Uncanny Exploration With It
+#+date: 2023-09-16
+#+tags: Technical Opensource Git Version-Control Tools Linux
+
+Well, it seems the whole world moved with it, if not all, at least 99 percent of
+the software related projects are moving into it. Rest probably catching up in
+big time in fear of being left behind. This is such a powerful tool to invest
+your time to learn, which will give you benefit beyond your expectation. Yes,
+the learning curve like every other software is steep. That is why, the
+/investment of time/ behind is so crucial. You just don't want to waste your
+invaluable time not knowing things properly. I have written about it
+before,which you can explore by typing /git/ in the search box in right upper hand
+corner of this website.And it will enlist you all the stuff related to git.
+
+In this post, I am going to show you a few of the command explorations I believe
+people ought to know sometime in their git usage time. Also, I am wildly
+expecting, whoever is reading this stuff,to at least have a basic understanding
+of it working and that too in the /Linux Platform/. There might be some subtleties
+on other platforms that I am not aware of due to my work environment
+confinement.
+
+* What the heck is /git cat-file/?[fn:1] And how it can be used?
+
+This is essentially a command to /figure out/ kind of stuff about the
+commits.Let me show you some...
+
+As the documentation said,it provides three things, content, size and type of
+any object in git repository.
+
+** How to figure out the TYPE?
+
+[[~/Pictures/Screenshots/2023-09-16-133953_518x91_scrot.png]]
+
+I am inside of one of my random repository and ran two distinct command to get
+the type of the hash object.
+
+*git shorthash is an alias : alias.shorthash !git rev-parse --short @*
+
+** How to see the CONTENT of the object?
+
+[[~/Pictures/Screenshots/2023-09-16-134348_577x339_scrot.png]]
+
+Alright, the words *type* and *dump* are aliases to these below commands:
+
+[[~/Pictures/Screenshots/2023-09-16-134738_465x76_scrot.png]]
+
+Okay, you have spotted another command along with those two,as the name of the
+alias suggest that is for entire tree, which look like this :
+
+[[~/Pictures/Screenshots/2023-09-16-135028_632x435_scrot.png]]
+
+* How to *Bundle[fn:2]* a project?
+
+This sub command basically create a /single file/ of the entire repository, which
+also include the versioning information.
+
+[[~/Pictures/Screenshots/2023-09-16-140903_508x120_scrot.png]]
+
+It essentially creates the project in outside of this repository. Let me show
+your the effect of it below by getting into that created bundle.
+
+[[~/Pictures/Screenshots/2023-09-16-141341_611x98_scrot.png]]
+
+...now see the log in this cloned repository :
+
+[[~/Pictures/Screenshots/2023-09-16-141532_1011x118_scrot.png]]
+
+* Archiving the project with *git archive[fn:3]*
+
+[[~/Pictures/Screenshots/2023-09-16-142244_641x507_scrot.png]]
+
+* Keep aside the *uncommitted changes* by using *stash*[fn:4]
+
+[[~/Pictures/Screenshots/2023-09-16-143143_680x171_scrot.png]]
+
+Various common commands related to stashing are :
+
+*git stash list ---> This will show you the list of stashed items*
+
+*git stash apply ---> This will let you apply saved stash  OR*
+
+*git stash apply {number} ---> If there are more than one item in the stash list*
+
+
+* Get the damn file from the remote repository
+
+It is useful in a sense, that if you modified something on the local repository
+and don't like it, then you can get the pristine copy of the same file from the
+remote repository.
+
+*git checkout origin/master -- $path_to_file*
+
+* Investigate using git *reflog*[fn:5]
+
+Typing /git reflog/ at the command prompt shows you this kind of information
+
+[[~/Pictures/Screenshots/2023-09-16-145520_749x93_scrot.png]]
+
+..and there is a *aliased* version of reflog , I called it *logref* , it is having a time
+stamp attached to the reflog entries.
+
+[[~/Pictures/Screenshots/2023-09-16-145935_917x83_scrot.png]]
+
+See the difference? Okay, here is the alias entry for it :
+
+*alias.logref !git reflog --date=iso*
+
+* Measure how much disk space used by the *pack files* by using git *count-objects*[fn:6]
+
+[[~/Pictures/Screenshots/2023-09-16-151309_471x176_scrot.png]]
+
+Look at the *size-pack* value.
+
+* Show commit objects in reverse chronological order git *rev-parse*[fn:7]
+
+I have a script that shows me the latest commits on HEAD of the Linux kernel source[fn:8]
+tree and it is like this :
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+if [ "$1" != "" ];then
+	branch="$1"
+else
+	branch="HEAD"
+
+fi
+
+printf "\n%s%s\n\n" $(git rev-list $branch ^$branch@{1} | wc -l) " commits were added by your last update to $branch:"
+
+git --no-pager log $branch ^$branch@{1} --oneline
+
+#+END_SRC
+
+..and it shows the output like this :
+
+[[~/Pictures/Screenshots/2023-09-16-152206_1366x768_scrot.png]]
+
+I think people who love some *visual* representation of the git internals might
+look in here [[https://eagain.net/articles/git-for-computer-scientists/][Git For Computer Scientists]].
+
+
+Enough!
+
+* Footnotes
+
+[fn:1] [[https://git-scm.com/docs/git-cat-file][Git cat-file Documentation]]
+
+[fn:2] [[https://www.git-scm.com/docs/git-bundle][Git Bunndle Documentation]]
+
+[fn:3] [[https://www.git-scm.com/docs/git-archive][Git Archive Documentation]]
+
+[fn:4] [[https://www.git-scm.com/docs/git-stash][Git Stash Documentation]]
+
+[fn:5] [[https://www.git-scm.com/docs/git-reflog][Git Reflog Documentation]]
+
+[fn:6] [[https://www.git-scm.com/docs/git-count-objects][Git Count Objects Documentation]]
+
+[fn:7] [[https://www.git-scm.com/docs/git-rev-list][Git Rev Parse Documentation]]
+
+[fn:8] Although it could be use on any git repository. I just used it on the
+kernel to show you a good looking output.
+
+# /home/bhaskar/Pictures/Screenshots/2023-09-16-133953_518x91_scrot.png http://unixbhaskar.files.wordpress.com/2023/09/2023-09-16-133953_518x91_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-09-16-134348_577x339_scrot.png http://unixbhaskar.files.wordpress.com/2023/09/2023-09-16-134348_577x339_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-09-16-134738_465x76_scrot.png http://unixbhaskar.files.wordpress.com/2023/09/2023-09-16-134738_465x76_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-09-16-135028_632x435_scrot.png http://unixbhaskar.files.wordpress.com/2023/09/2023-09-16-135028_632x435_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-09-16-140903_508x120_scrot.png http://unixbhaskar.files.wordpress.com/2023/09/2023-09-16-140903_508x120_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-09-16-141341_611x98_scrot.png http://unixbhaskar.files.wordpress.com/2023/09/2023-09-16-141341_611x98_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-09-16-141532_1011x118_scrot.png http://unixbhaskar.files.wordpress.com/2023/09/2023-09-16-141532_1011x118_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-09-16-142244_641x507_scrot.png http://unixbhaskar.files.wordpress.com/2023/09/2023-09-16-142244_641x507_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-09-16-143143_680x171_scrot.png http://unixbhaskar.files.wordpress.com/2023/09/2023-09-16-143143_680x171_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-09-16-145520_749x93_scrot.png http://unixbhaskar.files.wordpress.com/2023/09/2023-09-16-145520_749x93_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-09-16-145935_917x83_scrot.png http://unixbhaskar.files.wordpress.com/2023/09/2023-09-16-145935_917x83_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-09-16-151309_471x176_scrot.png http://unixbhaskar.files.wordpress.com/2023/09/2023-09-16-151309_471x176_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-09-16-152206_1366x768_scrot.png http://unixbhaskar.files.wordpress.com/2023/09/2023-09-16-152206_1366x768_scrot.png
