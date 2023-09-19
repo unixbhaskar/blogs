@@ -1,0 +1,197 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1592
+#+title: Slackware Linux After Update Cleanups Automated Way
+#+date: 2023-09-19
+#+tags: Technical Opensource Slackware Linux Tools Bash Scripting Programming
+
+Alright, as the title of the post suggests, this activity will be performed on a
+Linux distribution called *Slackware*[fn:1].
+
+While sitting on it and /updating activity/ is pretty common if you tend to hop
+onto it every few weeks. And, I am running kinda *rolling release* model with this
+distribution. The update is necessary to get the latest software on it to run
+plus the sadist pleasure of seeing the update happen on term!! See, I am NOT
+trying to give some other reason generally dished out by the "experts", which
+always skips me.
+
+Anyway,like everyone else in the wild, I too have my own way of updating the
+stuff in my system(what the big fuss about it???), and for that reason, I have
+written a mundane script(*unlike the experts*) to do the damn thing automated way,
+just for the sheer convenience but nothing else.
+
+Here is the trivial and mundane stuff, which does the trick for me...don't
+fret..
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+TM="/usr/bin/time -f"
+printf "Updating and Upgrading the system,please wait...\n\n\n"
+
+printf "Hostname: %s\nDate    : %s\nUptime  :%s\n\n"  "$(hostname -s)" "$(date)" "$(uptime)"
+
+printf "\n\n\n Checking the system capacity ...\n\n"
+
+
+maxpoint="90"
+per=`df / | awk 'END{print $5}' | tr -d %`
+if  [ "$per" -le  "$maxpoint" ]; then
+
+	printf "Ok...looks good...procced\n\n\n"
+
+elif [ "$per" -gt "$maxpoint" ]; then
+
+	printf "Not enough space...aborting!"
+	exit 1
+fi
+
+
+$TM "\t\n\n Elapsed time: %E \n\n" slackpkg update  && slackpkg upgrade-all
+
+if [[ $? -eq 0 ]];then
+	notify-send "Update and Upgrade process done!"
+else
+	notify-send "Update process failed..pls check manually"
+fi
+
+#+END_SRC
+
+Darn simple and ordinary.Period.
+
+Now, in general, this update process pulls the stuff from upstream(*I am using
+the current version, which means beyond stable*) and this mechanism brings out
+files that will be *overwritten* by the process if you don't take action at the
+end of the update.You can keep your old files and new files side by side, with a
+press of a key(generally that is done by pressing the letter K). Or you can
+overwrite with the other letter options O ...and so forth.
+
+I generally keep the old and new files once the update is finished doing update,
+I hop into those files and compare the changes(I have a homegrown automated way
+of doing this and that is extremely trivial to claim). The update, basically
+littered the *etc* directory with two kinds of files, one with *.new* extensions and
+other with the *.orig* extensions.
+
+To avoid that clutter of an important directory i.e. etc, I have made a few
+lines of trivial bash code to put those files in a designated directory for
+later inspection. But before doing that, the script also takes a backup of the
+same directory with old(which means the last backup update content) to make a
+tarball of it.Then essentially go ahead create the same directory and put the
+files in it.The directories are duly time stamped for the sake of clear
+understanding and later references.
+
+Now here comes the meat aka the trivial script to just what I have described in
+the above vignette.
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+#===============================================================================
+#
+#          FILE: slackware_update_leftover.sh
+#
+#         USAGE: ./slackware_update_leftover.sh
+#
+#   DESCRIPTION: Clean things up after the update by putting files in  places
+#
+#       OPTIONS: ---
+#  REQUIREMENTS: --- GNU coreutils
+#          BUGS: ---
+#         NOTES: --- Cleanliness of the /etc directory
+#        AUTHOR: Bhaskar Chowdhury (https://about.me/unixbhaskar), unixbhaskar@gmail.com
+#  ORGANIZATION: Independent
+#       CREATED: 09/19/2023 05:37
+#      REVISION:  ---
+#===============================================================================
+
+# License (GPL v2.0)
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+set -o nounset                              # Treat unset variables as an error
+
+
+usage(){
+
+   echo You are suppose to be Superuser to run this script.
+   exit 1
+}
+
+# You are suppose to be root to be run this script otherwise fail.
+
+if test  $UID -ne 0;then
+	usage
+fi
+
+# Specific naming format for the newly created directories
+
+backup_dir_with_new_extension="/etc/backup_new_config_$(date +'%F_%T')"
+backup_dir_with_orig_extension="/etc/backup_orig_config_$(date +'%F_%T')"
+search_dir=/etc
+TAR="$(command -v tar)"
+
+# Function to make a tarball of the existing directory filled with dot new
+# extensions files and create a new directory to hold new files left the by
+# updates.
+
+config_backedup_with_new(){
+
+	files=$(find "${search_dir}" -name "*.new" -type f -print)
+
+        sh -c "\"${TAR}\" -czf \"new_config_$(date +'%F_%T').tar.gz\" \"${backup_dir_with_new_extension}\""
+	mkdir -p "${backup_dir_with_new_extension}"
+
+	for i in $files
+do
+	ls -l "$i"
+	mv -v "$i" "${backup_dir_with_new_extension}"
+done
+}
+
+
+# Function to make a tarball of the existing directory filled with dot orig
+# file extensions and create new directory to hold new dot orig files left by
+# the update
+
+config_backedup_with_orig(){
+
+       files=$(find "${search_dir}" -name "*.orig" -type f -print)
+
+	 sh -c "\"${TAR}\" -czf  \"orig_config_$(date +'%F_%T').tar.gz\" \"${backup_dir_with_orig_extension}\""
+	mkdir -p "${backup_dir_with_orig_extension}"
+
+       for i in $files
+do
+	ls -l "$i"
+	mv -v "$i" "${backup_dir_with_orig_extension}"
+done
+}
+
+# Checking if calling the commands for the job is successful or not.
+if test "$(config_backedup_with_new)" -eq 0;then
+
+	echo Moved new extensions files successfully!
+else
+	echo Bloody hell...check manually
+fi
+
+if test "$(config_backedup_with_orig)" -eq 0;then
+
+	echo Moved orig extentions files successfully!
+else
+	echo Bloody hell ....check manually
+fi
+
+#+END_SRC
+
+This little thing plays well for the requirement and importantly, I just
+didn't want to overdo it.
+
+* Footnotes
+
+[fn:1] [[http://www.slackware.com/][Slackware Linux Website]]
