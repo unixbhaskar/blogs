@@ -1,6 +1,6 @@
 #+BLOG: Unixbhaskar's Blog
 #+POSTID: 1588
-#+title: Git: Uncanny Exploration With It
+#+title: Git Uncanny Exploration With It
 #+date: 2023-09-16
 #+tags: Technical Opensource Git Version-Control Tools Linux
 
