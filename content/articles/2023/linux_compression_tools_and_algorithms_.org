@@ -1,0 +1,184 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1598
+#+title: Linux Compression Tools And Algorithms
+#+date: 2023-09-21
+#+tags: Technical Linux Tools Algorithm Compression Opensource
+
+Well, if you live enough with the computer and specifically with /opensource/
+system for some time, you are bound to come across some renowned and well
+implemented *compression tools and algorithms* in various places. Sometimes these
+can be used explicitly and on other occasions, these are ingrained into the software.
+
+So,the point I am trying to make is that these tools and related algorithms are
+quite unavoidable, especially if you lean onto the open system(read GNU/Linux
+and BSD parlance),and I lack exposure to other systems for over two decades.
+
+Anyway, these tools are generally available by default in the system by the
+distribution people who ship distributions. If not, it should not be a big deal
+to get them installed in the system. But the catch is that some of the default
+software might not work without some of them.
+
+One thing readily coming to mind, although it is not mandatory, important for
+the people, who are inclined to do so, that is , compiling the Linux kernel
+needs them to be available in the system and the specific *menuconfig* option will
+allow you to choose the compression of the kernel after build.Likewise, many
+other software need those to perform the operation for the specific software,
+which depends on its facility.Likewise,*FFmpeg's libavutil library*[fn:1]
+includes its own implementation of LZO[3] as a possible method for lossless
+video compression
+
+Let me enlist you the popular ones here:
+
+  Gzip[fn:2]
+
+  LZO[fn:3]
+
+  XZ Utils[fn:4]
+
+  Bzip2[fn:5]
+
+Now,all of them come along with some binary to operate with the library attached
+with the algorithms.
+
+* Extracted the important things to note about *Gzip*:
+
+  + a 10-byte header, containing a magic number[fn:6] (1f 8b), the compression method
+    (08 for DEFLATE), 1-byte of header flags, a 4-byte timestamp, compression flags
+    and the operating system ID.
+
+
+ + optional extra headers as allowed by the header flags, including the original
+   filename, a comment field, an "extra" field, and the lower half of a CRC-32
+   checksum for the header section.
+
+
+ +  a body, containing a DEFLATE-compressed payload
+
+
+ + an 8-byte trailer, containing a CRC-32 checksum and the length of the original uncompressed data, modulo
+
+...and
+
+*zlib*[fn:7] is an abstraction of the DEFLATE algorithm in library form which includes
+support both for the gzip file format and a lightweight data stream format in
+its API. The zlib stream format, DEFLATE, and the gzip file format were
+standardized respectively as RFC 1950, RFC 1951, and RFC 1952.
+
+* Extracted the important things to note about *LZO*:
+
+  + Higher compression speed compared to DEFLATE[fn:8] compression
+
+
+  + Very fast decompression
+
+
+  + Requires an additional buffer during compression (of size 8 kB or 64 kB,
+    depending on compression level)
+
+
+  + Requires no additional memory for decompression other than the source and
+    destination buffers
+
+
+  + Allows the user to adjust the balance between compression ratio and
+    compression speed, without affecting the speed of decompression
+
+
+* The Linux kernel uses its LZO implementation in some of its features:
+
+   + btrfs uses LZO as a possible compression method for file system
+     compression.
+
+
+   + initrd and initramfs use LZO as a possible compression method for initial
+     RAM drive compression.
+
+
+   + SquashFS uses LZO as a possible compression method for file system
+     compression.
+
+
+   + zram uses LZO with run-length encoding called LZO-RLE as the default
+     compression method for RAM drive compression.
+
+
+   + zswap uses LZO as the default compression method for virtual memory
+     compression
+
+* XZ Utils can compress and decompress both the xz and lzma file formats
+
+     + xz, the command-line compressor and decompressor (analogous to gzip)
+
+
+    + liblzma, a software library with an API similar to zlib
+
+Various command shortcuts exist, such as lzma (for xz --format=lzma), unxz (for
+xz --decompress; analogous to gunzip) and xzcat (for unxz --stdout; analogous to
+zcat).
+
+
+* bzip2 is a free and open-source file compression program that uses the Burrows–Wheeler[fn:9] algorithm
+
+As an overview, a .bz2 stream consists of a 4-byte header, followed by zero or
+more compressed blocks, immediately followed by an end-of-stream marker
+containing a 32-bit CRC for the plaintext whole stream processed. The compressed
+blocks are bit-aligned and no padding occurs.
+
+
+bzip2 uses several layers of compression techniques stacked on top of each
+other, which occur in the following order during compression and the reverse
+order during decompression:
+
+   + Run-length encoding (RLE) of initial data.
+
+
+   + Burrows–Wheeler transform (BWT), or block sorting.
+
+
+   + Move-to-front (MTF) transform.
+
+
+   + Run-length encoding (RLE) of MTF result.
+
+
+   + Huffman coding.
+
+
+   + Selection between multiple Huffman tables.
+
+
+   + Unary base-1 encoding of Huffman table selection.
+
+
+   + Delta encoding (Δ) of Huffman-code bit lengths.
+
+
+   + Sparse bit array showing which symbols are used.
+
+
+
+bzip2 is suitable for use in big data applications with cluster computing
+frameworks like Hadoop and Apache Spark, as the compressed blocks can be
+independently decompressed.
+
+* Footnotes
+
+[fn:1] libavutil is a helper library containing routines common to different
+parts of FFmpeg. This library includes hash functions, ciphers, LZO decompressor
+and Base64 encoder/decoder.
+
+[fn:2] [[https://en.wikipedia.org/wiki/Gzip][Gzip Wikipedia Page]]
+
+[fn:3][[https://en.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Oberhumer][Lempel–Ziv–Oberhumer Wikipedia Page]]
+
+[fn:4][[https://en.wikipedia.org/wiki/XZ_Utils][XZ Utils Wikipedia Page]]
+
+[fn:5][[https://en.wikipedia.org/wiki/Bzip2][Bzip2 Wikipedia Page]]
+
+[fn:6][[https://en.wikipedia.org/wiki/Magic_number_(programming)][Magic Number]]
+
+[fn:7][[https://en.wikipedia.org/wiki/Zlib][Zlib Wikipedia Page]]
+
+[fn:8][[https://en.wikipedia.org/wiki/Deflate][Deflate Algorithm Wikipedia Page]]
+
+[fn:9][[https://en.wikipedia.org/wiki/Burrows%E2%80%93Wheeler_transform][Burrows–Wheeler transform Wikipedia Page]]
