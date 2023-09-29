@@ -1,0 +1,90 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1612
+#+title: How To Use Wpa_Supplicant Cli On The Command Line To Deal With Wireless Network
+#+date: 2023-09-29
+#+tags: Technical Linux Opensource Tools Network Wireless
+
+
+Well,managing network connections on a Linux desktop is a serious kind of pain
+in the butt,but not always. Because GUI tools were not apt enough to get things
+done more efficiently or minimal way. Wireless networks have become a /lingua
+franca/ on Linux devices many moons ago. And the software that is doing the thing
+is called *Wpa_Supplicant[fn:1]*.
+
+It has a command line version, which is aptly called /wpa_cli/ and can be used on
+the command line to manipulate the wireless network related stuff. It will be
+surprising, if it is not installed by default to your choice of Linux
+distribution. And if it is so, then it is pretty darn simple to get and
+installed by your distribution's package manager.
+
+Here in the below section, I will show you some rudimentary interactions with
+/wpa_cli/ and you will see how easy it is to delve into.
+
+* Calling *wpa_cli* without any argument will put you in an interactive shell
+
+[[~/Pictures/Screenshots/2023-09-29-084347_775x217_scrot.png]]
+
+* Now you can *Scan* the network from this interactive shell
+
+[[~/Pictures/Screenshots/2023-09-29-084535_595x84_scrot.png]]
+
+Now, you can see it spitted out the result as *OK*
+
+
+* How to see the network scan result
+
+[[~/Pictures/Screenshots/2023-09-29-085158_481x333_scrot.png]]
+
+I have intentionally trim the right hand side of the screenshot to hide the
+network names in my near vicinity.
+
+* To add an network
+
+[[~/Pictures/Screenshots/2023-09-29-085521_294x26_scrot.png]]
+
+* To set the network with specific SSID[fn:2]
+
+[[~/Pictures/Screenshots/2023-09-29-085614_362x32_scrot.png]]
+
+
+* How to set the credentials
+
+[[~/Pictures/Screenshots/2023-09-29-085709_296x25_scrot.png]]
+
+
+* How to enable the network
+
+[[~/Pictures/Screenshots/2023-09-29-085754_235x33_scrot.png]]
+
+
+* And the status of the connected network is shown
+
+[[~/Pictures/Screenshots/2023-09-29-085903_624x121_scrot.png]]
+
+* How to save the config for future use
+
+[[~/Pictures/Screenshots/2023-09-29-090024_297x34_scrot.png]]
+
+* How to quit from this interactive shell , once done
+
+[[~/Pictures/Screenshots/2023-09-29-090134_103x14_scrot.png]]
+
+
+That's it.
+
+* Footnotes
+
+[fn:1] [[https://w1.fi/wpa_supplicant/][Linux WPA/WPA2/IEEE 802.1X Supplicant]]
+
+[fn:2] [[https://en.wikipedia.org/wiki/Service_set_(802.11_network)][Service set Page At Wikipedia]]
+
+# /home/bhaskar/Pictures/Screenshots/2023-09-29-084347_775x217_scrot.png http://unixbhaskar.files.wordpress.com/2023/09/2023-09-29-084347_775x217_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-09-29-084535_595x84_scrot.png http://unixbhaskar.files.wordpress.com/2023/09/2023-09-29-084535_595x84_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-09-29-085158_481x333_scrot.png http://unixbhaskar.files.wordpress.com/2023/09/2023-09-29-085158_481x333_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-09-29-085521_294x26_scrot.png http://unixbhaskar.files.wordpress.com/2023/09/2023-09-29-085521_294x26_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-09-29-085614_362x32_scrot.png http://unixbhaskar.files.wordpress.com/2023/09/2023-09-29-085614_362x32_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-09-29-085709_296x25_scrot.png http://unixbhaskar.files.wordpress.com/2023/09/2023-09-29-085709_296x25_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-09-29-085754_235x33_scrot.png http://unixbhaskar.files.wordpress.com/2023/09/2023-09-29-085754_235x33_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-09-29-085903_624x121_scrot.png http://unixbhaskar.files.wordpress.com/2023/09/2023-09-29-085903_624x121_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-09-29-090024_297x34_scrot.png http://unixbhaskar.files.wordpress.com/2023/09/2023-09-29-090024_297x34_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-09-29-090134_103x14_scrot.png http://unixbhaskar.files.wordpress.com/2023/09/2023-09-29-090134_103x14_scrot.png
