@@ -1,0 +1,124 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1617
+#+title: Linux Kernel Module Skeleton File
+#+date: 2023-09-30
+#+tags: Technical Linux Kernel Opensoure kernel-modules C Programming
+
+Alright, in this post, I will show you the /skeleton file structure/ of a
+Linux kernel module file. These entries are required to be present in the module
+file to get into the kernel.
+
+Heads Up! Linux Kernel Experts, you can infuse the exact details missing as
+comment, so I can update the post if that is the missing part.
+
+
+*I am assuming(that's a bad thing, but I can't help much), that you are getting
+*into this endeavor, means, you have to have little idea what you are trying to*
+*pursue.*
+
+
+Let me give you the *skeleton file* first:
+
+#+BEGIN_SRC C
+#include <linux/kernel.h>
+#include <linux/init.h>
+#include <linux/module.h>
+
+
+/* Meta Informations */
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Bhaskar Chowdhury");
+MODULE_DESCRIPTION("Random kernel module demonstration");
+
+
+/**
+ * This is all about module insertion to the running kernel
+ */
+
+static int __init custom_module_init(void) {
+	printk("This is to show you how you can make kernel module ,basic way\n");
+		return 0;
+}
+
+/**
+ * How to remove module from the running kernel
+ */
+
+static void __exit custom_module_exit(void) {
+	printk("Removing dummy module\n");
+}
+
+module_init(custom_module_init);
+module_exit(custom_module_exit);
+
+#+END_SRC
+
+You are suppose to compile it like every other C file. In general, nothing
+special is requited. The *custom_module_init() and custom_module_exit()* functions
+have to be filled with the exact login of the module's purpose.
+
+Now, you need a *Makefile* get the damn module to be build and here is a bare-bone
+one to help with :
+
+#+BEGIN_SRC sh
+obj-m += demo-kernel-module-build.o
+
+all:
+	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
+
+clean:
+		make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
+
+#+END_SRC
+
+Pretty darn simple, right? It should give you a fair idea of how to get on with the
+proceedings about it. You can think of it as a starting point.
+
+You might take a peek at the video I made [[https://youtu.be/u_9HZcPpGQU][Linux Kernel Module Writing Video]].
+
+If you ever wanted to write a module which is *out of kernel tree*[fn:1].
+
+* You can *Insert* the kernel module by *insmod* command
+
+#+BEGIN_SRC bash
+insmod name_of_your_module.ko
+#+END_SRC
+
+* You can *Remove* the kernel module by *rmmod* command
+
+#+BEGIN_SRC bash
+rmmod name_of_your_module.ko
+#+END_SRC
+
+* You can get *Information* about the kernel module by *modinfo* command
+
+#+BEGIN_SRC bash
+modinfo name_of_your_module
+#+END_SRC
+
+* You can get all the modules of the running kernel with nice enlisting
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+ gawk '{print $1}' "/proc/modules" | xargs modinfo | gawk '/^(filename|desc|depends)/'
+
+#+END_SRC
+
+* To enlist all the kernel modules by using *lsmod* command
+
+#+BEGIN_SRC sh
+lsmod
+#+END_SRC
+
+..and the output would look like this :
+
+[[~/Pictures/Screenshots/2023-09-30-045630_540x398_scrot.png]]
+
+I have trimmed the output for brevity's sake :)
+
+* Footnotes
+
+[fn:1] [[https://www.kernel.org/doc/html/latest/kbuild/modules.html][Building External Modules]]
+
+# /home/bhaskar/Pictures/Screenshots/2023-09-30-045630_540x398_scrot.png http://unixbhaskar.files.wordpress.com/2023/09/2023-09-30-045630_540x398_scrot.png
