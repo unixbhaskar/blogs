@@ -1,0 +1,135 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1629
+#+title: Linux Kernel Make Is A Tool To Give Enough Hints About Builds
+#+date: 2023-10-04
+#+tags: Technical Linux Kernel Opensource Build Tools
+
+Well, building software is just a second nature to anyone who spends enough time
+with open systems(read GNU/Linux, UNIX). As part of that build process, we use
+several tools, common and intuitive. One of them, is called *make* and Linux
+kernel has its own flavor. It is bound to be because it is a big project and
+touches different corners of the system and some special cases. So, in an effort
+to amalgamate those feature options in one place, the Linux system evolved and
+incorporated a few flags, mostly unnoticed by the common people.
+
+Here I am going to just bring out those flags,they are ingrained with it and you
+can use them for different reasons.Of them, we use almost daily basis or
+instantly and others are there but less used and targeted to some specific
+cases.
+
+Why does this all matter?? Because, taking a leaf out of my ignorance, I have
+missed the stuff that was there( and somebody good enough to write that thing
+for us) and I used to use things /"my laborious way"/ all these years.Nope, there
+is no denying /ignorance is bliss/ but not knowing what to ignore might cause a
+long route and lack efficiency.
+
+Okay, enough background and heads up. Let me furnish the stuff, those who
+missed those like me. Here is an interaction with *Linux Kernel Build specific
+Make*
+
+I ran it in the *Linux Kernel Source Directory* :
+
+#+BEGIN_SRC sh
+✔ ~/git-linux/linux [master|✔]
+03:35 $ make help
+#+END_SRC
+
+I have a line in my build scripts, like this:
+
+#+BEGIN_SRC sh
+$get_elapsed_time "\n\n\tTime Elapsed: %E\n\n" $get_make ARCH=x86_64 V=1 -j$(getconf _NPROCESSORS_ONLN) deb-pkg
+#+END_SRC
+
+That *get make* variable is just a placeholder for make binary in the system. And
+that *V=1* is for the verbosity.
+
+Likewise, few other calls the make various other options I needed in other
+locations. All of the targets(yes, it is called, make targets) are enlisted when
+you run make help in the source directory.
+
+Okay, I build various Linux distributions and I have a script, like everyone
+else,and I have written about it in the past. But, for your laziness sake , I
+just quick grep about the make I run ..
+
+#+BEGIN_SRC sh
+✔ ~/git-linux/linux [master|✔]
+03:37 $ grep make ~/bin/build_and_install_kernel
+get_make=$(command -v make)
+make_llvm="LLVM=1"
+$get_make clean && $get_make mrproper
+$get_make  ARCH=x86_64 olddefconfig
+$get_elapsed_time "\t\n\n Elapsed Time : %E \n\n"  $get_make ARCH=x86_64 V=1 -j$(getconf _NPROCESSORS_ONLN) LOCALVERSION=-$(hostname)
+$get_make  modules_install
+$get_make install
+$get_make clean && $get_make mrproper
+$get_make  ARCH=x86_64 olddefconfig
+$get_elapsed_time "\n\n\tTime Elapsed: %E\n\n" $get_make ARCH=x86_64 V=1 -j$(getconf _NPROCESSORS_ONLN) deb-pkg
+sed -i 's/#make oldconfig/make olddefconfig/' PKGBUILD
+sed -i '62i make V=1 ARCH=x86_64 -j4  bzImage modules' PKGBUILD
+#makepkg -g
+$get_elapsed_time "\t\n\n Elapsed Time : %E \n\n" makepkg -s
+$get_make olddefconfig
+printf "${Bright}${Green}Then make it${NOCOLOR} ...\n\n"
+$get_elapsed_time "\t\n\n Elapsed time: %E\n\n" $get_make V=1 ARCH=x86_64 -j$(getconf _NPROCESSORS_ONLN) LOCALVERSION=-$(hostname)
+$get_make modules_install
+$get_make olddefconfig
+$get_elapsed_time "\n\t Elapsed Time: %E \n\n" $get_make ARCH=x86_64 V=1 -j$(getconf _NPROCESSORS_ONLN)
+$get_make cleandocs
+$get_make modules_install
+$get_make install
+#+END_SRC
+
+These make options are littered in that script, which build various Linux
+distributions kernel.
+
+I would like to explicitly show few flags,that you consider using while build
+the kernel.
+
+* Verbosity matters but overwhelming at times
+
+#+BEGIN_SRC sh
+ make V=n   [targets] 1: verbose build
+                       2: give reason for rebuild of target
+                       V=1 and V=2 can be combined with V=12
+#+END_SRC
+
+* Check targets
+
+#+BEGIN_SRC sh
+make C=1   [targets] Check re-compiled c source with $CHECK
+                       (sparse by default)
+  make C=2   [targets] Force check of all c source with $CHECK
+
+#+END_SRC
+
+* Warning helps you to catch potential bugs and malfunctions
+
+#+BEGIN_SRC sh
+ make W=n   [targets] Enable extra build checks, n=1,2,3 where
+                1: warnings which may be relevant and do not occur too often
+                2: warnings which occur quite often but may still be relevant
+                3: more obscure warnings, can most likely be ignored
+                e: warnings are being treated as errors
+                Multiple levels can be combined with W=12 or W=123
+#+END_SRC
+
+* Linux kernel build make target: Packages
+
+[[~/Pictures/Screenshots/2023-10-04-045001_607x301_scrot.png]]
+
+
+* Linux kernel build make target: Static Analyzers
+
+[[~/Pictures/Screenshots/2023-10-04-045159_491x139_scrot.png]]
+
+* Linux Kernel build make target: Hard Drive and ISO images
+
+[[~/Pictures/Screenshots/2023-10-04-045523_606x74_scrot.png]]
+
+
+Enough! I think these options will take some of your time to get yourself
+acclimatize with the build process.
+
+# /home/bhaskar/Pictures/Screenshots/2023-10-04-045001_607x301_scrot.png http://unixbhaskar.files.wordpress.com/2023/10/2023-10-04-045001_607x301_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-10-04-045159_491x139_scrot.png http://unixbhaskar.files.wordpress.com/2023/10/2023-10-04-045159_491x139_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2023-10-04-045523_606x74_scrot.png http://unixbhaskar.files.wordpress.com/2023/10/2023-10-04-045523_606x74_scrot.png
