@@ -1,0 +1,518 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1632
+#+title: Gentoo Linux Various Scripts
+#+date: 2023-10-20
+#+tags: Technical Gentoo Linux Opensource OpenrataingSystem Bash Scripting Tools
+
+Well, I have been using this specific Linux distribution for some decades
+now. As it is a /source based[fn:1]/ distribution,the chances have more to do with
+the customizations. But, that is beyond the point and not the topic of this post
+too. All I am trying to post here is a few absolutely ordinary and essentially
+rudimentary scripts to work on with this distribution.
+
+Hope, some of you might find these as a building block for better things, or you
+have probabaly done better things already, in that case, you might drop the
+suggestion for the improvement. But, please only the empirical experience of
+yours.
+
+So, without further ado, let's dig in :)
+
+* Gentoo Chroot
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+chrootdir="/mnt/gentoo"
+mount=$(command -v mount)
+
+if [[ $UID -ne 0 ]];then
+
+  echo -e "\n You need to be root to run this script.\n"
+  exit 1
+fi
+
+#echo -e "\n Get the stage3 tarball...and decompress it in the allocated partition \n"
+#links http://distfiles.gentoo.org/releases/amd64/autobuilds/
+#wget -c https://gentoo.osuosl.org/releases/amd64/autobuilds/current-install-amd64-minimal/stage3-amd64-20200419T214502Z.tar.xz
+#tar xvjpf stage3-*.tar.bz2 -C $chrootdir
+
+echo -e "Mounting Gentoo in chroot environment...wait ..\n"
+
+if [[ ! -d $chrootdir  ]];then
+
+    mkdir -p $chrootdir
+else
+   echo -e "Directory already exists..\n"
+fi
+$mount /dev/sda7 $chrootdir
+$mount /dev/sda3 $chrootdir/boot/efi/
+$mount -o rbind /dev $chrootdir/dev > /dev/null &
+#$mount --make-rslave $chrootdir/dev > /dev/null &
+$mount -t proc none $chrootdir/proc > /dev/null &
+$mount -o bind /sys $chrootdir/sys  > /dev/null &
+#$mount --make-rslave $chrootdir/sys > /dev/null &
+$mount -o bind /tmp $chrootdir/tmp  > /dev/null &
+$mount -o bind /dev/pts $chrootdir/dev/pts > /dev/null &
+cp /etc/resolv.conf $chrootdir/etc/resolv.conf
+
+echo $?
+
+if [[ $? -eq 0 ]];then
+	echo -e "\n Get into the chroot environment."
+
+	chroot $chrootdir  /bin/bash -c "env-update && . /etc/profile && /bin/bash"
+
+else
+	echo -e "\n Something went wrong, manually check"
+fi
+
+exit 0
+
+#+END_SRC
+
+Alright, this is probably the very first step one will stumble over while
+building this distribution.
+
+I have hard-coded stuff, because it is machine-specific to me, you can easily
+alter that part according to your requirements.
+
+* Gentoo Wiki Search
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+# set -vx
+if [[ -z "$1" ]]; then
+  #printf "Search query: ";
+  query=$( echo | dmenu -p "Gentoo Linux Wiki Search:" )
+else
+	query="$1"
+fi
+
+query="${query// /_}"
+#echo "$query"
+
+if [[ "$query" == "" ]];then
+	exit 1
+else
+
+setsid -f $(command -v vimb) https://wiki.gentoo.org/wiki/$query
+
+fi
+
+#+END_SRC
+
+I have a heavily integrated environment, where I run exclusively /i3 Window
+Manager[fn:2]/ as Window Manager. /Dmenu[fn:3]/ is a lightweight menu system on it, which
+helps to get things presented nicely, without being too obtrusive.
+
+* Gentoo Packges Rebuild
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+set -vx
+pack=$1
+
+   qdepends -Qqq -F '%{CAT}/%{PN}:%{SLOT}' ^${pack}
+
+printf "Lets rebuild these packages.....\n"
+
+
+sh -c "emerge --ignore-default-opts -va1 $(qdepends -CQqqF'%{CAT}/%{PN}:%{SLOT}' '^${pack}')"
+
+#+END_SRC
+
+The tool *qdepends[fn:4]* can be installed seperately to take advantage of the above
+script.
+
+* Gentoo System Update
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+# Author : Bhaskar Chowdhury
+# Email  : unixbhaskar@gmail.com
+# Website: https://unixbhaskar.wordpress.com
+
+
+# Update portage tree and eix, then bring all packages in @world up-to-date.
+# Clean up at the end, ensuring changes to files in /etc are processed.
+# Will offer to update the kernel, if a new version has become available.
+
+# License (GPL v2.0)
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+
+set -e
+set -u
+shopt -s nullglob
+
+printf "Hostname: %s\nDate    : %s\nUptime  :%s\n\n"  "$(hostname -s)" "$(date)" "$(uptime)"
+
+# Last repository sync time
+echo Last sync to remote repository made on:
+echo
+qlop -s | tail -n1 | tr -d "***"
+echo
+
+# Syncing with remote repo
+ eix-sync
+
+# Update the local repo
+ eix-update
+
+# Updating the packager manager itself first, if the update available
+
+emerge --oneshot --update portage
+
+# See if there is any significant news in the in gentoo channel
+NEWS=$(eselect news count)
+if [ $NEWS -ne 0 ]; then
+     eselect news read
+else
+    notify-send "No news is good news"
+fi
+
+
+# Actually update the system with fetched in packages
+emerge  --verbose --update --deep --newuse --with-bdeps=y --exclude net-libs/webkit-gtk --exclude dev-libs/libffi --keep-going @world
+
+if [ $? -eq 0 ];then
+	notify-send "System has Updated successfully!"
+else
+	notify-send "Nope, Update is having trouble, please fix"
+	exit 1
+fi
+
+
+# If some of the library needs to be rebuild, then do it
+# notify-send "Rebuilding the preserved libraries..."
+
+# emerge @preserved-rebuild
+
+# if [ $? -ne 0 ];then
+# 	notify-send "Trouble rebuilding preserve libraries."
+# else
+# 	:
+# fi
+
+
+# Showing what are the packages merge in local system today
+genlop --list --date today
+
+# Clean the stale log of previous merge
+find /var/log/portage -maxdepth 1 -type f -ls -delete
+
+# Clean the distribution directory to gain disk space
+eclean-dist --deep
+
+# It is a custom to rip away the stale stuff from the system after world merge.
+notify-send "Running depclean, please be attentive..."
+emerge --ask --depclean
+
+# Check for security vulnerability by scanning local installed packages.
+glsa-check -f --verbose all  &&  glsa-check -l --verbose all
+
+# System checks for sanity
+
+echo ":: Checking file system root size"
+df -h | grep "/$"
+echo ":: Checking package file size too"
+du -shc "/var/cache/distfiles" | head -1
+echo ":: Checking the world file..."
+emaint world
+
+#+END_SRC
+
+Just to make regualr routine automated :)
+
+* Gentoo Package Search
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+# set -vx
+if [[ -z "$1" ]]; then
+  #printf "Search query: ";
+  query=$( echo | dmenu -p "Gentoo package Search:" )
+else
+	query="$1"
+fi
+
+query="${query// /_}"
+#echo "$query"
+
+if [[ "$query" == "" ]];then
+	exit 1
+else
+
+setsid -f $(command -v vimb) https://packages.gentoo.org/packages/search?q=$query
+
+fi
+
+#+END_SRC
+
+Again, it is going out in the wild(read the internet) and lands on the specific
+page, where you can search packages. This assumes you are connected to the
+internet.
+
+Alternatively you could use a tool, /Equery/[fn:5].
+
+
+* Gentoo Network Bounce
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+vpn=$(pgrep pia-daemon)
+
+kill -9 $vpn
+
+sudo /etc/init.d/net.lo restart
+
+sudo /etc/init.d/dhcpcd restart
+
+sudo /etc/init.d/wpa_supplicant restart
+
+printf "\n Done\n"
+
+sleep 30
+
+ping -c 1 10 -i.2 google.com
+
+if [[ $? -eq 0 ]];then
+	echo Go and start the pia-daemon manually at tty1 CTRL+ALT+1
+else
+	:
+fi
+
+#+END_SRC
+
+Sometimes in my old and aging Thinkpad, the wireless signal drops due to
+hardware aging. So, to bring that up by giving a kick on the butt(the machine).
+
+
+* Gentoo Package Browse with FZF
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+# Gentoo installed packages previews with fzf
+
+eix -c --pure-packages | grep I | grep -v N | gawk '{ print $2  }' | fzf --preview='eix -F {}' --layout=reverse
+#+END_SRC
+
+Pretty darn simple and convenient.
+
+* Gentoo Enlist Log Files
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+$(command -v eread) -t
+
+#+END_SRC
+
+It is using a command /eread[fn:6]/ you can download and use.
+
+* Gentoo Kernel Update
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+EFIBOOTPATH=/boot/efi/loader/entries
+source /home/bhaskar/colors.sh
+source /home/bhaskar/spinner.sh
+NOCOLOR="\033[0m"
+build_dir=/var/tmp/kernel/latest_kernel_build_`hostname`_`date '+%F'`
+get_kernel=/usr/local/bin/secure_kernel_tarball
+TM="/usr/bin/time -f"
+
+printf "${Reverse}Lets build the new kernel${NOCOLOR}  ..... \n\n"
+
+printf "Hostname: %s\nDate    : %s\nUptime  :%s\n\n"  "$(hostname -s)" "$(date)" "$(uptime)"
+
+printf " Check the latest stable kernel version from ${Bright}${Blue}kernel.org${NOCOLOR} \n\n"
+#kernel=`curl -sL https://www.kernel.org/finger_banner | grep '4.18' | awk -F: '{gsub(/ /,"", $0); print $2}'`
+kernel=$(curl -s https://www.kernel.org/ | grep -A1 'stable:' | grep -oP '(?<=strong>).*(?=</strong.*)' | grep 5.10)
+printf "${Bright}${Green}$kernel${NOCOLOR} \n"
+
+printf "\n Pre-flight check...basic build tools are in the system for kernel build...\n"
+
+ver_linux
+
+if [[ ! -d $build_dir ]];then
+   mkdir -p $build_dir
+fi
+
+cd $build_dir
+
+printf "Get the kernel from ${Bright}${Blue}kernel.org${NOCOLOR} and this for the ${Underline}*stable* kernel${NOCOLOR} \n\n\n"
+
+
+#wget -c https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-$kernel.tar.xz
+
+#printf "Get the ${Bright}${LimeYellow}sign for the kernel${NOCOLOR} ...\n\n"
+
+#wget -c https://cdn.kernel.org/pub/linux/kernel/v4.x/linux-$kernel.tar.sign
+
+#printf "Get the ${Bright}${Cyan} asc file for verification ${NOCOLOR} ...\n\n"
+
+#wget -c https://cdn.kernel.org/pub/linux/kernel/v4.x/sha256sums.asc
+
+eval ${get_kernel} ${kernel}
+
+printf "\n\n ${Bright}${Magenta}  Make sure we are in the right directory ${NOCOLOR} ...\n\n"
+
+pwd
+
+
+printf "${Bright}${Magenta} Decompress the downloaded kernel${NOCOLOR} ...\n\n\n"
+
+unxz linux-$kernel.tar.xz
+
+
+#printf "${Bright}${Green} Lets check the kernel signing${NOCOLOR}...\n\n"
+
+#gpg2 --verify linux-$kernel.tar.sign
+
+#sleep 3
+
+#gpg2 --verify sha256sums.asc
+
+#sleep 3
+
+
+printf "${Bright}${Cyan} Untar the kernel${NOCOLOR} ...\n\n"
+
+tar -xvf linux-$kernel.tar
+
+
+if [[ $? -eq 0 ]]; then
+printf "${Bright}${Green} Looks alright ..go ahead ${NOCOLOR} \n\n "
+else
+printf "${Bright}${Red}Nope missing tool ,abort! ${NOCOLOR} \n\n"
+fi
+
+printf "\n\n ${Bright}${Yellow} Get into the kernel tree and clean it ${NOCOLOR} ..\n\n\n"
+
+cd linux-$kernel
+
+/usr/bin/notify-send --expire-time=2000 --urgency=critical "The kernel building started"
+
+make  clean && make mrproper
+
+cp /boot/config-$(uname -r) .config
+
+scripts/config --disable DEBUG_KERNEL .config
+
+make  ARCH=x86_64 olddefconfig
+
+
+$TM "\t\n\n Elapsed Time : %E \n\n"  /usr/bin/make ARCH=x86_64 V=1 -j `getconf _NPROCESSORS_ONLN` LOCALVERSION=-`hostname` | /usr/bin/ts
+
+
+if [ $? == 0 ]
+then
+
+printf "${Bright}${Green}Done${NOCOLOR} \n\n"
+
+else
+
+printf "${right}${Red}Error encountered${NOCOLOR} \n\n"
+
+fi
+
+printf "${Bright}${Yellow} Installing the modules${NOCOLOR} ...\n\n"
+
+
+/usr/bin/make  modules_install |  /usr/bin/ts
+/usr/bin/notify-send --expire-time=2000 --urgency=critical "Modules install done"
+
+printf "${Bright}${LimeYEllow} Copying the build kernel to boot directory${NOCOLOR} \n\n"
+
+
+/usr/bin/make install
+
+/usr/bin/dracut --hostonly --kver $kernel-Gentoo
+
+/usr/bin/notify-send --expire-time=2000 --urgency=critical "Kernel install and initramfs creation  done"
+
+printf "\n\n ${Bright}${Yellow} Fixing the EFI boot entry by copying the kernel to ESP place ${NOCOLOR}...\n\n"
+
+cp /boot/vmlinuz-$kernel-`hostname` /boot/efi/EFI/Gentoo/
+cp /boot/initramfs-$kernel-Gentoo.img /boot/efi/EFI/Gentoo/
+
+/usr/bin/notify-send --expire-time=2000 --urgency=critical "Copied linux and initrd in EFI directory"
+
+>$EFIBOOTPATH/Gentoo.conf
+
+echo "title Gentoo" > $EFIBOOTPATH/Gentoo.conf
+echo "linux /EFI/Gentoo/vmlinuz-$kernel-`hostname`" >> $EFIBOOTPATH/Gentoo.conf
+echo " initrd /EFI/Gentoo/initramfs-$kernel-Gentoo.img" >> $EFIBOOTPATH/Gentoo.conf
+echo "options root=PARTUUID=f61e6cec-134e-5e4d-8486-08c4bd235fd3 net.ifnames=0 rw" >> $EFIBOOTPATH/Gentoo.conf
+
+cat $EFIBOOTPATH/Gentoo.conf
+
+/usr/bin/notify-send --expire-time=2000 --urgency=critical "Modified the boot entry"
+
+printf "\n\n ${Bright}${Cyan} Fix the UEFI boot shell script... ${NOCOLOR} \n\n"
+
+echo "\EFI\Gentoo\vmlinuz-$kernel-Gentoo --initrd \EFI/Gentoo\initramfs-$kernel-Gentoo.img root=PARTUUID=f61e6cec-134e-5e4d-8486-08c4bd235fd3 rw" > /boot/efi/EFI/gentoo.nsh
+
+
+cat /boot/efi/EFI/gentoo.nsh
+/usr/bin/notify-send --expire-time=2000 --urgency=critical "Fix the nsh script too"
+
+printf "\n\n ${Bright}${Cyan}Lets clean up the build directory ${NOCOLOR} .....\n\n\n"
+
+cd ..
+
+(rm -rf $build_dir) &
+
+spinner "$!" "Cleaning...wait.."
+
+
+exit 0
+
+#+END_SRC
+
+A lot of static stuff, which is my machine dependent and you can safely ignore
+those sections. I am posting this entirety, so people can take a cue out of
+it. This is build the /vanilla-kernel/ from [[https://kernel.org/][kernel.org]] . Although, you could have
+done the same with other methods provided in the Gentoo Wiki.[fn:7]
+
+
+* Gentoo Timer
+
+#+BEGIN_SRC bash
+#!/bin/bash
+
+watch -cn 10 genlop -ci
+#+END_SRC
+
+You are supposed to have /genlop[fn:8]/ install in the system for this to work.
+
+* Footnotes
+
+[fn:1] [[https://en.wikipedia.org/wiki/Gentoo_Linux][Source based Linux distribution Gentoo Linux]]
+
+[fn:2] [[https://i3wm.org/][I3WM]]
+
+[fn:3] [[https://tools.suckless.org/dmenu/][dmenu]]
+
+[fn:4] [[https://wiki.gentoo.org/wiki/Q_applets][Q-Applets in Gentoo]]
+
+[fn:5] [[https://wiki.gentoo.org/wiki/Equery][Equery tool in Gentoo]]
+
+[fn:6] [[https://wiki.gentoo.org/wiki/Gentoolkit#eread][Eread in gentoolkit]]
+
+[fn:7] [[https://wiki.gentoo.org/wiki/Kernel][Gentoo Wiki Kernel Section]]
+
+[fn:8] [[https://wiki.gentoo.org/wiki/Genlop][Genlop tool]]
