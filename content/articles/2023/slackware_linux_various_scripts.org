@@ -1,0 +1,287 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1640
+#+title: Slackware Linux Various Scripts
+#+date: 2023-10-22
+#+tags: Technical Linux Opensource Slackware Scripting Bash Tools OperatingSystem
+
+Well, because Slackware Linux[fn:1] has a long history and survival nature to
+date and I am very fond of it. Importantly, I have been using it for ages. The
+*simplicity* of process of using any specific software unmatched and
+useful.Alright,some complain that the process bit lengthy, yes it is, but damn,
+doesn't it give you the clarity of what the hell is going on??? This is the most
+important thing to know when you depend on something and doing important thing
+on it.
+
+Like other distributions, this is also very customizable and pretty too. I have
+some of my own but importantly ordinary scripts curated over the ages and I am
+going to present a few of those here in this post. Hope someone will find those
+useful or may take a cue of them.
+
+HEADS UP! I have I3 Window Manager[fn:2] running as WM and other associated
+tools i.e. dmenu[fn:3],i3blocks[fn:4]. Those might reflects in the scripts too.
+
+So, without further ado, let's dig in. :)
+
+* Slackware How To
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+# set -vx
+if [[ -z "$1" ]]; then
+#  #printf "Search query: ";
+  query=$( echo | dmenu -p "Slackware Linux Wiki Search:" )
+else
+   query="$1"
+fi
+
+query="${query// /_}"
+#echo "$query"
+
+if [[ "$query" == "" ]];then
+	exit 1
+else
+
+setsid -f $(command -v vimb) https://docs.slackware.com/start
+
+ fi
+
+#+END_SRC
+
+This script will take you to the Slackware wiki pages.
+
+* Slackware Package Browse with Fzf
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+# Slackware installed packages previews with fzf
+
+basedir=/var/lib/pkgtools/packages/
+
+cd $basedir
+ls | gawk '{print $1 }' | fzf --preview='slackpkg info {}' --layout=reverse
+#+END_SRC
+
+Nicely formatted enlisting of installed packages .
+
+* Slackware Find Largest File( this could have been used in other distributions too)
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+printf "Finding the largest space gobbler....wait ...\n\n"
+
+
+printf "/usr is scanning .....\n\n"
+du -shc /usr/* | sort -n -r | head -n 15
+
+
+printf "\n\n/var is scanning .......\n\n"
+du -shc /var/* | sort -n -r | head -n 15
+
+
+#+END_SRC
+
+* Slackware Clean Up
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+printf "Cleaning the stale stuff from the system ......\n\n"
+
+$(command -v sbopkg) -o
+
+
+$(command -v slackpkg) clean-system
+
+
+if [[ $? == 0 ]];then
+
+	echo Done!
+
+else
+	echo Failed!
+
+fi
+#+END_SRC
+
+You are suppose to have *sbopkg[fn:5]* installed in the system beforehand.This
+tool helps to build and install software from the [[https://slackbuilds.org/][SlackBuild Package Website]].
+
+
+* Slackware Update Leftover
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+#===============================================================================
+#
+#          FILE: slackware_update_leftover.sh
+#
+#         USAGE: ./slackware_update_leftover.sh
+#
+#   DESCRIPTION: Clean things up after the update by putting files in  places
+#
+#       OPTIONS: ---
+#  REQUIREMENTS: --- GNU coreutils
+#          BUGS: ---
+#         NOTES: --- Cleanliness of the /etc directory
+#        AUTHOR: Bhaskar Chowdhury (https://about.me/unixbhaskar), unixbhaskar@gmail.com
+#  ORGANIZATION: Independent
+#       CREATED: 09/19/2023 05:37
+#      REVISION:  ---
+#===============================================================================
+
+# License (GPL v2.0)
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+set -o nounset                              # Treat unset variables as an error
+
+
+usage(){
+
+   echo You are suppose to be Superuser to run this script.
+   exit 1
+}
+
+# You are suppose to be root to be run this script otherwise fail.
+
+if test  $UID -ne 0;then
+	usage
+fi
+
+# Specific naming format for the newly created directories
+
+backup_dir_with_new_extension="/etc/backup_new_config_$(date +'%F_%T')"
+backup_dir_with_orig_extension="/etc/backup_orig_config_$(date +'%F_%T')"
+search_dir=/etc
+TAR="$(command -v tar)"
+old_backup_dir1=$(find . -name "backup_new_config_*" -type d | tr -d "./")
+old_backup_dir2=$(find . -name "backup_orig_config_*" -type d | tr -d "./")
+
+
+cd "$search_dir" || exit 1
+
+# Function to make a tarball of the existing directory filled with dot new
+# extensions files and create a new directory to hold new files left the by
+# updates.
+
+config_backedup_with_new(){
+
+	 files=$(find "${search_dir}" -name "*.new" -type f -print)
+
+	sh -c "\"${TAR}\" -czf previous_new_config.tar.gz \"${old_backup_dir1}\""
+	mkdir -p "${backup_dir_with_new_extension}"
+
+	for i in $files
+do
+	ls -l "$i"
+	mv -v "$i" "${backup_dir_with_new_extension}"
+done
+}
+
+
+# Function to make a tarball of the existing directory filled with dot orig
+# file extensions and create new directory to hold new dot orig files left by
+# the update
+
+config_backedup_with_orig(){
+
+        files=$(find "${search_dir}" -name "*.orig" -type f -print)
+
+       sh -c "\"${TAR}\" -czf  previous_orig_config.tar.gz \"${old_backup_dir2}\""
+	mkdir -p "${backup_dir_with_orig_extension}"
+
+       for i in $files
+do
+	ls -l "$i"
+	mv -v "$i" "${backup_dir_with_orig_extension}"
+done
+}
+
+# Checking if calling the commands for the job is successful or not.
+if test "$(config_backedup_with_new)" -eq 0;then
+
+	echo Moved new extensions files successfully!
+else
+	echo Bloody hell...check manually
+fi
+
+if test "$(config_backedup_with_orig)" -eq 0;then
+
+	echo Moved orig extentions files successfully!
+else
+	echo Bloody hell ....check manually
+fi
+
+#+END_SRC
+
+Once the update is done, the process left few crams on the surface, this script
+put them in a place designated for it in the file system.
+
+* Slackware New Config file after update
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+backup_dir=/etc/backup_config_dir
+config_dir=/etc
+
+files=$(find ${config_dir} -name "*.new" -type f -print)
+
+for i in "$files"
+do
+	tar -cvzf new_config_$(date +'%F%T').tar.gz "$backup_dir"
+	mkdir -p /etc/backup_new_config_dir
+	ls -l $i
+	mv -v $i "$backup_new_config_dir"
+done
+
+
+#+END_SRC
+
+Again. after the update done, new files brings in by the update left with a *.new*
+extension in the etc directory.So, to put them back in one consolidated place is
+the mandate of this script.
+
+
+* Slackware Orig config file
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+
+config_dir=/etc
+
+files=$(find ${config_dir} -name "*.orig" -type f -print)
+
+for i in "$files"
+do
+	ls -l $i
+done
+
+
+#+END_SRC
+
+Like the previous script, and it only taken into account of file left with *.orig*
+extension and put them in a designated place.
+
+* Footnotes
+
+[fn:1] [[http://www.slackware.com/][Slackware Linux Homepage]]
+
+[fn:2] [[https://i3wm.org/][I3 Window Manager]]
+
+[fn:3] [[https://tools.suckless.org/dmenu/][Suckless's dmenu tool]]
+
+[fn:4] [[https://vivien.github.io/i3blocks/][i3blocks Status Bar]]
+
+[fn:5] [[https://www.sbopkg.org/index.php][Sbopkg Homepage]]
