@@ -1,0 +1,95 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1656
+#+title: Linux Ftrace A Short Vignette
+#+date: 2023-12-05
+#+tags: Technical Linux Opensource Kernel Tools
+
+Alright, if you are like me, struggling all the time to know what is going on
+under the hood in the system, while running Linux, ftrace[fn:1] can greatly help
+you to get some information.
+
+This tool[fn:2] is maintained in the kernel source tree and pretty darn simple to
+activate and deactivate. But, having said that, the usage and interpretation of
+information might not quite as easy as it sounds. I have a track record of
+struggling with so many things in Linux including this one. Purely due to my
+lack of bend of mind.( Strictly No PUN INTENDED) .
+
+Then why the heck am I stabbing at it here?? Although it is not a tutorial but
+just a 60000 feet overview of the tool, this might help some people to get on
+with it and do some wonder for themselves and others.
+
+Ftrace introduces a new form of printk() called trace_printk(). It can be used
+just like printk(), and can also be used in any context (interrupt code, NMI
+code, and scheduler code). What is nice about trace_printk() is that it does not
+output to the console. Instead it writes to the Ftrace ring buffer and can be
+read via the trace file.
+
+These notations might interest you to keep track of the things it produces:
+(extracted from the documentation)
+
+delay:
+
+    This is just to help catch your eye a bit better. And needs to be fixed to
+    be only relative to the same CPU. The marks are determined by the difference
+    between this current trace and the next trace.
+
+            '$' - greater than 1 second
+
+            '@' - greater than 100 millisecond
+
+            '*' - greater than 10 millisecond
+
+            '#' - greater than 1000 microsecond
+
+            '!' - greater than 100 microsecond
+
+            '+' - greater than 10 microsecond
+
+            ' ' - less than or equal to 10 microsecond.
+
+
+Configuration parameters to be enables :
+
+CONFIG_FUNCTION_TRACER
+    CONFIG_FUNCTION_GRAPH_TRACER
+    CONFIG_STACK_TRACER
+    CONFIG_DYNAMIC_FTRACE
+
+Annotation of "{" to start a function and "}" at the end. Leaf functions, which
+do not call other functions, simply end with a ";".
+
+* Disable the Ftrace ring buffer from recording --> echo 0 > tracing_on
+
+* Enable trace buffe --> echo 1 > tracing_on
+
+It is very important that you have a space between the number and the greater
+than sign ">"
+
+To help synchronize between the actions in user space and kernel space, the
+trace_marker file was created
+
+  tracing_on() and tracing_off()
+
+Having Ftrace configured and *enabling ftrace_dump_on_oops in the kernel boot*
+*parameters, or by echoing a "1" into /proc/sys/kernel/ftrace_dump_on_oops,* will
+enable Ftrace to dump to the console the entire trace buffer in ASCII format
+on oops or panic. Having the console output to a serial log makes debugging
+crashes much easier. You can now trace back the events that led up to the
+crash.
+
+* To enable the stack tracer, echo 1 into /proc/sys/kernel/stack_tracer_enabled.
+
+To see the max stack size during boot up, add "stacktrace" to the kernel boot parameters.
+
+You might take a look at the presentations of the Ftrace tool maintainers and learn
+something from it.
+
+
+
+
+
+* Footnotes
+
+[fn:1] [[https://www.kernel.org/doc/html/latest/trace/ftrace.html][Ftrace Documentation]]
+
+[fn:2] [[https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/trace][Ftrace Tree In The Linux Kernel]]
