@@ -1,0 +1,126 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1662
+#+title: Linux Git Automated Way Of Adding and Pushing Important Dot Files To Remote Repository
+#+date: 2023-12-18
+#+tags: Techical Git Linux Opensource Tools Scripting Bash
+
+Okay, here in this post I will share an *abject ordinary although useful* script,
+whose basic job is to use /git/ internally *add new or modified* files in the
+specific directory, and commit those to the repository. And then pushed to the
+designated remote repositories.
+
+Pretty darn simple as it sounds and indeed. Why I did automate it? Because, the
+redundant operations on those files were paramount.
+
+So, without further ado, here is the script entirety :)
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+source ~/.bashrc >/dev/null 2>&1
+
+dotfiles="/home/bhaskar/dotfiles"
+
+dotfiles() {
+
+	cd $dotfiles || exit
+
+	files=$(git st | gawk '/M/ { print $2 }')
+
+	for file in $files
+do
+
+if [[ "$file" == ".bashrc" ]];then
+	   git add .bashrc
+	   git ci "This is a Bash Shell Config file"
+
+elif [[ "$file" == ".profile" ]];then
+	   git add .profile
+	   git ci "This is a dot profile Config file"
+
+elif [[ "$file" == ".muttrc" ]];then
+           git add .muttrc
+	   git ci "This is Mutt Email Client config file"
+
+elif [[ "$file" == ".vimrc" ]];then
+            git add .vimrc
+	    git ci "This is Vim config file"
+
+elif [[ "$file" == ".ithreeconfig" ]];then
+            git add .ithreeconfig
+	    git ci "This is i3 Window Manager config file"
+
+elif [[ "$file" == ".ithreeblocksconfig" ]];then
+            git add .ithreeblocksconfig
+	    git ci "This is i3 Blocks Status line config file"
+
+elif [[ "$file" == ".emacs" ]];then
+            git add .emacs
+	    git ci "This is Emacs config file"
+
+elif [[ "$file" == ".mbsyncrc" ]];then
+            git add .mbsyncrc
+	    git ci "This is Mail Sync config file"
+
+elif [[ "$file" == "vimb_config" ]];then
+            git add vimb_config
+	    git ci "This is Vimb Browser config file"
+
+elif [[ "$file" == "vimb_style_config" ]];then
+            git add vimb_style_config
+	    git ci "This is Vimb Browser CSS config file"
+
+elif [[ "$file" == "newsboat_config" ]];then
+            git add newsboat_config
+	    git ci "This is Newsbot Feed Reader config file"
+
+elif [[ "$file" == "newsboat_urls" ]];then
+            git add newsboat_urls
+	    git ci "This is Newsbot Feed Reader URLS file"
+
+elif [[ "$file" == ".orgemacs" ]];then
+            git add .orgemacs
+	    git ci "This is Emacs Config written in ORG mode"
+
+elif [[ "$file" == ".orgithreeconfig" ]];then
+            git add .orgithreeconfig
+	    git ci "This is i3 Window Manager Config written in ORG mode"
+
+elif [[ "$file" == ".nyxt_config.lisp" ]];then
+            git add .nyxt_config.lisp
+	    git ci "This is Nyxt Browser Config"
+else
+		    printf "No files match..nothing to do \n"
+fi
+done
+git githubdotfiles  && git gitlabdotfiles
+setsid -f $(command -v vimb) https://github.com/unixbhaskar/dotfiles.git >/dev/null 2>&1
+setsid -f $(command -v vimb) https://gitlab.com/unixbhaskar/dotfiles.git >/dev/null 2>&1
+}
+
+
+printf "\n Pushing to remote repos ....\n\n"
+           dotfiles
+
+#+END_SRC
+
+Huh! So trivial and I haven't put any effort into making it
+complicated. Although it can be made *compact* by amalgamating a little logic
+together. I want the reader to get a clear understanding of what is going on and
+brew their own.
+
+Those of you wondering by looking at the bottom of the script and stuck on two
+git subcommands, those are nothing but git aliases, which translate to these :
+
+#+BEGIN_SRC sh
+githubdotfiles = "!git push git@github.com:unixbhaskar/dotfiles.git master"
+gitlabdotfiles = "!git push git@gitlab.com:unixbhaskar/dotfiles.git master"
+#+END_SRC
+
+These entries are hard coded in my [[https://github.com/unixbhaskar/dotfiles/blob/master/.gitconfig][.gitconfig]] file as an alias.
+
+Well, you have spotted another one, what the heck is /git ci/ ?
+
+That is /ci = "!git commit -s -m"/, which basically signs with my GPG key and
+expects the commit message as the second argument. A shorthand version of the
+commit in steroids. :)
