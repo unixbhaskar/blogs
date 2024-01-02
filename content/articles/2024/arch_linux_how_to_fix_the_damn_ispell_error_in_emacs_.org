@@ -1,0 +1,23 @@
+#+title: Arch Linux How To Fix The Damn Ispell Error In Emacs
+#+date: 2024-01-02
+#+tags: Technical Linux Opensource
+
+
+One of the a few rare moments is when I hop into a specific Linux distribution,
+namely /Arch Linux,/ and start one of my editor and surprise(read annoyed) by
+encountering a stupid error.
+
+Here is what I got while trying to compose a blog post in customary style like
+every other time :
+
+[[~/Pictures/Screenshots/2024-01-02-063454_1920x1200_scrot.png]]
+
+Clearly, it is an *ispell* error.
+
+In spite of having /ispell/ installed and it still spits out an error like this :
+
+[[~/Pictures/Screenshots/2024-01-02-063502_1920x1200_scrot.png]]
+
+So, it is missing the /words/ file. I had to get it .
+
+And the problem vanishes once restart the Emacs daemon and client.
