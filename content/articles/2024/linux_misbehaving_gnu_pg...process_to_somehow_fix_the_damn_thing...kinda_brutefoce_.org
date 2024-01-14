@@ -1,0 +1,50 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1672
+#+title: Linux Misbehaving GnuPG...Process To Somehow Fix The Damn Thing...Kinda Brute-force
+#+date: 2024-01-14
+#+tags: Technical GNUPG Encryption Security Opensource Tools Teminal CommandLine
+
+Well, we all use this tool[fn:1] somehow knowingly or unknowingly. Sometimes directly
+and other times bind with other tools. But this tool is such a present in out
+armory to get thing going with daily basis on some operations, that ignoring the
+tool become quite impossible.
+
+In this post, I am gonna discuss and process I follow to fix little glitches it
+time to time impose on my by not obeying the work it suppose to do.Here are few
+common [[https://wiki.gnupg.org/TroubleShooting][GnuPG Troubleshooting]] page contains some instances.
+
+Now, sometimes, the damn agent will die for no apparent reason and I am force to
+bounce it with method.Here is something I have ingrained in my /.bashrc/ , so
+every time I open up a terminal and applied the method.
+
+[[~/Pictures/Screenshots/2024-01-14-095448_702x192_scrot.png]]
+
+The above enlisting is just a small function which basically kill the existing
+*gpg-agent* ..and this below trick..
+
+#+BEGIN_SRC sh
+bhaskar_09:55:43_Sun Jan 14: :~>grep GPG .bashrc
+GPG_TTY=$(tty)
+export GPG_TTY
+#+END_SRC
+
+..reinitialize the terminal it will run.
+
+Whenever It is not working as expected I just call up that function (yeah...yeah
+I know it can be automated, but I didn't opt for it for a reason) and voila!
+
+As you have noticed that I have enabled the /debug/ option and directed the output
+to a file.Time to time , I folk into that file to ;find out something might be
+messing around or not. This is a recommended step to get along with this tool.
+
+Here is an random screenshots I just took while writing this post for your
+visual cue.
+
+[[~/Pictures/Screenshots/2024-01-14-100212_1920x1200_scrot.png]]
+
+* Footnotes
+
+[fn:1] [[https://gnupg.org/][GnuPG Website]]
+
+# /home/bhaskar/Pictures/Screenshots/2024-01-14-095448_702x192_scrot.png http://unixbhaskar.files.wordpress.com/2024/01/2024-01-14-095448_702x192_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2024-01-14-100212_1920x1200_scrot.png http://unixbhaskar.files.wordpress.com/2024/01/2024-01-14-100212_1920x1200_scrot.png
