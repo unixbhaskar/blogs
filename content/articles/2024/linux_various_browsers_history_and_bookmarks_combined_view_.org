@@ -1,0 +1,196 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1675
+#+title: Linux Various Browsers History And Bookmarks Combined View
+#+date: 2024-01-18
+#+tags: Technical Opensource Browsers Firefox Vimb Bash Shell Scripting Dmenu
+
+Alright, like everyone else in the wild, I do use various /browsers/ and I have
+[[https://unixbhaskar.wordpress.com/?s=browser+galore][written about them]] in the past. Here in this post, I will show you a technique
+about how to combine different browser's *History and Bookmarks* in one place and
+show them system-wide, so they can be used in various browsers. I have also
+given a [[https://unixbhaskar.wordpress.com/2023/05/02/how-am-i-running-my-browsers-without-depending-on-linux-distributions-support/][hint about]],how I have been using those browsers in the past too.
+
+Basically, all the operation is done by stitching together various small scripts
+and that output the desired thing at the end.
+
+* How Do I Add Bookmarks In My System
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+#set -vx
+if [[ -z "$1" ]]; then
+#  printf "Search query: ";
+  query=$( echo | dmenu -p "Add Bookmark Url:" )
+else
+	query="$1"
+fi
+
+#query="${query// /_}"
+#echo "$query"
+
+if [[ "$query" == "" ]];then
+	exit 1
+else
+
+#setsid -f $(command -v vimb) $query
+echo "$query" >> ~/.config/vimb/bookmark
+notify-send "Bookmark Added for this URL : "$query" "
+fi
+
+#+END_SRC
+
+Well, I have a key bind to open the prompt for the URL with /dmenu/ at the top of
+the screen and then I have to paste the url on that prompt and press
+enter. That's all to get it saved.
+
+I have said it numerous occasions in several blogs that I am using I3 Window
+Manager as my base Window Maker. Dmenu is the menu system.
+
+* How To Show Bookmarks Via Dmenu
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+## Add name of your browser here ( not text-browsers )
+
+BROWSER=$(echo $BROWSER)
+
+## add your plain text bookmarks here, you can add tag after the bookmark bookmart url e.g., "www.google.co.in search googlesearch", use "link-handler" for adding bookmarks
+
+BOOKMARKS=~/.config/vimb/bookmark
+
+# use dmenu to display bookmarks and select one
+
+$(command -v dmenu) -l 30  -p Bookmarks: < "$BOOKMARKS" | read -a url
+
+[[ ! $url ]] && exit
+
+#+END_SRC
+
+* How Do I Sync Various Browsers History To One Place?
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+#sync firefox browsing history with vimb's ; just to get a unified history
+
+sqlite3 -list /home/bhaskar/.mozilla/firefox/18q9dvrr.default-release/places.sqlite 'select url from moz_places ;' | grep ^http >> ~/.config/vimb/history
+
+sed -i '/linkedin\|duckduckgo\|twitter\|tweetdeck\|account\|mail\|reddit\|lkml\|retail\|glassdoor\|getpocket\|amazon\|fedora\|youtube\|youtu\|sign_in\|dictionary\|lwn\/d' ~/.config/vimb/history
+#+END_SRC
+
+....and this
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+extract_url_by_awk ~/.config/vimb/history 2>&1 | gawk '{ print $1 }' | cat >/home/bhaskar/hist_urls
+#+END_SRC
+
+
+Sometimes I do run the /Surf/ browser and its history and bookmarks are kept in
+different ways.
+
+* Surf Bookmark
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+#===============================================================================
+#
+#          FILE: surf_bookmark.sh
+#
+#         USAGE: ./surf_bookmark.sh
+#
+#   DESCRIPTION: Show bookmarks enlisting at the bottom of the screen for surf
+#
+#       OPTIONS: ---
+#  REQUIREMENTS: ---
+#          BUGS: ---
+#         NOTES: ---
+#        AUTHOR: Bhaskar Chowdhury (https://about.me/unixbhaskar), unixbhaskar@gmail.com
+#  ORGANIZATION: Independent
+#       CREATED: 01/04/2022 10:00
+#      REVISION:  ---
+#===============================================================================
+set -o nounset
+
+basepath="$HOME/.surf"
+
+cd $basepath || exit 1
+
+if test $(find "bookmark_gen" -cmin +120)
+then
+	    touch bookmark_gen
+fi
+tac ~/.surf/bookmarks | dmenu -l 10 -b -i -p "Bookmarks:"  | xargs -I {}  setsid -f surf {}
+
+#+END_SRC
+
+* Surf History Enlisting
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+#===============================================================================
+#
+#          FILE: dmenu.uri.sh
+#
+#         USAGE: ./dmenu.uri.sh
+#
+#   DESCRIPTION:
+#
+#       OPTIONS: ---
+#  REQUIREMENTS: ---
+#          BUGS: ---
+#         NOTES: ---
+#        AUTHOR: Bhaskar Chowdhury (https://about.me/unixbhaskar), unixbhaskar@gmail.com
+#  ORGANIZATION: Independent
+#       CREATED: 01/04/2022 10:00
+#      REVISION:  ---
+#===============================================================================
+set -o nounset
+notify-send --expire-time=5000 "This conversion might take lot of time ...hang on ....."
+extract_url_by_awk ~/.config/vimb/history 2>&1 | gawk '{ print $1 }'| cat >/home/bhaskar/.surf/history
+tac ~/.surf/history | dmenu -l 10 -b -i -p "History:"  | xargs -I {} surf {}
+
+#+END_SRC
+
+Pretty ordinary stuff, right? But I am happy with it. :)
+
+I have used another script in the above code snippet, which is *extract_url_by_awk*
+and here it is :
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+filename=$1
+
+if [[ $1 == "" ]];then
+	echo you need to provide the filename.
+	exit 1
+	fi
+
+
+sed -ne 's/.*\(http[^"]*\).*/\1/p'  < $filename
+#+END_SRC
+
+* Nyxt Bookmarks Kept Separate, Because It Uses Different Formats
+
+Also, *Nyxt* keeps its bookmark in different formats, so the file is different,
+and I haven't put an effort into amalgamate these into a unified one. But the
+content of the file looks like this :
+
+#+BEGIN_SRC emacs-lisp
+(
+(:url "https://0xax.gitbooks.io/linux-insides/content/" :title "Introduction · Linux Inside" :date "2022-01-28T23:32:49.204006Z" :tags ("kernelbook"))
+(:url "https://0xax.gitbooks.io/linux-insides/content/Booting/linux-bootstrap-1.html" :title "From bootloader to kernel · Linux Inside" :date "2022-05-15T01:41:06.891210Z" :tags ("linuxinside"))
+(:url "https://ag91.github.io/blog/2021/06/08/emacs-nyxt-and-engine-mode-how-to-browse-urls-via-nyxt-and-slime/" :title "Emacs, Nyxt and Engine-mode: how to browse URLs via Nyxt and Slime - Where parallels cross" :date "2021-12-16T06:09:52.515996Z" :tags ("browser"))
+(:url "https://ag91.github.io/blog/2022/01/29/escalate-your-helm-searches/" :title "Escalate your helm searches! - Where parallels cross" :date "2022-01-29T01:34:51.942098Z" :tags ("helm"))
+(:url "https://begriffs.com/posts/2018-11-15-c-portability.html" :title "C Portability Lessons from Weird Machines" :date "2022-02-21T22:51:52.213852Z" :tags ("oldcomparchitecture"))
+(:url "https://blog.boot.dev/cryptography/how-sha-2-works-step-by-step-sha-256/" :title "How SHA-256 Works Step-By-Step | Boot.dev" :date "2022-04-23T10:08:50.397288Z" :tags ("sha"))
+(:url "https://blog.nelhage.com/post/a-cursed-bug/" :title "A Cursed Bug - Made of Bugs" :date "2022-02-23T11:08:41.870994Z" :tags ("kernelinternals"))
+(:url "https://blog.packagecloud.io/how-to-extract-and-disassmble-a-linux-kernel-image-vmlinuz/" :title "How to extract and disassemble a Linux kernel image (vmlinuz) | Packagecloud Blog" :date "2022-04-07T07:14:35.397823Z" :tags ("kernelextraction"))
+
+#+END_SRC
+
+This file can be found on most Linux systems in this path
+=~/.local/share/nyxt/bookmarks.lisp=
