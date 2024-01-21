@@ -1,0 +1,98 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1678
+#+title: How Do I Sync My Blog In Various Places, Remote Repositories? If It Is At All Interest You
+#+date: 2024-01-21
+#+tags: Technical Opensource Linux Git Bash Scripting Tools Shell
+
+Alright, I am going to showcase my workflow of disseminating my blogs in various
+ways. All it takes little scripts to stitch together and produce the things I want.
+
+I write stuff equally inside Vim and Emacs (like everyone else in the wild, nothing
+surprising here) and keep stuff in various places for my sake, including pushing
+selected stuff out on the cloud.
+
+Here is a small script, which does sync to various directories:
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+source_dir="/home/bhaskar/blogs/content/articles/2024/"
+
+dest_dir="/home/bhaskar/.emacs.d/OrgFiles/"
+
+backup_dir="/data/blogs/content/articles/2024/"
+
+# inotifywait -m -q -e | while read -r file  | fzf --prompt "select file:"
+  # do
+  #   # cp "$source_dir" "$dest_dir"
+  # done
+
+find "$source_dir" -type f -exec sh -c "basename {}" \; 2>/dev/null | fzf --prompt="Select file:" | xargs -I {} cp "$source_dir/{}" "$dest_dir"
+
+$(command -v rsync) --stats --progress -ravz "$source_dir" "$backup_dir"
+
+if [ $? == 0 ];then
+
+notify-send "File copied to destination dirs sucessfully"
+else
+	notify-send "Nope,not done."
+fi
+
+#+END_SRC
+
+Ordinary? Huh! It does the job for me.
+
+The below script takes that syncing further including pushing it into the remote
+repositories:
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+# Sync blogs in various places in the file system once then remote push to repositories
+
+source_dir="/home/bhaskar/blogs/content/articles/2024/"
+html_blogs="/home/bhaskar/html_blogs/2024/"
+cd $source_dir || exit 1
+
+latest_file=$(find . -iname "*.org" -type f -newermt $(date '+%F') -ls | gawk '{ print $11 }' | sort -f -i -r | head -1 | tr -d "./")
+
+mv *.html "$html_blogs"
+rm -f .*.~undo-tree~
+
+
+# call up other script which sync with other with fzf integration
+sync_blog
+
+# This will automate git add and git commit with signing at once
+addcom "${latest_file}"
+
+# Pushing the latest file to the remote repositories
+git push
+
+# If the last command executed successfully then pop out the msg
+if [ $? == 0 ];then
+	notify-send "Successfully pushed to remote repositories"
+else
+	notify-send "No,something went wrong, fix it!"
+
+fi
+
+#+END_SRC
+
+Okay, you spotted there is an "unknown command" in the above script, called
+"addcom" , that's a little bunny I wrote for my convenience, here it is :
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+addcom ()
+{
+    git add .;
+    git ci "$@" 2> /dev/null;
+    if [[ "$@" == "" ]]; then
+        echo Not allowed empty commit msg...aborting;
+    fi
+}
+addcom "$@"
+#+END_SRC
+
+Ah,see! How trivialities grasp me,and the results are showing. :)
