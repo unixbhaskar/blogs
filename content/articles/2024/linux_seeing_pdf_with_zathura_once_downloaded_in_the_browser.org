@@ -1,0 +1,113 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1681
+#+title: Linux Seeing PDF With Zathura Once Downloaded In The Browser
+#+date: 2024-01-28
+#+tags: Technical Opensource Browsers Vimb Nyxt Firefox Linux Customization PDF Zathura Bash Scripting
+
+Alright, here is the process I follow to *see PDF with Zathura[fn:1]*. The deal is that,
+once the damn browser I am in,downloaded the pdf ,it simply,automatically opens
+it in Zathura.
+
+I primarily use *Vimb[fn:2]* browser, but also use *Firefox[fn:3] and Nyxt[fn:4]* and I have
+written about them in the past.
+
+I wrote two small scripts to accomplish that thing, let me share them with ya..
+
+* Monitor file arrival in the directory by using /inotifywait[fn:5]/
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+downdir=$HOME/Downloads
+bib_source=$HOME/bibliography/pdf_docs/
+
+# inotifywait -m --include "[pdf$]" ${downdir} -e create -e moved_to |
+#     while read ${downdit} action file; do
+#         notify-send "The file '$file' appeared in directory '${downdir}' via '$action'"
+#     done
+
+
+inotifywait -m ~/Downloads -e create -e moved_to |
+while read path action file; do
+    #echo "The file '$file' appeared in directory '$path' via '$action'"
+    # Check if the file is a PDF or another file type.
+    cd $downdir
+    if [[ $(head -c 4 "$file") = "%PDF" ]]; then
+         notify-send "PDF found - filename: $file"
+          mv "$file" "$bib_source"
+    else
+        notify-send "NOT A PDF!"
+fi
+done
+
+#+END_SRC
+
+This script also *moves* the downloaded PDFs to the designated directory, where I
+keep all my pdfs in one location.
+
+* Seeing PDF with Zathura
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+latest_file=$(find $HOME/bibliography/pdf_docs/ -maxdepth 1 -type f -newermt $(date '+%F') -ls | gawk '{ print $11}' | sort -f -i -r | head -1)
+
+$(command -v zathura) "$latest_file" >/dev/null 2>&1
+
+#+END_SRC
+
+Although I could have amalgamated those two scripts into a one, but I refrained
+to. Small and separated stuffs are easy on the eyes and also easy to debug.
+
+Now, you need to /infuse/ the second script to the appropriate location to bind
+with the browser. Firefox provides an easy way to bind it, when you go to
+*Settings* and right under the *Applications* heading, select PDF then *click on
+it* pops up a menu and *select the bottom most option* which says *use others* and
+point to the second script to open with a designated application(here it is Zathura).
+
+To using with *Vimb* browser, you have to include a single line in the *vimbconfig[fn:6]* file
+like this :
+
+#+BEGIN_SRC bash
+au DownloadFinished *.pdf shellcmd! open-downloaded-pdf
+#+END_SRC
+
+This line tells the browser to use *Autocommand[fn:7]* and open the PDF from the
+designated directory.
+
+For working with *Nyxt* I have started a discussion with the core developers and
+they responded and you can take a peek at it [[https://www.reddit.com/r/Nyxt/comments/s5cbc8/how_to_open_downloaded_pdf/][here]] .
+
+#+BEGIN_SRC emacs-lisp
+;; Open downloaded pdf in zathura
+
+(define-configuration browser
+((after-download-hook
+(hooks:add-hook
+ %slot-default%
+    (nyxt::make-handler-download
+    (lambda (download)
+    (when (str:ends-with-p "pdf" (nyxt::destination-path download))
+    (echo "Opening ~a in zathura." (nyxt::destination-path download))
+    (uiop:launch-program `("zathura" ,(nyxt::destination-path download)))))
+    :name 'open-pdf-in-zathura)))))
+
+#+END_SRC
+
+Pretty darn simple!
+
+* Footnotes
+
+[fn:1] [[https://pwmt.org/projects/zathura/][Zathura PDF Viewer]]
+
+[fn:2] [[https://fanglingsu.github.io/vimb/][Vimb Browser]]
+
+[fn:3] [[https://www.mozilla.org/en-US/firefox/new/][Firefox Browser]]
+
+[fn:4] [[https://nyxt.atlas.engineer/][Nyxt Web Browser]]
+
+[fn:5] [[https://linux.die.net/man/1/inotifywait][inotifywait Man Page]]
+
+[fn:6] [[https://github.com/unixbhaskar/dotfiles/blob/5b61fe71365bfcddd26cd6869355da6f8a8f255e/vimb_config][Vimb Config File]]
+
+[fn:7] [[https://vimdoc.sourceforge.net/htmldoc/autocmd.html][Vim Autocommand]]
