@@ -1,0 +1,61 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1688
+#+title: Linux Uncanny Systemd Specific Behavior About Mount
+#+date: 2024-01-29
+#+tags: Technical Systemd Boot Filesystem Opensource Tools
+
+
+Alright, I stumbled on it like a n00b, if you please say so. But the damn
+thing gave me some headache before I understand why the heck it was happening.
+
+Long story short, specifically /Debian/ and /Arch/ were running *systemd* by default
+and showing this to me, *not mounting the specific pattern from fstab*. Although,
+it was showing *loaded and running* from the systemctl output.
+
+I was a dead rat and furious. After hovering about it sometimes, then came to know
+that I have to add a *systemd specific* ,option to the /fstab/ file to get it
+mounted automatically during boot.
+
+Firefox's profile has to be mounted on tmpfs, and it was not happening. What I had
+in my fstab file is this :
+
+#+BEGIN_SRC sh
+ firefox /home/bhaskar/.mozilla/firefox/18q9dvrr.default-release tmpfs      size=2G,user,exec,uid=1000,gid=1000                       0 0
+#+END_SRC
+
+.....and once I figure out what is needed to add to that line, after that it
+looks like this :
+
+#+BEGIN_SRC sh
+ firefox /home/bhaskar/.mozilla/firefox/18q9dvrr.default-release tmpfs      x-systemd.automount,size=2G,user,exec,uid=1000,gid=1000                       0 0
+#+END_SRC
+
+Did you notice the difference??? Damn, it was *x-systemd.automount* , that option
+has to be added,then only it can be booted automatically during boot.
+
+
+I have tried other methods of mounting but to no avail.It was not enabling the
+*aumount.unit* , until the option gets added to the specific line. So, the thing
+was not showing when running the standard stock /df/ command. The most confusing part
+was that /systemctl/ output was showing it was /loaded and active/ .
+
+When I visited that file was missing in the standard location i.e
+*=/usr/lib/systemd/system=*.
+
+
+Now it is showing like this :
+
+[[~/Pictures/Screenshots/2024-01-29-103508_1701x58_scrot.png]]
+
+I have a file in my home directory like this :
+
+[[~/Pictures/Screenshots/2024-01-29-104021_1920x302_scrot.png]]
+
+Now it is showing properly with the standard df command :
+
+[[~/Pictures/Screenshots/2024-01-29-104359_1911x59_scrot.png]]
+
+
+# /home/bhaskar/Pictures/Screenshots/2024-01-29-103508_1701x58_scrot.png http://unixbhaskar.files.wordpress.com/2024/01/2024-01-29-103508_1701x58_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2024-01-29-104021_1920x302_scrot.png http://unixbhaskar.files.wordpress.com/2024/01/2024-01-29-104021_1920x302_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2024-01-29-104359_1911x59_scrot.png http://unixbhaskar.files.wordpress.com/2024/01/2024-01-29-104359_1911x59_scrot.png
