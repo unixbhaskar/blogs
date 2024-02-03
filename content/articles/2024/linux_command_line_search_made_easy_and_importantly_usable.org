@@ -1,0 +1,46 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1695
+#+title: Linux Command Line Search Made Easy And Importantly Usable
+#+date: 2024-02-03
+#+tags: Technical Linux Opensource Tools Bash Scripting
+
+Well, like everyone else in the wild, I do spend most of my time on the /command
+line/. Now one of the *common* activities sitting in that mode is finding something
+often and easy way.Yes, there are tools that make things darn simple and easy at
+times but most people sometimes find it daunting to get along with them.
+
+So, as a result, I drew up something for my convenience and it is a few lines
+shell script, that takes an argument and searches the file system. The plus
+point is that, if the damn thing sense, it is inside a git repository then it is
+use git's native grep to search through that repository, otherwise it is uses
+simply find command.
+
+Here is the script,entirety for your perusal.
+
+[[~/Pictures/Screenshots/2024-02-03-095515_1920x232_scrot.png]]
+
+Oh, it is integrated with the shell initialization file and I use /bash/ so this
+function is inside the /.bashrc/ of, you might take a look on my github
+repository.
+
+Here are some interactions with the tool :
+
+* When it is used to search normally in the filesystem!
+
+[[~/Pictures/Screenshots/2024-02-03-095917_1915x363_scrot.png]]
+
+* When it is used to search inside the git repository!
+
+[[~/Pictures/Screenshots/2024-02-03-100055_1920x66_scrot.png]]
+
+and this :
+
+[[~/Pictures/Screenshots/2024-02-03-100137_1252x544_scrot.png]]
+
+It might look trivial to you, but it is what I needed. Oh, it could have been
+improved left and right, and I haven't bothered to. :)
+
+# /home/bhaskar/Pictures/Screenshots/2024-02-03-095515_1920x232_scrot.png http://unixbhaskar.files.wordpress.com/2024/02/2024-02-03-095515_1920x232_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2024-02-03-095917_1915x363_scrot.png http://unixbhaskar.files.wordpress.com/2024/02/2024-02-03-095917_1915x363_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2024-02-03-100055_1920x66_scrot.png http://unixbhaskar.files.wordpress.com/2024/02/2024-02-03-100055_1920x66_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2024-02-03-100137_1252x544_scrot.png http://unixbhaskar.files.wordpress.com/2024/02/2024-02-03-100137_1252x544_scrot.png
