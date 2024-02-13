@@ -1,0 +1,61 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1704
+#+title: WTF How To Solve Webkit-gtk Compile Error Problem In Gentoo
+#+date: 2024-02-13
+#+tags: Technical Gentoo Linux Compiler Memory Shell Package Opensource
+
+
+Bloody hell !! This damn thing bugs me a couple of times and I thought it might
+bother other people too. And importantly knowing the reason eluded most people
+like me, who failed to give attention to the failure log properly.
+
+It all started when /Gentoo/ has update for *webkit-gtk* package and having set the
+*MAKEOPTS and MAKEJOBS set as per the cpu and memory available in the system
+will certainly backfire and it did to me.
+
+How it looked like when it failed:
+
+[[~/Pictures/Screenshots/2024-02-13-082208_986x511_scrot.png]]
+
+Now,BAM! What does that even mean?? Not so withstanding. So,like an intuition, I
+scrolled up and saw the log said this :
+
+#+BEGIN_SRC sh
+internal compiler error: Illegal instruction
+#+END_SRC
+
+Hmmm, so clue, but what about it explicitly? After spending some hours(resisting
+the temptation to go to the internet and search), I have surrendered and found
+this :
+
+#+BEGIN_SRC sh
+x86_64-pc-linux-gnu-g++: fatal error: Killed signal terminated program cc1plus
+#+END_SRC
+
+So, it is *running out of memory* ....irks...the machine has 16 gigs of RAM and
+still it is failing and it is not involved in any other memory consuming
+activity.
+
+Puzzling! Right?
+
+My *make.conf* file having a /-j10 -l10/ setting to speed things up, although it
+could go up and I haven't put the fullest thing in place not to allow the
+machine to freeze in some compile time.So, the setting was lowered and despite
+this obstruction.
+
+Compiling big package like this is time consuming, as you can see from the
+history of many other packages. I have been sitting on fairly bumped hardware
+and it should not take that long
+
+Alas!
+
+[[~/Pictures/Screenshots/2024-02-13-084549_471x94_scrot.png]]
+
+Now, I have lowered the values of compilation and while it going behind the
+scenes and I am writing this piece, the entire system is very sluggish ...meh
+
+It would certainly take more time for sure. I don't mind letting the machine do
+this kind stuff once in a while and thankfully it is like so.
+
+# /home/bhaskar/Pictures/Screenshots/2024-02-13-082208_986x511_scrot.png http://unixbhaskar.files.wordpress.com/2024/02/2024-02-13-082208_986x511_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2024-02-13-084549_471x94_scrot.png http://unixbhaskar.files.wordpress.com/2024/02/2024-02-13-084549_471x94_scrot.png
