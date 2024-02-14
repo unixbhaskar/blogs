@@ -1,0 +1,63 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1708
+#+title: Linux Terminal Emulators So Many To Choose From
+#+date: 2024-02-14
+#+tags: Technical Linux Terminal Emulators Opensource Tools
+
+Well, we all have been using one or another for some reason, if you are
+predominantly sitting on Linux for sometimes.There are so many /terminal
+emulators/ available to choose from. And every single thing have some way or
+other have some sort of different offering. The best part, though, they are all
+destined to one damn thing, that is emulating[fn:1] a terminal.Period.
+
+Here are few popular ones:
+
+*x-terminal-emulator mate-terminal gnome-terminal terminator xfce4-terminal*
+
+..and these..
+
+*urxvt rxvt termit Eterm aterm uxterm xterm roxterm*
+
+...and these..
+
+*lxterminal terminology qterminal lilyterm tilix terminix konsole kitty guake tilda alacritty hyper*
+
+I have used quite a few over the decades of me sitting on my beloved operating
+system.But reached to the point, where I stick with a single thing for the sake
+of keeping my sanity and consistency's sake.
+
+Few years back, precisely I have opted for few specific piece of software to
+induct in my workflow and since then I am sticking with them. The terminal
+emulator , I have been using called *ST[fn:2]* , which is made available by people
+behind the popular *Suckless[fn:3]* project. Their ethos of minimalism entice me
+and it seems with little effort you can make yourself nice piece of stuff
+without much overhead.
+
+I have built my terminal as per my need with few patches. The patching is
+needed, because they provide the software with bare minimal capability or
+usability for normal use. So, to make it useful all the time, you have to have
+some mechanism built into it. And that mechanism is by doing some patching to
+the base software they provide. Thankfully, people write various patches for
+different capabilities and posted them online, so you can pick whatever you need
+and built it.So did I.
+
+I have built two variant of color scheme with the set of patching I needed. Here
+they look like :
+
+[[~/Pictures/Screenshots/2024-02-14-073655_1920x1200_scrot.png]]
+
+A /Solarized-Dark/ and a /Gruvbox-Dark/ :)
+
+All I did was bring down all the patches I needed and built the stuff. You can
+refer to that repository, where I have put things up for people to consume, if
+they are inclined to. [[https://github.com/unixbhaskar/st_terminal_build][My ST Terminal Build Repository.]]
+
+* Footnotes
+
+[fn:1] [[https://en.wikipedia.org/wiki/Terminal_emulator][Terminal Emulator]]
+
+[fn:2] [[https://st.suckless.org/][Suckless's St Terminal Emulator]]
+
+[fn:3] [[https://suckless.org/][Suckless Website]]
+
+# /home/bhaskar/Pictures/Screenshots/2024-02-14-073655_1920x1200_scrot.png http://unixbhaskar.files.wordpress.com/2024/02/2024-02-14-073655_1920x1200_scrot.png
