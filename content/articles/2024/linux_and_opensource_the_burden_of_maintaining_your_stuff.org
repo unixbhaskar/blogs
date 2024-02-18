@@ -1,0 +1,90 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1711
+#+title: Linux And Opensource The Burden Of Maintaining Your Stuff
+#+date: 2024-02-18
+#+tags: Technical Linux Opensource Software Tools
+
+
+Alright, here are some follies, if you say so, but the damn thing is an integral
+part of open-source software from its inception. While it gives you the freedom
+to choose and play at your will, it also imposes the burden of maintaining those
+stuffs yourself and that is not a faint heart’s job.
+
+Phew! Said some condensed stuff in the above vignette to explain a simple thing
+that you choose the thing to get on, provided you are absolutely sure what needs
+to be done.
+
+When you are up to it, nothing is more pleasing and wonderful than the feeling
+of accomplishment. And if you are slacking(most of us, let’s face it) the impact
+is sometimes so unbearable that we seek sideways. Alas! It brings down even more
+owes into our lives than solving the issue at hand. Kinda downward spiral effect
+to make things miserable.
+
+Why this is happening? Because our lust or in a broader sense to reach the
+far-reaching stuff is uncanny and unfathomable. We fall victim to it many times
+in our lives. The irony is that, the falling is just a minuscule of what we
+somehow manage to resist ourselves to fall on.
+
+Now the real trouble is that if your managed stuff is not in sync with the
+upstream maintainers one, then you need to spend time to figure out what has
+been changed since you last pulled in? And takes a toll on you. But, if you are
+in an air-tight environment then it might be alright to have the old thing lying
+around and do the job for you. It might sound feasible but actually quite
+oppressing and you might be missing out on so many good things on offer with the
+more recent stuff.
+
+That is why, look at the Linux Distribution Maintainers …bloody hell, they are
+doing an astonishing job of keeping things abreast(almost) with the upstream and
+providing their own stuff along with that.
+
+Likewise, any open-source project with certain popularity(I know Curl is
+irreplaceable and we all love it and use it every single day!), and Curl shows
+how to maintain an open-source project with grace and integrity.
+
+Say, I built a lot of tools for my own convenience, and for doing so, I probably
+learned some version of the software to be the base of it. But, when the
+upstream moves and my tools are lagging, a problem abounds. And it happened
+quite often despite my very conservative approach to tooling and maintaining it
+for the longest possible time of use.
+
+Now, sometimes I do build stuff straight from the source because the timid
+reason is that I hop between different Linux distributions, although limited
+numbers, precisely four(3 frequently and 1 seldom). And every damn distribution
+maintains their stuff in their way! Then how do you sync? Sooner or later it is
+bound to go weary. Not only that, but the way I choose to operate on computer is
+absolutely my problem too. I have a common home and common data section, those
+are mounts every boot with different distributions. And that mounts also happen
+to have so many tools I use. The only way to use a single version of a
+particular tool or software is to build from the source and keep it in a common
+accessible place.
+
+Sometimes, I have to build the damn tool whenever I hop to another place, at
+least once, and inflate that into the local file system. That’s it. But why is
+it necessary? Because every damn distribution maintains a different version of
+the software as per requirement of the package they are building.
+
+I want to skip that, so keep things in one place that can be accessed all the
+time from different distributions. This is not always feasible or
+recommended. It is working for me, it does not mean it works for you this
+way. It is a long and convoluted route to travel and chances are you end up
+spending more time just to get things this way.
+
+For instance, my lack of patience to get on with distribution’s offering
+sometimes provokes me to do stuff, that I have described above. Say, two pieces
+of crucial software I use and depend on ships with the specific distribution
+which failed to get on or comply with the way I use those specific things. What
+do I do? I go and get it from upstream and built the damn thing myself to sort
+out the pain.
+
+Head up! It is not as straight as it sounds. Sometimes, as I mentioned above,
+takes way more time and way more effort to get things in line with your own
+requirements. What the distribution is provided is that at some phases of a
+distribution release cycle. So, you will be out of luck, if some feature you are
+relying on or trying to get your hands dirty to see if it fits your
+workflow. Oh, sometimes this process exposed a lot of stuff I am not aware of or
+never imagined that the damn thing depend on it. My lacuna and I try to learn
+from it. So, the next occasion arrives, I shall be reminded of my stab at it.
+
+The most problematic phase is when you are stumped by your own shortcomings and
+I have had that moment every now and then while doing this kind of thing. Nope,
+I haven’t learned the lesson and still pursuing that path.
