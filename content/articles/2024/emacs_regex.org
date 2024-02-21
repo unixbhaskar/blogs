@@ -1,0 +1,53 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1718
+#+title: Emacs Regex
+#+date: 2024-02-21
+#+tags: Technical Emacs Editor Opensource Regex Tools
+
+Well, let's start with an oddity it imposes on its users. Nonetheless, you will get
+accustomed to its follies, once you fall in love with it.(It applies to every
+other context too).
+
+The first thing you noticed is that the damn /regex/ in Emacs doesn't allow */d*
+notation of regular expression. But, that is quite a standard way of
+representing a numeric in every other regexes. Well, you have to mention the
+numeric in normal syntax[fn:1] classes.
+
+Second, use the regex in Emacs way of invoking stuff. There are a handful of them:
+
+[[~/Pictures/Screenshots/2024-02-21-072253_625x309_scrot.png]]
+
+And this thing is extracted out of much recommended Emacs Wiki[fn:2].
+
+Third,some of the *very common* syntactical notation you must/should learn at the
+very beginning, that you find the [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Regexps.html][Syntax Of Regular Expressions]].
+
+Fourth,Emacs has the package name *rx*[fn:3], which converts human readable syntax
+to regular expressions,a very handy tool to make things easy.
+
+Fifth, you might give a shot at *regex builder[fn:4]*, This little window allows
+you to build the damn regex inside Emacs.
+
+Sixth, You can always look at the Emacs Syntax Table[fn:5], this is for /meta
+information/.
+
+Seventh,you can always bring up regular expression syntax by invoking =C-h s= and
+it will show the regex related to that specific mode you are in.
+
+Eighth, this is a good place to find some Emacs Regex Examples[fn:6].
+
+* Footnotes
+
+[fn:1] [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Char-Classes.html][Regular Expression Syntax Classes]]
+
+[fn:2] [[https://www.emacswiki.org/emacs/RegularExpression][Emacs Wiki About Regular Expression]]
+
+[fn:3] [[https://www.emacswiki.org/emacs/rx][Rx Emacs Package]]
+
+[fn:4] [[https://www.emacswiki.org/emacs/ReBuilder][Emacs Re-Builder]]
+
+[fn:5] [[https://www.emacswiki.org/emacs/EmacsSyntaxTable][Emacs Syntax Table]]
+
+[fn:6] [[https://emacsdocs.org/docs/emacs/Regexp-Example][Emacs Regex Examples]]
+
+# /home/bhaskar/Pictures/Screenshots/2024-02-21-072253_625x309_scrot.png http://unixbhaskar.files.wordpress.com/2024/02/2024-02-21-072253_625x309_scrot.png
