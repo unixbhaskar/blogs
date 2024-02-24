@@ -1,0 +1,92 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1743
+#+title: Linux Unix Tools Cheat Sheets At One Place
+#+date: 2024-02-24
+#+tags: Technical Tools Linux Unix Commands Opensource
+
+Alright, here we are and I thought it would be good to have a place, where all
+the scattered stuff put together for the /real lazy people/ and they might be able
+to /copy and paste/ stuff from this place.(Dangerous ploy,please don't).
+
+*HEADS UP!* For heaven's sake and your betterment sake, please spend sometime
+to figure it out, two things:
+
+-- Why the heck it is happening?
+
+-- And how the heck it is happening?
+
+See, the difference! And bloody important distinction. Kinda ingrained
+requirement to get forward and do something meaningful.Those queries keep you on
+your toes and for a good reason. It certainly takes up your time, why miser
+about it when the damn thing justifiably demand it? You will soon come to know
+why it is important to spend time behind things you want to do some productive
+work.
+
+I am going to enlist a few /PDFs & text files/ as a reference to fall back on. In
+fact, this is the main motivation to get your attention on them. And practice as
+often as you can.
+
+* AWK Cheat Sheet                                                    :ATTACH:
+:PROPERTIES:
+:ID:       8aa349a9-490d-4efa-99ea-0dba1c0a9d55
+:END:
+
+* BASH Cheat Sheet                                                   :ATTACH:
+:PROPERTIES:
+:ID:       77e79158-0c55-4d8f-b0ef-98e1cfa4b7dd
+:END:
+
+* VIM Cheat Sheet                                                    :ATTACH:
+:PROPERTIES:
+:ID:       3857bc31-85df-4aad-b1da-9480f98bebd3
+:END:
+
+* GIT Cheat Sheet                                                    :ATTACH:
+:PROPERTIES:
+:ID:       716f9db3-4bad-42e0-9bed-bd90de03f6ab
+:END:
+
+* PERL One Liners                                                    :ATTACH:
+:PROPERTIES:
+:ID:       c80139a6-de6b-450e-87ce-aec4365647da
+:END:
+
+* SSH Cheat Sheet                                                    :ATTACH:
+:PROPERTIES:
+:ID:       e631abec-b3b9-475d-95fb-03f1af66b0a7
+:END:
+
+* SED Cheat Sheet                                                    :ATTACH:
+:PROPERTIES:
+:ID:       5e74c162-8d39-4723-b3c1-e23bfc6c3710
+:END:
+
+* Emacs Cheat Sheet                                                  :ATTACH:
+:PROPERTIES:
+:ID:       45fd6559-bf59-4fac-8334-4663294f9950
+:END:
+
+* READLINE Emacs Editing Mode Cheat Sheet                            :ATTACH:
+:PROPERTIES:
+:ID:       d464627a-1635-4431-9828-f21841a6b2c9
+:END:
+
+* BASH Vi Mode Editing Cheat Sheet                                   :ATTACH:
+:PROPERTIES:
+:ID:       9cc24188-942a-48e0-b908-20667ad3a66b
+:END:
+
+* GREP Manual
+
+[[https://www.gnu.org/software/grep/manual/grep.html][Grep Manual]]
+
+Last, but not the least, you can always query /Duckduckgo/ search engine about the
+specific cheat sheet and you get it right on the first search page, like this :
+
+[[~/Pictures/Screenshots/2024-02-24-131619_1920x1200_scrot.png]]
+
+No, I haven't forgotten a massive important tool, and we call it the /Swiss Army
+Knife/ of system administration. I shall be writing about it in a couple of
+days. It deserves its dedicated post.
+
+# /home/bhaskar/Pictures/Screenshots/2024-02-24-131619_1920x1200_scrot.png http://unixbhaskar.files.wordpress.com/2024/02/2024-02-24-131619_1920x1200_scrot-2.png
