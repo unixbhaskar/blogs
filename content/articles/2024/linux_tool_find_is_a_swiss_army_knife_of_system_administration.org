@@ -1,0 +1,174 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1768
+#+title: Linux Tool Find Is A Swiss Army Knife Of System Administration
+#+date: 2024-03-01
+#+tags: Technical Tools Commandline Opensource Linux SystemAdministration
+
+Okay, as stated at the fag end of the last article I wrote, I am going to
+write about a tool, name find. And here we are,in this post, I will try to show
+you the minimal use case of using the tool.It is an invaluable tool in any
+sysadmin's armory.Importantly, it makes thing easier for them to use other stuff
+efficiently.
+
+Just a note, there is a package maintained by most of the Linux distributions, named
+/findutils[fn:1]/ and it has some other close-knit siblings in it.So, please be aware
+and get that package.
+
+Generally,looking for something in the system can be done with find in a much
+faster way. The only impediment might be the damn syntax, especially, those
+flags, until you get accustomed to those. Or,you probably, automate a few of
+those frequently happening activities to put things inside a script and give it a
+apt name(this is very important, I can not stretch more the importance to having
+it).
+
+Inside of the script, always ....always use find instead of other tools for
+finding. Why? Because it has got precisely thing with flags that make things
+play well within your script.
+
+Nope, I am writing this article NOT to show off a plethora of examples, which
+are littered on the internet and absolutely good for people. Here I am trying to
+make you understand(if you take that with a pinch of salt :) ) and realize how
+good it will be to use a tool which stood the test of time and still very
+relevant and kicking.
+
+Because, the files are scattered in the system in various locations, due to the
+nature of the operating system's requirement and the other system tools to be
+able to find and use, we are often left wondering about the stuff we are looking
+for in the system.The aid we seek in the very first place is to use *find* from
+the command line or from the comfort of the editor environment.People wrote many
+a thing, which wraps the find command to suit the particular editor environment
+they are sitting in. I think that integration with the editors makes things easy
+for people at least one step, that is to go out of that convenient zone and try
+thing out at the command line and then come back.
+
+If you are a person, who is more comfortable looking things up on the internet,
+than use the /man/ command at the terminal to see the documentation then you might be
+interested to seeing this page[fn:2], and I love manpages which are having
+examples.
+
+
+Now, the thing is you are best served, when you use it on the command line or
+within a script.The precision it provides matches none other.
+
+Alright...alright you are itching to see some examples and I am not going to
+disappoint you regarding that, but with very limited set.
+
+* Finding the latest file in the directory
+
+#+BEGIN_SRC sh
+find $HOME/bibliography/pdf_docs/ -maxdepth 1 -type f -newermt $(date '+%F') -ls | gawk '{ print $11}' | sort -f -i -r | head -1
+#+END_SRC
+
+See!It is not just alone, but get help from other /known/ tools
+(i.e. head,gawk,sort) all the way.
+
+* Find empty files
+
+#+BEGIN_SRC sh
+find . -type f,d -empty -print0
+#+END_SRC
+
+Here, find is instructed to find out all the /empty/ files and directories of the
+specific directory, where it is fired from. That /dot/ signifies the local
+directory you are sitting on. And it takes an *-empty* flag too. Notice, it also
+directs the /-type/ flag to have files and directories both with a comma separated
+flags.Lastly, it prints out the stuff without the /newlines/ appended to the
+filenames.
+
+=*The difference between print and print0 is the former output with newlines*
+*and second one output without newline.*=
+
+Let me show you the difference visually :)
+
+* Find print expression with newline, this is the default
+
+[[~/Pictures/Screenshots/2024-03-01-031846_672x106_scrot.png]]
+
+And this is the default way find print stuff on stdin.
+
+* Find print expression without the newline aka -print0
+
+[[~/Pictures/Screenshots/2024-03-01-032113_1912x91_scrot.png]]
+
+This form is more suitable to /infuse/ with other tools along the pipeline.
+
+* Find any specific filename extension with *regex*
+
+[[~/Pictures/Screenshots/2024-03-01-033415_746x167_scrot.png]]
+
+* Find dot files and use *fzf* to enlist them and then use *vim* to open the selected one
+
+#+BEGIN_SRC sh
+find $dir -maxdepth 1 -name ".*" -type f | fzf | xargs -I {} vim {}
+#+END_SRC
+
+That /$dir/ variable has to hold the directory path, where you want to search.It
+also introduces another important flag, i.e. *maxdepth* , which can be a great
+help,if you try to maneuver with a big directory with lots of files but want to
+*restrict the search specific directory level.*
+
+I have mentioned that /findutils/ package comes bundles with other utilities too
+and those included are :
+
+  - locate[fn:3]
+  - updatedb[fn:4]
+  - xargs
+
+To use /locate/ you have to build the database first by running /updatedb/. People
+generally run this command from /cron/ at certain intervals.Because the database
+has to be kept in sync with the system and running it by hand doesn't make much
+sense.
+
+Here is how it can be used from the command line:
+
+[[~/Pictures/Screenshots/2024-03-01-041453_1920x1200_scrot.png]]
+
+About /xargs/![fn:5] Ah, it is closest cousin of find and *use extensively*. You saw
+the very example just above that I have used it to run vim against the output
+holding of the piped command.
+
+Let me show you three classic cases of using /xargs/ aptly :)
+
+* Move files from A to B in bunch at once
+
+#+BEGIN_SRC sh
+find . -name "*.bak" -print 0|xargs -0 -I file mv file ~/old
+#+END_SRC
+
+This command looks for files with specific extension i.e.bak and prints them
+without newline(I showed you in the above) and then piping it to xarg to move to
+a specific directory.
+
+* Using with *Sed[fn:6]* to change something
+
+#+BEGIN_SRC sh
+ls |xargs -n1 -I file sed -i '/^Beg/d' file
+#+END_SRC
+
+
+* Add file name to the first line of a file
+
+#+BEGIN_SRC sh
+ls |sed 's/.txt//g'|xargs -n1 -I file sed -i -e '1 i\>file\' file.txt
+#+END_SRC
+
+*DON'T use file as file name literally,you have to use the actual file name*
+
+* Footnotes
+
+[fn:1] [[https://www.gnu.org/software/findutils/][GNU Findutils Package]]
+
+[fn:2] [[https://manpages.org/find][Online Find Man Page]]
+
+[fn:3] [[https://manpages.org/locate][Oniine Locate Man Page]]
+
+[fn:4] [[https://manpages.org/updatedb][Online Updatedb Man Page]]
+
+[fn:5] [[https://manpages.org/xargs][Online Xargs Man Page]]
+
+[fn:6] [[https://manpages.org/sed][Online Sed Man Page]]
+
+# /home/bhaskar/Pictures/Screenshots/2024-03-01-031846_672x106_scrot.png http://unixbhaskar.files.wordpress.com/2024/03/2024-03-01-031846_672x106_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2024-03-01-032113_1912x91_scrot.png http://unixbhaskar.files.wordpress.com/2024/03/2024-03-01-032113_1912x91_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2024-03-01-033415_746x167_scrot.png http://unixbhaskar.files.wordpress.com/2024/03/2024-03-01-033415_746x167_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2024-03-01-041453_1920x1200_scrot.png http://unixbhaskar.files.wordpress.com/2024/03/2024-03-01-041453_1920x1200_scrot.png
