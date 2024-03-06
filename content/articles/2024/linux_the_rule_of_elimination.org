@@ -1,0 +1,138 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1772
+#+title: Linux And The Rule Of Elimination
+#+date: 2024-03-06
+#+tags: Technical Philosophical Insight Opensource Linux
+
+Alright, living with something I love and care deeply about with all my
+shortcomings has enabled me to look inside me and my life.
+
+Embracing Linux way back in the late 90s was one of the bloody good decisions I
+have made in life that I am so proud of. Despite all the ill advice and
+glittering of shallow shiny stuff’s popularity never fazed me the slightest
+bit. See, my tenacity is reflected in my words and I am not saying it for the
+sake of getting traction.
+
+Predominantly, the adoption of a particular technology in that nascent stage of
+technological embark mine helps me to fathom the nuance of surviving with
+it. And since the lesson learned quite early in the stage of getting along,
+seems to have had a profound impact on my life.
+
+Initially, two things matter most of the dive into this:
+
+    - The lack of bend of mind of mine
+    - The possibility of doing something useful without being clogged.
+
+And that initiates a lot for me. The route is long and torturous(like everyone
+else) but the fruit it bears for me gives me a deep satisfaction of
+accomplishing something I always wanted to. Nope, I am not complacent nor I ever
+will be, because, the damn thing called life keeps coming at you all the time to
+embrace something to go forward.
+
+There were phases, where I was super weighed by ever-so-present people’s blatant
+promotion of something very feeble stuff. Later, I discovered, or came to know,
+that it was more of a thing about one of them in the herd thing keep their
+sanity and ego intact. Never ever bought that notion or encouraged or
+entertained anyone to impose that on me. Do I miss out on that? Probably, but I
+just didn’t give a f… to ponder.
+
+It took me more time than normal to get over the depicted “norm” of the
+schmuck’s armory than to find out what actually play well. Again, this kinda
+realization leads me to some thoughts:
+
+   - I have nothing to prove to anyone.
+   - Nor do most people’s voices ever matter to life.
+   - Pleasing everyone is not possible and you have to take some tough call.
+
+I have been sticking to those thoughts and boy! It has provided me rich benefits
+over the decades.
+
+Eliminating stuff and people who I figure are not good enough to be part of my
+life is the key and it takes me as always more time to evaluate than
+necessary. But, in the end, I believe, I made the right decision which helped me
+survive in this harsh world.
+
+Linux/UNIX helped me inject a thought that *minimalism” is the thing and it
+should be nurtured and embraced with vengeance. Whether it is about
+software/hardware selection or life in general.
+
+Nope, it is not all hunky-dory. It has an inherent cost of “not being part of”
+something very dominant. But, at least that allows me to have a say in my way,
+damnit that is what matters most.
+
+The efficiency got tenfold high when I started to discard things and also people
+from my life with conscious understanding. It is all I am measuring my way of
+looking at life not by the “said rule of life”. Did I falter? Yes I did, that
+was too many occasions. I felt miserable then, but like everything else, either
+it healed itself or I put a conscious effort to get over it. Because sticking
+with that trauma will not help to move forward.
+
+Learning from better people and trying to embrace their stuff in my own way of
+adopting gave me the realization that putting in an honest effort has long-term
+value. And I have been hooked on it since then.
+
+Also, by being really blunt, when I don’t like something, generally, I don’t
+hold back but let the offender know about my feelings. It clears things in a
+jiffy, either we are getting along or we are not. Nope, I am not living in a
+glass house and it proved too costly to live in it. 🙂
+
+Some technical aspect of elimination helps to do my stuff regarding computing,
+to a finite set of things, which importantly, I love to do. I have a specific
+set of software that helps me to do the day-to-day life operation with a
+computer. Special cases arrive very seldom and I obey the rule of it if I really
+need that ploy into my workflow.
+
+Open source software is one of the prime ethos of giving you freedom to live
+with. But it comes at a price if you are willing to pay for it. The
+do-it-yourself is one of the coherent parts of that freedom. Thankfully, the
+lesson learned very early days of adopting it. Figuring out with lots of trial
+and error methods and striking off what is not so important is a very
+time-consuming process and it took me years of perseverance. Sure, we forward
+and the requirement gets uplifted but not so much that you have to bring in what
+is all available there. The more you have the more time it consumes to maintain
+and manage those.
+
+The famous words Less Is More hold very true especially for me the mentioned
+reasons earlier in this article. It might be less compared to a plethora of
+other things, but very intense to manage and needs more attention to
+details. The overhead gradually goes away after some time when you are settled
+with those limited options.
+
+I have been running/using Linux exclusively for over two decades and I am a bit
+faintly disappointed with it. Yes, from time to time, especially in the early
+days, it quote often brought me to my knees, and days were longing and
+withstanding the pain it inflicted upon me. It was mostly because of my lack of
+understanding and overboard with things that were not so important. Plus,
+learning has its bearing too. A self-taught person needs to be more careful and
+spend more time evaluating stuff to embrace. Otherwise, the chances would be
+high to get your feet in the trap.
+
+I have been aggressively eliminating stuff from computing requirements and in
+life too. The road is not smooth nor ever will be. Getting jolted quite often
+does not diminish my inclination to optimize resources for betterment. Somehow,
+I just can’t let it go out of my system.IOW, I have been hooked on it for a long
+long time.
+
+Getting involved in Linux Kernel development also taught me about the process’s
+Black & White enigma. Visiting expert’s work and talking to them taught me to
+look for something in work, which I was missing completely. Those little
+interactions with them cleared so many clouds in my mind and I can apply the
+learned lessons more aptly now. Likewise, as am getting older the stupidity of
+mine and the other peoples come to light, and blind faiths(had I have any? If at
+all)are going into oblivion.
+
+Not necessarily that I hold things tight all the time. I have been proven wrong
+many a time in the past. Should I be emotional about that fact? Rather I
+swallowed the bitter pill and learned the lesson to forge ahead. I have to take
+a leaf out of better to not engage in a spat for an unjustified reason, whatever
+the provocation may allude to it.
+
+Learning anything is/was always a steep curve for me and I mentioned the reasons
+above. But that’s not certainly a point try to make again and again that started
+to sound like an excuse to not do the necessary things to improve. I have a
+barrier (which is extremely hard way ingrained in me), to consume from whom and
+discard from what.
+
+I am putting an effort to survive in this world like everyone else.I am not
+apologetic about my follies, without them I wouldn’t be true to myself or
+others.
