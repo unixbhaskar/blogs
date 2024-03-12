@@ -1,0 +1,162 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1780
+#+title: Linux Sans Flashy Stuff To Mitigate Distraction
+#+date: 2024-03-12
+#+tags: Technical Philosophical Linux Opensource
+
+Well, I have absolutely no clue how you operate your computer and certainly
+don’t want to guess the pattern. Because every workflow is quite different
+unless you are paid to follow the rules of the shop from where earn your
+month-end paycheck.
+
+What I adopted two decades back and tried to apply in general in my life, helped
+me fall on my face many a time. But, like my other lacuna, am blessed with
+stubbornness, so get over the fall as quickly as possible. But, that is not
+always the case, though.
+
+People who are not born with or have the metal to excel cognitively at scale,
+they have to have some sort of mechanism in their armory to get along or provide
+stuff that helps them to survive and essentially provide the basic amenities of
+life.
+
+By any stretch of the imagination, I can not count myself in that category,
+where people do things effortlessly. I am jinxed with a fact, most of the time,
+it takes at least a second effort to get the damn thing out as expected by
+me. Except, for a few cases, where it clicked in the first, lucky me!
+
+Computing is an upheaval task to get along smoothly. Whether you believe it or
+not at this juncture of time, where you are facilitated by many supportive
+mechanisms. I can recollect, a decade or two, it was not as affluent as it is
+today. Boon in disguise. Kiddos embrace all the offerings in open arms, without
+giving much thought to the avalanche of trouble it also brings along. Nope, I am
+not trying to rant about it but to make sure people get it.
+
+The glittering effect of the cheap and shiny things overawed the power of
+simplicity at bay. People just have their guns just by looking at the tip of the
+iceberg. Also, I don’t blame most people, they have been fed with aplomb to
+engulf it and react to the providing. But, the consequences are not so pleasant
+nor desirable.
+
+How to encounter this ever-thrusting implication on you, especially related to
+computing(which essentially reflects on life, because it is so integral today)?
+Fortunately, there are ways to help yourself kinda things. It is a long route
+but a better route to be traveled.
+
+Let me start, with what I did and continuously doing to get my life aligned with
+my expectations. See! The stressing on my expectations. That matters a lot. When
+I decided that computing would be a thing I would be doing for the rest of my
+life, I had to give it a long thought of what is necessary to make me feel that
+I am not lost. In that quest, I have applied a few things to my day-to-day
+computing, which has helped me immensely to date.
+
+Here are a few things:
+
+    - I had to figure out what interested me the most about computing platform
+
+    - What exactly I am going to do with my interest in that platform?
+
+    - Eliminate so-called recommended stuff and evaluate things for my needs.
+
+    - Curious to know from people I believe have done something useful.
+
+    - Didn’t follow blindly what every other tom-dick-harry doing at that time.
+
+    - Embrace DIY in vengeance and figure collaborate with other people
+
+…… the list could go on some length, which I refrain from doing so. It was not
+an easy decision to practice but to live with every single day. Lots of little
+incidents impacted the way I have trimmed down the present computing scenario
+for me it is the effect of sticking with my liking.
+
+I am inclined to do better for myself and importantly any possibly good way to
+do better for people, not just by saying mere words(that kind are flooding space
+for a long time, miraculously they are getting away, what a skill!)but by
+providing actual work to benefit them.
+
+Shortcomings should not be an excuse to defer to doing something, that benefits
+you and importantly others. I personally do not hold back, knowing very well my
+limitations. Trying to improve has an ingrained pain and overcoming that is that
+is not certainly fucking fun. But, until I have made an attempt to overcome
+it(..and still doing so), how do you know, when things stuck, how it feels the
+enigma or when things work what the ecstasy means?
+
+I am a dogged worker and I cling on to something I value. Adopting something
+takes way more time and discarding becomes so natural. Nope, you don’t have to
+be blatantly dismissive in your actions to show your preferences.
+
+Linux and real people around that teach me, how to be focused and be
+productive. The posers are getting fad away more quickly than I have
+imagined. People I look up to are rare species and show all the qualities of
+better human beings. They are a handful and I am happy with that number.
+
+I wrote about [[https://unixbhaskar.wordpress.com/2024/03/06/linux-and-the-rule-of-elimination/][Linux And The Rule Of Elimination]] in my previous post about the
+endeavor I am into.
+
+Sticking to my requirements is the key to letting go of all the fads and
+sticking to a platform for a long time gives you the benefit, which certainly
+serves me well to evaluate things in that spectrum much more concisely. I am not
+afraid or ever hesitated to ask for help or clue. The primary reason is not like
+being stuck with something that hinders progress.
+
+Linux provides pain, whether you like it or not. Sometimes quite unbearable and
+I was on the verge of giving up. Alas! My tenacity to discover more about it has
+not allowed me to do so. This brings a lot of learning curves and days of
+head-banging. Also, seeking help is probably easy from the known places but
+getting the right kind of help needs lots of work involving so much
+elimination. Why? Because, most places provide you with help, based on a certain
+set of understanding, which might fit or might not fit. Then it comes to the
+evaluation phase to understand the help. Nope, blatant induction is certainly
+NOT the way forward to understand something correctly.
+
+The easy route is for the timid. It sounds great, but the tough route actually
+imposes so much of a burden on your shoulders to learn the correct thing to make
+it an easy thing in the future. And it is time-consuming. Whoever told you
+otherwise, is probably a schmuck or has not lived a Utopian life. So, that kind
+of information gets trashed the moment I hear it without engaging my gray cells.
+
+Linux allows you to have software of your choice and a system to be made of your
+choices. No, it comes with the cost of being prudent and vigilant of your stuff,
+a slip will gobble up your and others’ time immensely. But, that is how you live
+on the edge, the thrill of dying looms large if you are not careful enough.
+
+On the enterprise, the impact is less, because of two main things:
+
+    - The software comes from renowned vendors, who are providing service too.
+    - The stuffs are more stable than bleeding edge, so have predictability.
+
+But it is always the case of diverging interest groups between two poles,
+enterprise and personal computing. Nothing new about it. Stability has its
+priority in the enterprise and it is bound to be. Because business can not be
+run on fragility, can they? Likewise in the embedded world, where predictability
+at high, because of the nature of the device, the implementation happened.
+
+I used to hop a lot when I was in a nascent stage of using Linux. And gradually
+realized, that it cost me dearly my time and nothing new is getting added to my
+repertoire for useful. I have written about that phenomenon of distribution
+hopping surge here [[https://unixbhaskar.wordpress.com/2023/01/05/nopelinux-distro-hopping-doesnt-help/][Nope,Linux Distro Hopping Doesn't Help]]. What it also does,
+when I stopped doing so, allows me to concentrate more on the problem and in
+essence solve it with much ease. So, in essence, your head is not getting
+fragmented over some vendor’s peculiarity of dishing out their offering.
+
+I have written it many a time before, one more time for the sake of refreshment
+of your memory, I have various Linux distributions (Gentoo, Slackware, and
+Debian) in their own physical slice and things get transferred from machine to
+machine. A very specific Window Manager (been sticking with it for the past 7
+years now, and chances of moving away from it are dim) i.e. I3 Window Manager,
+and some specific set of software that drives my day-to-day
+activity. Unfortunately, nothing fancy I need or crave for, you see, the
+limitation of my choice.IOW, pretty boring.
+
+I don’t know, it never strikes me enough to jump or integrate something others
+are using and getting popularized by some fad. Yes, I was influenced, when I saw
+people I value use some specific software, that intrigue me in some way. But, it
+takes time to evaluate from my perspective, whether it is a good fit or not. If
+the person is fluent enough in something, does it make any sense to my workflow?
+Oftentimes, the answer is plain NO. Now, I have adopted some software once I was
+intrigued by seeing the demo of specific people I value, and the point is I am
+still using that software after almost 15 years now, daily. So, once I am hooked
+on something not generally let it go easily.
+
+Now, the question might pop up in the head, is it good to be confined?? In what
+way? If the confinement brings value and produces more useful stuff, don’t
+hesitate.
