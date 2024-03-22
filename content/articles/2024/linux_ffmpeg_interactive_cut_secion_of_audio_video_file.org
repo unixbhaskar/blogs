@@ -1,0 +1,81 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1790
+#+title: Linux FFMPEG Interactive Cut Section Of Audio Video File
+#+date: 2024-03-23
+#+tags: Technical Linux Opensource ffmpeg Tools
+
+Well, I have shown my fondness for using /FFmpeg[fn:1]/ before with other post[fn:2]. I
+have also mentioned the topic of this post with an example in that post too. So,
+what's new about that /old/ topic? The /new/ thing is that I have found a way to
+make the damn thing do it interactively with more precision. And it is not so
+complicated or long.
+
+I am writing this with hope that someone might find it useful for their workflow
+or usage.
+
+It is just a /bash/ script and the thing is here in entirety for your perusal:
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+# Provide time in seconds
+
+
+# if [[ $# -lt 4 ]];then
+
+# 	echo You are suppose to provide two parameters to this script
+# 	echo Times should be given in hh:mm:ss format
+# 	echo $(basename $0) -ss start_sec -i source_file end_sec modifed_file
+# 	exit 1
+# fi
+
+printf "Give the start time in HH:MM:SS format: %s"
+read -r start_time
+
+start_sec=$(echo "$start_time" | gawk -F: '{ print ($1 * 60) + ($2 * 60) + $3 }')
+
+echo $start_sec
+
+printf "Give the Souce file: %s"
+
+read -r source_file
+
+printf "Give the end time in HH:SS:MM format:  %s"
+read -r end_time
+
+
+end_sec=$(echo "$end_time" | gawk -F: '{ print ($1 * 60) + ($2 * 60) + $3 }')
+
+echo $end_sec
+
+printf "Give the modified file name: %s"
+read -r modi_file
+
+echo "ffmpeg -ss ${start_sec} -i ${source_file} -to ${end_sec} -c:a copy -c:v copy ${modi_file}.mp3"
+
+printf "Is it look alright?[Y/N]: %s"
+read -r res
+
+if test "$res" == "Y";then
+
+       sh -c "ffmpeg -ss ${start_sec} -i ${source_file} -to ${end_sec} -c:a copy -c:v copy ${modi_file}.mp3"
+
+else
+	printf "Something doesn't look right, fix it"
+
+fi
+
+
+#+END_SRC
+
+See! Pretty ordinary. If you run it from the terminal it will prompt you for the
+/start time/ and then /source file/ , on which it will act upon and finally /end time/
+to round up the time range.
+
+You might be interested to look at the [[https://youtu.be/ySOUeyA8ayU][YouTube Video]] about it.
+
+* Footnotes
+
+[fn:1] [[https://unixbhaskar.wordpress.com/2021/12/27/how-do-i-run-screencast-with-ffmpeg/][How Do I Run Screencast With FFMPEG]]
+
+[fn:2] [[https://unixbhaskar.wordpress.com/2023/03/23/how-to-tap-potentials-of-ffmpeg/][How To Tap Potentials Of FFMPEG]]
