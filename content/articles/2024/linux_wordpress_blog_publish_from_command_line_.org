@@ -1,0 +1,107 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1802
+#+title: Linux Wordpress Blog Publish From Command Line
+#+date: 2024-03-29
+#+tags: Technical Linux Opensource Wordpress Tools Perl Scripting Bash
+
+
+Well, I have been writing and posting my blogs on /WordPress/ site using
+/Emacs[fn:1]/. That was such a convenient and powerful package someone wrote and
+compelled me to adopt it and use it vigorously.
+
+But depending on a single piece of software(after all it is  software, and every
+damn software is prone to bugs)is not a wise thing to do, when the other
+equally well(researched) option is good enough for backup and do the normal job
+in case the primary software misbehaves.
+
+This kind of thing happens quite often with all the software,irrespective
+of whether it is open or closed source.
+
+I was bugged(momentarily, read a few hours) by some sorts of Emacs miscreants(it
+was probably all my fault than Emacs's)and then that very moment I searched out
+for an /alternative/ software that could do the same.And surprisingly, it takes
+very little time to find one.Someone bright enough has already written that
+piece for us.(This is the true beauty of using open-source software, if someone
+encounters the same problem and finds a solution,they post it publicly for
+others to consume.
+
+I have found a gem to publish a WordPress blog from the command line via a /Perl
+script/[fn:2].
+
+Now, for my job to be easier, I have written a  wrapper script to do the
+same. Here is the script entirety for your perusal :
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+# This is a wrapper around a perl script to post woresspress blog from org file
+# The original script can be found here : https://metacpan.org/dist/App-org2wp/view/script/org2wp
+
+post_file=$1
+
+_abort() {
+if test "$post_file" == "";then
+	echo You have not given the file containg post...so aborting..read the help below..
+	echo
+	$(command -v org2wp) -h
+	exit 1
+fi
+}
+
+# This is default behavior of the original script too,just making sure
+_draft()  {
+            if test $# -eq 1;then
+
+		echo Posting as draft .....wait ...
+		echo
+
+		$(command -v org2wp) "$post_file"
+
+		if test $? -eq 0;then
+
+			echo Posted the draft...checking at wordpress web interface..
+			echo
+			setsid -f $(command -v firefox) "https://wordpress.com/posts/drafts/unixbhaskar.wordpress.com" 2>&1 >/dev/null
+		fi
+	   else
+
+		 _abort
+	   fi
+}
+
+# This is how directly publish the post
+_publish() {
+
+	if test $# -ne 2;then
+
+	  _abort
+
+       else
+	   echo Posting for publish directly .....
+	   echo
+
+	   $(command -v org2wp) --publish "$post_file"
+	fi
+}
+
+# Calling up the routines
+_main() {
+
+      _draft "$@"
+
+     _publish "$@"
+}
+
+_main "$@"
+#+END_SRC
+
+See! It is nothing much.
+
+Now, you can watch that live in my [[https://youtu.be/d-dxfQgsxhE][YouTube Video]]
+
+
+* Footnotes
+
+[fn:1] [[https://youtu.be/PVZa3BUV7Us ][Write And Publish Wordpress Blog From Emacs]]
+
+[fn:2] [[https://metacpan.org/dist/App-org2wp/view/script/org2wp][org2wp A per script to publish wordpress blog from command line]]
