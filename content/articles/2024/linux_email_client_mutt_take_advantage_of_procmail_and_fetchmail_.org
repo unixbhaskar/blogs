@@ -1,0 +1,127 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1816
+#+title: Linux Email Client Mutt Take Advantage Of Procmail And Fetchmail
+#+date: 2024-04-04
+#+tags: Technical Linux Opensource Mutt Email Tools
+
+Okay, I have written about [[https://unixbhaskar.wordpress.com/2022/03/29/rambling-about-mutt/][Mutt]] before.Here I am going to specifically focus on
+two important tools to get integrated with it to help use this wonderful email
+client experience much better.
+
+*Procmail[fn:1]*
+
+This is a wonderful utility to help filter messages. Here is my /.procmailrc/
+
+#+BEGIN_SRC bash
+
+PATH=/usr/bin:/usr/local/bin:/sbin:/usr/sbin:/home/bhaskar/bin/
+
+MAILDIR=$HOME/.maildir/
+
+DEFAULT=$MAILDIR
+
+LOGFILE=$MAILDIR/log
+
+SHELL=/bin/bash
+
+:0
+* !^Content-Type: message/
+* !^Content-Type: multipart/
+* !^Content-Type: application/pgp
+{
+    :0 fBw
+    * ^-----BEGIN PGP MESSAGE-----
+    * ^-----END PGP MESSAGE-----
+    | formail \
+        -i "Content-Type: application/pgp; format=text; x-action=encrypt"
+
+    :0 fBw
+    * ^-----BEGIN PGP SIGNED MESSAGE-----
+    * ^-----BEGIN PGP SIGNATURE-----
+    * ^-----END PGP SIGNATURE-----
+    | formail \
+        -i "Content-Type: application/pgp; format=text; x-action=sign"
+}
+
+
+
+    :0 h
+    * ^Subject:[    ]+\/(|send)[    ]+key pub\>.*
+    | mutt -s "Re: $MATCH" `formail -rtzxTo:` </home/bhaskar/gpg_pub_key/bhaskar_gpg.asc
+
+:0
+* ^From.*no-reply\@ted\.com
+/dev/null
+
+:0
+* ^From.*naukrialerts\@naukri\.com
+/dev/null
+
+:0
+* ^From.*noreply\@medium\.com
+/dev/null
+
+:0
+* ^From.*info\@hirist\.com
+/dev/null
+
+:0
+* ^From.*info\@naukri\.com
+/dev/null
+
+:0
+* ^From.*alexk\@buddy\.works
+/dev/null
+
+:0
+* ^From.*support\@brandyourself\.com
+/dev/null
+
+:0
+* ^From.*tip-bot2\@linutronix\.de
+tip-bot2
+
+:0
+* ^From.*notify\@protonmail\.ch
+/dev/null
+
+:0
+* ^From.*informations\@hdfcbank\.net
+/dev/null
+
+:0hc
+|grep "^To:\|^Subject:" > /run/user/1000/mail.notify-send; DISPLAY=:0 && export XAUTHORITY=/home/bhaskar/.Xauthority; notify-send --icon=/home/bhaskar/Pictures/neomutt.png "`cat /run/user/1000/mail.notify-send`";
+
+#+END_SRC
+
+Basically to throw away useless junk mail permanently. You could write many
+other rules if you like to. Also, I have a /key bind/ in my *.muttrc* to invoke it
+by hand from time to time.
+
+#+BEGIN_SRC bash
+macro index G "!fetchmail -a -m 'procmail -d %T'\r"
+#+END_SRC
+
+*Fetchmail*[fn:2]
+
+I have use it to fetch mail from the remote imap server. Here is my /.fetchmailrc/
+
+#+BEGIN_SRC bash
+
+#set daemon 120
+
+set logfile /home/bhaskar/.fetchmail.log
+     poll imap.your_mail_provider.com protocol imap
+#poll imap.your_mail_provider.com protocol imap
+          username "your_mail_address" password "your_password" is "bhaskar" here keep ssl;
+
+	  mda "/usr/bin/procmail -d %T"
+#+END_SRC
+
+
+
+* Footnotes
+
+[fn:1] [[https://porkmail.org/era/procmail/quickref][Procmail Quickref]]
+
+[fn:2] [[https://www.fetchmail.info/][Fetchmail]]
