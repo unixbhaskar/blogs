@@ -1,0 +1,434 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1825
+#+title: Linux Distributions Download And Verification Automation
+#+date: 2024-04-08
+#+tags: Technical Linux Opensource Tools Bash Scripting Automation
+
+
+Alright, /Linux Fanatics/ never stops trying various things aka exploring,
+especially when they are young and exuberant. We all have been trapped in that
+vicious activity for years just for perfection. Alas! Despite our endless hours
+search and doing various crazy things , we are just not settling on a particular
+thing.
+
+*Distro hopping* is considered very normal and in fact, a desired activity seen by
+other fellas in the field of the same. Not doing so, considered that serious
+limitation of your /intellect and capabilities/ and is sometimes frowned upon. So,
+as a result, we all dive in with aplomb and do as many crazy things as
+possible. But that does not end there,we go one step further and claim our
+/specific/ work is a kinda standard and others should follow.
+
+This is a vibe and not necessarily told explicitly otherwise. Any enthusiasts
+with little sense get it within a few days of foray into this bandwagon. And it
+doesn't take too much to be part of it. Especially the shortcoming of our
+knowledge about the internals initially makes it even more possible. The
+suggestions you are getting everywhere, on all the online places, namely, forums
+and site specifics to support provide you with weird suggestions to try out. And
+our brains are so triggered by those suggestions and we do not waste time to
+head on to try all that said.Such a force.
+
+Likewise, the beauty of *open-source* software is that your /problem/ no longer
+stays /unresolved/ for too long. How? Someone like you might encounter it and find
+a solution to that problem and post it online somewhere so others get the
+benefit of that finding. Such a boon. But, wait, there are lots of presumptions
+regarding that.It is not always the case. Sometimes, suggestions are way off and
+done in assumption and importantly in very different situations and
+environments.People get stumped by that very often with a late realization. The
+temptation to find the solution is so high that people ignore the basics of
+understanding and have an unfathomable inclination to adopt whatever is thrown
+at them.
+
+You learn some by reading those offerings and loathe some. Not to mention, in
+between creeps devilish idea to put on the sword's edge to get the sadistic
+pleasure of your unawareness. But, don't worry you will learn fast,how to avoid
+those evils. They follow some patterns and it is very vivid despite of their
+motivated effort.
+
+Moreover, every damn Linux distribution offers some /flavor/ to make themselves
+different from the others.Sometimes, it is a business policy, and others are
+driven by some sort of inexplicable ethos for design.Also, people offering those
+distributions came from different backgrounds and understandings,so baked that
+into their loved stuff. As a result, we as an end user get various flavors to
+try on.
+
+People start to play with them having installed in the physical partitions( many
+many moons ago, and I belong from that era) and then comes virtualization, which
+makes things easier to try something and not touch the base system. Plus, you do
+not have to wrongly /erase in the process/ the wrong drive having different
+things.
+
+Now,why do people try that I have said it at the outset of this article. But
+there are more, namely, people get bored with one thing,different looks and
+feel, and missing capabilities on one and finding it on the other. I have
+personally tried at least 30 of various offerings(nope, I am not ashamed of
+that) before setting on finally a few selective ones. It is a process that takes
+years to neck deep in the ecosystem to get along and find out the pros and
+cons(like every other thing in life).But, the realization kicks in with various
+factors come into play. In your pursuit of finding the *silver bullet* (that's
+taken out Fredrick.P.Brooks,Jr's paper by the same name)conclude that there is
+*NO silver bullet* to all our desired Linux distributions.There never will be.
+
+The availability of preferred software packages is not consistent and sometimes
+does not even ship.The awkward naming scheme of the same packages for different
+distributions confused end users and forced them to search more. Nope, compiling
+from is NOT the norm, until you are forced,desperate, and capable of resolving
+the glitch by looking or it in the code or asking various places on the
+internet._So, many people I have seen, don't ask questions and they are stuck
+with their fallacy. They thought asking questions publicly was a matter of shame
+and not good for their ego and status. So, they suffer the most by being dumb
+and spending a hell of a time doing things they are not supposed to do.
+
+We all know that *Eric. S. Raymond* wrote a template[fn:1], that should be the
+basis of asking questions in places where you seek help. Not so surprisingly,
+the majority of the people initially do not read it or find it and know it, so
+make fault by putting the way they feel it helps them to answer their query.Not
+the way it is.So, eventually, someone wise enough to point that document to them
+insists on reading for their betterment.Those who do,have an edge over others in
+the future of getting help.
+
+To make things easy for people with an unavoidable need to hop between various
+distributions, I have written an ordinary script(inspired by some other people's
+already written ideas) to download and verify the chosen distribution. Some of
+the stuff might need some careful updates, because it is been while since I
+haven't updated the script. I am expecting the user will be curious enough to
+find the missing part and update accordingly.
+
+Here is the script entirety for your perusal :)
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+# Download and verify Linux distribution installers/ISO images
+# Modified version of https://github.com/nodiscc/distrib-dl
+
+set -o errexit
+set -o nounset
+set -o pipefail
+usage="$(basename $0) DISTRIBUTION1 [DISTRIBUTION2 DISTRIBUTION3 ...]"
+
+##############################
+# Configuration
+
+### GENTOO (LIVE DVD)
+# https://www.gentoo.org/downloads/signatures/
+gentoo_release="20160704"
+gentoo_image="livedvd-x86-amd64-32ul"
+gentoo_gpg2_fingerprint="D99EAC7379A850BCE47DA5F29E6438C817072058"
+### DEBIAN
+# one of: amd64-i386 amd64 armel armhf i386 ia64 kfreebsd-amd64 kfreebsd-i386 mips mipsel multi-arch powerpc s390 s390x source sparc
+debian_architecture="amd64"
+debian_version="10.3.0"
+debian_gpg2_fingerprint="DF9B9C49EAA9298432589D76DA87E80D6294BE9B"
+### FREEBSD
+freebsd_version="12.0"
+### SLACKWARE CURRENT
+slack_release="slackware-current-mini-install"
+slack_md5sum="8c48b807e1313c0431166786a6296a4f"
+### ARCH LINUX
+arch_release="2020.04.01-x86_64"
+arch_image="archlinux-20202.04.01-x86_64"
+arch_gpg2_fingerprint="0E8B644079F599DFC1DDC3973348882F6AC6A4C2"
+#change the below date manually
+rel_date="2020.04.01"
+### OpenSUSE TUMBLEWEED
+opensuse_release="tumbleweed"
+opensuse_image="openSUSE-Tumbleweed-DVD-x86_64-Current"
+opensuse_gpg2_fingerprint="0x22C07BA534178CD02EFE22AAB88B2FD43DBDC284"
+### UBUNTU
+ubuntu_codename="eoan"
+ubuntu_release="19.10"
+ubuntu_image="ubuntu-${ubuntu_release}-desktop-amd64"
+ubuntu_gpg2_fingerprint1="46181433FBB75451"
+ubuntu_gpg2_fingerprint2="D94AA3F0EFE21092"
+### VOID Linux
+voidlinux_image="void-live-x86_64-20191109"
+voidlinux_gpg2_fingerprint="8DEBDA68B48282A4"
+### NIXOS
+nixos_release="nixos-graphical-19.09.1269.09f5f3a810c-x86_64-linux"
+nixos_gpg2_fingerprint1="0xFE918C3A98C1030F"
+nixos_gpg2_fingerprint2="0x846FDED7792617B4"
+nixos_gpg2_fingerprint3="0xC2FFBCAFD2C24246"
+### FEDORA
+fedora_image="Fedora-Server-netinst-x86_64-32-1.6.iso"
+fedora_gpg2_fingerprint="97A1AE57C3A2372CCA3A4ABA6C13026D12C944D0"
+### SOLUS
+solus_image="Solus-4.2-Budgie.iso"
+solus_gpg2_fingerprint="96B4A0291094A86A2B7E3367DD672FE9A2BE5892"
+### CLEAR LINUX
+clearlinux_image="clear-32910-live-desktop.iso"
+#clearlinux_gpg2_fingerprint=""
+############################
+
+# abort on errors
+set -o errexit
+
+download_dir="$PWD"
+usage="$(basename $0)  DISTRIBUTION1 [DISTRIBUTION2 DISTRIBUTION3]"
+
+#Options:
+#-c        only check that the url returns 200, don't download anything"
+
+distros="Available distributions:
+                         gentoo
+                         debian
+			 freebsd
+			 slackware_current
+			 archlinux
+			 opensuse_tumbleweed
+			 ubuntu
+			 voidlinux
+			 nixos
+			 fedora
+			 solus
+			 clearlinux"
+
+
+
+if [[ $# == 0 ]];then
+	echo $usage
+	echo $distros
+fi
+
+
+############################
+download_gentoo() {
+    # https://www.gentoo.org/downloads/mirrors/
+    gentoo_base_url="https://mirror.bytemark.co.uk/gentoo/releases/amd64/${gentoo_release}/"
+    gentoo_iso_filename="${gentoo_image}-${gentoo_release}.iso"
+    gentoo_sums_filename="${gentoo_iso_filename}.DIGESTS.asc"
+    gentoo_gpg2keyring_filename="${gentoo_iso_filename}.DIGESTS.sig"
+    if [[ ! -d "$download_dir/gentoo/" ]]; then mkdir -p "$download_dir/gentoo/"; fi
+    echo "[distrib-dl] INFO: Downloading gentoo keyring, checksums and signature..."
+    gpg2 --keyserver hkps://keys.gentoo.org --recv-keys "$gentoo_gpg2_fingerprint"
+    wget -N -nv --show-progress -P "$download_dir/gentoo/" "${gentoo_base_url}${gentoo_gpg2keyring_filename}"
+    wget -N -nv --show-progress -P "$download_dir/gentoo/" "${gentoo_base_url}${gentoo_sums_filename}"
+    gpg2 --verify "gentoo/${gentoo_sums_filename}"
+    echo "[distrib-dl] INFO: Downloading Gentoo Live ISO image..."
+    wget --continue -N -nv --show-progress -P "$download_dir/gentoo/" "${gentoo_base_url}/${gentoo_iso_filename}"
+    echo "[distrib-dl] INFO: Verifying Gentoo Live ISO image integrity..."
+    cd "$download_dir/gentoo/" && sha512sum --ignore-missing -c <(cat ${gentoo_sums_filename}) && cd -
+}
+download_debian() {
+    debian_base_url="https://cdimage.debian.org/debian-cd/current/amd64/iso-cd"
+    debian_iso_filename="debian-${debian_version}-${debian_architecture}-netinst.iso"
+    debian_sums_url="${debian_base_url}/SHA512SUMS"
+    debian_sums_sign_url="${debian_base_url}/SHA512SUMS.sign"
+    if [[ ! -d "$download_dir/debian/" ]]; then mkdir -p "$download_dir/debian/"; fi
+    echo "Downloading Debian keyring, checksums and signature..."
+     gpg2 --keyserver hkps://keyring.debian.org  --recv-keys "$debian_gpg2_fingerprint"
+    # shellcheck disable=SC2086
+    wget -N -nv --show-progress -P "$download_dir/debian/" "$debian_sums_url"
+    # shellcheck disable=SC2086
+    wget -N -nv  --show-progress -P "$download_dir/debian/" "$debian_sums_sign_url"
+    echo "Verifying Debian signature..."
+    gpg2 --verify "$download_dir/debian/SHA512SUMS.sign" "$download_dir/debian/SHA512SUMS"
+    echo "Downloading Debian ISO image..."
+    # shellcheck disable=SC2086
+    wget --continue -N -nv --show-progress -P "$download_dir/debian/" "$debian_base_url/$debian_iso_filename"
+    echo "Verifying Debian ISO image integrity..."
+    cd "$download_dir/debian/" && sha512sum -c <(cat SHA512SUMS) && cd -
+}
+download_freebsd() {
+    freebsd_base_url="https://download.freebsd.org/ftp/releases/amd64/amd64/ISO-IMAGES/${freebsd_version}"
+    freebsd_iso_firlename="FreeBSD-${freebsd_version}-RELEASE-amd64-memstick.img"
+    freebsd_sums_filename="CHECKSUM.SHA512-FreeBSD-${freebsd_version}-RELEASE-amd64.asc"
+    freebsd_sums_url="https://www.freebsd.org/releases/${freebsd_version}R/${freebsd_sums_filename}"
+    freebsd_gpg2keyring_url="https://www.freebsd.org/doc/pgpkeyring.txt"
+    if [[ ! -d "$download_dir/freebsd/" ]]; then mkdir "$download_dir/freebsd/"; fi
+    echo "[distrib-dl] INFO: Downloading freebsd keyring, checksums and signature..."
+    # shellcheck disable=SC2086
+    wget $wget_opts --timestamping --no-verbose --show-progress -P "$download_dir/freebsd/" "$freebsd_gpg2keyring_url"
+    # shellcheck disable=SC2086
+    wget $wget_opts --timestamping --no-verbose --show-progress  -P "$download_dir/freebsd/" "$freebsd_sums_url"
+    gpg2 --verify "freebsd/$freebsd_sums_filename"
+    echo "[distrib-dl] INFO: Downloading freebsd ISO image..."
+    # shellcheck disable=SC2086
+    wget $wget_opts --continue --timestamping --no-verbose --show-progress -P "$download_dir/freebsd/" "$freebsd_base_url/$freebsd_iso_filename"
+    echo "Verifying freebsd ISO image integrity..."
+    cd "$download_dir/freebsd/" && sha512sum --ignore-missing -c <(cat ${freebsd_sums_filename}) && cd -
+}
+download_slackware_current() {
+        # https://slackware.uk/people/alien-current-iso/slackware-current-iso/
+        slack_base_url="https://slackware.uk/people/alien-current-iso/slackware-current-iso/"
+        slack_iso_filename="${slack_release}.iso"
+        slack_sums_filename="MD5SUM"
+        slack_sums_url="https://slackware.uk/people/alien-current-iso/slackware-current-iso/${slack_sums_filename}"
+        if [[ ! -d "$download_dir/slackware_current/" ]]; then mkdir -p "$download_dir/slackware_current/"; fi
+        wget -N -nv --show-progress -P "$download_dir/slackware_current" "${slack_base_url}${slack_sums_filename}"
+        echo "Downloading Slackware-current Linux ISO image..."
+        wget --continue -N -nv --show-progress -P "$download_dir/slackware_current/" "${slack_base_url}${slack_iso_filename}"
+        echo "Verifying Slackware-current ISO image integrity..."
+        cd "$download_dir/slackware_current/" && md5sum -c <(cat ${slack_sums_filename}) && cd -
+}
+download_archlinux() {
+        # https://www.archlinux.org/downloads
+        arch_base_url="http://mirror.rackspace.com/archlinux/iso/${rel_date}/"
+        arch_iso_filename="archlinux-${arch_release}.iso"
+        arch_sums_filename="sha1sums.txt"
+        arch_gpg2keyring_filename="archlinux-${arch_release}.iso.sig"
+        if [[ ! -d "$download_dir/archlinux/" ]]; then mkdir -p "$download_dir/archlinux/"; fi
+        echo "Downloading arch keyring, checksums and signature..."
+        gpg2  --recv-keys "$arch_gpg2_fingerprint"
+        wget -N -nv --show-progress -P "$download_dir/archlinux/" "${arch_base_url}${arch_gpg2keyring_filename}"
+        wget -N -nv --show-progress -P "$download_dir/archlinux/" "${arch_base_url}${arch_sums_filename}"
+     #   gpg2 --verify  "archlinux/$arch_gpg2keyring_filename" "archlinux/${arch_sums_filename}"
+        echo "Downloading Arch Linux ISO image..."
+        wget --continue -N -nv --show-progress -P "$download_dir/archlinux/" "${arch_base_url}${arch_iso_filename}"
+        echo "Verifying Arch Linux ISO image integrity..."
+        cd "$download_dir/archlinux/" && sha1sum --ignore-missing -c <(cat ${arch_sums_filename}) && cd -
+}
+download_opensuse_tumbleweed() {
+    # https://www.opensuse.org/#Tumbleweed
+    opensuse_base_url="http://opensuse.mirrors.theom.nz/${opensuse_release}/iso/"
+    opensuse_iso_filename="${opensuse_image}.iso"
+    opensuse_sums_filename="${opensuse_iso_filename}.sha256"
+    opensuse_asc_filename="${opensuse_sums_filename}.asc"
+    if [[ ! -d "$download_dir/opensuse/" ]]; then mkdir -p "$download_dir/opensuse/"; fi
+    echo "[distrib-dl] INFO: Downloading Opensuse Tumbleweed keyring, checksums and signature..."
+    gpg2 --keyserver hkps://keyserver.ubuntu.com --recv-keys "$opensuse_gpg2_fingerprint"
+    wget -N -nv --show-progress -P "$download_dir/opensuse/" "${opensuse_base_url}${opensuse_sums_filename}"
+    wget -N -nv --show-progress -P "$download_dir/opensuse/" "${opensuse_base_url}${opensuse_asc_filename}"
+    gpg2 --verify  "opensuse/${opensuse_asc_filename}" "opensuse/${opensuse_sums_filename}"
+    echo "[distrib-dl] INFO: Downloading OpenSUSE Tumbleweed ISO image..."
+    wget --continue -N -nv --show-progress -P "$download_dir/opensuse/" "${opensuse_base_url}${opensuse_iso_filename}"
+    echo "[distrib-dl] INFO: Verifying OpenSUSE Tumbleweed ISO image integrity..."
+    cd "$download_dir/opensuse/" && sha256sum --ignore-missing -c <(cat ${opensuse_sums_filename}) && cd -
+}
+download_ubuntu() {
+	#http://releases.ubuntu.com/
+	ubuntu_base_url="http://releases.ubuntu.com/${ubuntu_codename}/"
+	ubuntu_iso_filename="${ubuntu_image}.iso"
+	ubuntu_sums_filename="SHA256SUMS"
+	ubuntu_gpg2keyring_filename="SHA256SUMS.gpg"
+	if [[ ! -d "$download_dir/ubuntu/" ]]; then mkdir -p "$download_dir/ubuntu/"; fi
+	echo "Downloading Ubuntu keyring, checksums and signature..."
+	gpg2  --keyid-format long --keyserver hkps://keyserver.ubuntu.com --recv-keys "$ubuntu_gpg2_fingerprint1" "$ubuntu_gpg2_fingerprint2"
+	wget -N -nv --show-progress -P "$download_dir/ubuntu/" "${ubuntu_base_url}${ubuntu_gpg2keyring_filename}"
+	wget -N -nv --show-progress -P "$download_dir/ubuntu/" "${ubuntu_base_url}${ubuntu_sums_filename}"
+	gpg2 --keyid-format long --verify "ubuntu/${ubuntu_gpg2keyring_filename}" "ubuntu/${ubuntu_sums_filename}"
+	echo "Downloading Ubuntu Latest Desktop ISO image..."
+	wget --continue -N -nv --show-progress -P "$download_dir/ubuntu/" "${ubuntu_base_url}/${ubuntu_iso_filename}"
+	echo "Verifying Ubuntu Desktop ISO image integrity..."
+	cd "$download_dir/ubuntu/" && sha256sum --ignore-missing -c <(cat ${ubuntu_sums_filename}) && cd -
+}
+download_voidlinux() {
+	# https://alpha.de.repo.voidlinux.org/live/current/
+	voidlinux_base_url="https://alpha.de.repo.voidlinux.org/live/current/"
+	voidlinux_iso_filename="${voidlinux_image}.iso"
+	voidlinux_sums_filename="sha256.txt"
+	voidlinux_gpg2keyring_filename="sha256.sig"
+	if [[ ! -d "$download_dir/voidlinux/" ]]; then mkdir -p "$download_dir/voidlinux/"; fi
+	echo "Downloading VoidLinux keyring, checksums and signature..."
+	gpg2  --keyid-format long --keyserver hkps://keyserver.ubuntu.com --recv-keys "$voidlinux_gpg2_fingerprint"
+	wget -N -nv --show-progress -P "$download_dir/voidlinux/" "${voidlinux_base_url}${voidlinux_gpg2keyring_filename}"
+	wget -N -nv --show-progress -P "$download_dir/voidlinux/" "${voidlinux_base_url}${voidlinux_sums_filename}"
+	echo "Downloading VoidLinux ISO image..."
+	wget --continue -N -nv --show-progress -P "$download_dir/voidlinux/" "${voidlinux_base_url}${voidlinux_iso_filename}"
+	echo "Verifying VoidLinux ISO image integrity..."
+	cd "$download_dir/voidlinux/" && sha256sum --ignore-missing -c <(cat ${voidlinux_sums_filename}) && cd -
+}
+download_nixos() {
+	#https://releases.nixos.org/nixos/19.09/nixos-19.09.1269.09f5f3a810c/nixos-graphical-19.09.1269.09f5f3a810c-x86_64-linux.iso
+	nixos_base_url="https://releases.nixos.org/nixos/19.09/nixos-19.09.1269.09f5f3a810c/"
+	nixos_iso_filename="${nixos_release}.iso"
+	if [[ ! -d "$download_dir/nixos/" ]]; then mkdir -p "$download_dir/nixos/"; fi
+	echo "Downloading NixOS security devs keys ..."
+	gpg2  --keyid-format long --keyserver hkps://keyserver.ubuntu.com --recv-keys "$nixos_gpg2_fingerprint1" "$nixos_gpg2_fingerprint2" "$nixos_gpg2_fingerprint3"
+        echo "Downloading NixOS Graphical install ISO image..."
+	wget --continue -N -nv --show-progress -P "$download_dir/nixos/" "${nixos_base_url}${nixos_iso_filename}"
+}
+download_fedora() {
+    #https://getfedora.org/en/workstation/download/
+    fedora_base_url="https://fedora.mirrors.theom.nz/releases/32/Server/x86_64/iso/"
+    fedora_iso_filename="${fedora_image}"
+    fedora_sums_filename="Fedora-Server-32-1.6-x86_64-CHECKSUM"
+    #fedora_gpg2keyring_filename="${fedora_iso_filename}.DIGESTS.sig"
+    if [[ ! -d "$download_dir/fedora/" ]]; then mkdir -p "$download_dir/fedora/"; fi
+    echo "[distrib-dl] INFO: Downloading fedora keyring, checksums and signature..."
+    gpg2 --keyserver hkps://keyserver.ubuntu.com --recv-keys "$fedora_gpg2_fingerprint"
+    #wget -N -nv --show-progress -P "$download_dir/fedora/" "${fedora_base_url}${fedora_gpg2keyring_filename}"
+    wget -N -nv --show-progress -P "$download_dir/fedora/" "${fedora_base_url}${fedora_sums_filename}"
+    gpg2 --verify "fedora/${fedora_sums_filename}"
+    echo "[distrib-dl] INFO: Downloading Fedora Everything Netinstall ISO image..."
+    wget --continue -N -nv --show-progress -P "$download_dir/fedora/" "${fedora_base_url}${fedora_iso_filename}"
+    echo "[distrib-dl] INFO: Verifying Fedora Everything Netinstall ISO image integrity..."
+    cd "$download_dir/fedora/" && sha256sum --ignore-missing -c <(cat ${fedora_sums_filename}) && cd -
+}
+download_solus() {
+    # https://getsol.us/download/
+    solus_base_url="https://mirrors.rit.edu/solus/images/4.2/"
+    solus_iso_filename="${solus_image}"
+    solus_sums_filename="${solus_image}.sha256sum"
+    solus_gpg2keyring_filename="${solus_image}.sha256sum.sign"
+    if [[ ! -d "$download_dir/solus/" ]]; then mkdir -p "$download_dir/solus/"; fi
+    echo "[distrib-dl] INFO: Downloading Solus keyring, checksums and signature..."
+    gpg2  --keyserver hkps://keyserver.ubuntu.com  --recv-keys "$solus_gpg2_fingerprint"
+    wget -N -nv --show-progress -P "$download_dir/solus/" "${solus_base_url}${solus_gpg2keyring_filename}"
+    wget -N -nv --show-progress -P "$download_dir/solus/" "${solus_base_url}${solus_sums_filename}"
+    gpg2 --verify "solus/${solus_gpg2keyring_filename}" "solus/${solus_sums_filename}"
+    echo "[distrib-dl] INFO: Downloading Solus Budgie Desktop ISO image..."
+    wget --continue -N -nv --show-progress -P "$download_dir/solus/" "${solus_base_url}${solus_iso_filename}"
+    echo "[distrib-dl] INFO: Verifying Solus Desktop ISO image integrity..."
+    cd "$download_dir/solus/" && sha256sum --ignore-missing -c <(cat ${solus_sums_filename}) && cd -
+}
+download_clearlinux() {
+    # https://clearlinux.org/downloads
+    clearlinux_base_url="https://cdn.download.clearlinux.org/releases/32910/clear/"
+    clearlinux_iso_filename="${clearlinux_image}"
+    clearlinux_sums_filename="${clearlinux_iso_filename}-SHA512SUMS"
+    clearlinux_gpg2keyring_filename="${clearlinux_iso_filename}-SHA512SUMS.sig"
+    if [[ ! -d "$download_dir/clearlinux/" ]]; then mkdir -p "$download_dir/clearlinux/"; fi
+    echo "[distrib-dl] INFO: Downloading ClearLinux keyring, checksums and signature..."
+   # gpg2 --keyserver hkps://keyserver.ubuntu.com --recv-keys "$clearlinux_gpg2_fingerprint"
+    wget -N -nv --show-progress -P "$download_dir/clearlinux/" "${clearlinux_base_url}${clearlinux_gpg2keyring_filename}"
+    wget -N -nv --show-progress -P "$download_dir/clearlinux/" "${clearlinux_base_url}${clearlinux_sums_filename}"
+   # gpg2 --verify "clearlinux/${clearlinux_gpg2keyring_filename}" "clearlinux/${clearlinux_sums_filename}"
+    echo "[distrib-dl] INFO: Downloading ClearLinux ISO image..."
+    wget --continue -N -nv --show-progress -P "$download_dir/clearlinux/" "${clearlinux_base_url}/${clearlinux_iso_filename}"
+    echo "[distrib-dl] INFO: Verifying ClearLinux ISO image integrity..."
+    cd "$download_dir/clearlinux/" && sha512sum --ignore-missing -c <(cat ${clearlinux_sums_filename}) && cd -
+}
+
+ _main() {
+    wget_opts=""
+    while getopts ":c" opt; do
+        case $opt in
+            c) wget_opts="--spider"; shift;;
+            \?) echo "[distrib-dl] ERROR: invalid option -$OPTARG" >&2; exit 1;;
+        esac
+    done
+
+    for distribution in "$@"; do
+        if [[ "$distribution" == "gentoo" ]] ; then download_gentoo; fi
+        if [[ "$distribution" == "debian" ]] ; then download_debian; fi
+        if [[ "$distribution" == "freebsd" ]] ; then download_freebsd; fi
+        if [[ "$distribution" == "--help" ]]; then echo "Usage: $usage"; exit 1; fi
+        if [[ "$distribution" == "slackware_current" ]] ; then download_slackware_current; fi
+        if [[ "$distribution" ==  "archlinux" ]] ; then download_archlinux; fi
+        if [[ "$distribution" == "opensuse_tumbleweed" ]] ; then download_opensuse_tumbleweed; fi
+        if [[ "$distribution" == "ubuntu" ]] ; then download_ubuntu; fi
+        if [[ "$distribution" == "voidlinux" ]] ; then download_voidlinux; fi
+        if [[ "$distribution" == "nixos" ]] ; then download_nixos; fi
+        if [[ "$distribution" == "fedora" ]] ; then download_fedora; fi
+	if [[ "$distribution" == "solus" ]] ; then download_solus; fi
+	if [[ "$distribution" == "clearlinux" ]]; then download_clearlinux; fi
+    done
+}
+
+#####################
+
+_main "$@"
+
+#+END_SRC
+
+Spend some time with it to help you get your stuff easily. Here is an interaction
+with it :
+
+[[~/Pictures/Screenshots/2024-04-08-130000_1920x274_scrot.png]]
+
+
+
+* Footnotes
+
+[fn:1] [[https://www.catb.org/~esr/faqs/smart-questions.html][How To Ask Questions The Smart Way]]
+
+# /home/bhaskar/Pictures/Screenshots/2024-04-08-130000_1920x274_scrot.png http://unixbhaskar.files.wordpress.com/2024/04/2024-04-08-130000_1920x274_scrot.png
