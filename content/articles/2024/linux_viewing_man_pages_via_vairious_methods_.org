@@ -1,0 +1,121 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1832
+#+title: Linux Viewing Man Pages Via Various Methods
+#+date: 2024-04-12
+#+tags: Technical Linux Opensource Manual Scripting Tool Fzf Commandline Shell Vim Emacs Opensource
+
+So, viewing /Linux Manual Pages/ is an integral activity that we often perform.But
+the important part is, we want it to get access from anywhere in the
+system. Simply, because of convenience to find out the exact details we are
+sought after.
+
+In this post, I am going to show you various ways I personally access those /man/
+pages in my system. You might like it and if those any of them suits your
+workflow might adapt it.
+
+* Accessing Linux Manual Pages Via Window Manager And Associated Tools
+
+This is a biggie, and it needs more than one tool to accomplish the job. In
+crux, the integration helps to see manual pages via /dmenu/ and shows up with a
+/pdf viewer/.
+
+First I needed to curate a little script and I wrote it in bash[fn:1] (you can
+use whatever language you are comfortable with) and it is essentially a borrowed
+idea, so I adopted it.
+
+Here is the little script :
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+man -k .  | dmenu -l 30 | gawk '{print $1}' | xargs -r man -Tpdf | zathura - &
+#+END_SRC
+
+You see, I am sitting on I3 Window Manager[fn:2] and using /dmenu[fn:3]/ as a
+command launcher, and then using all the basic UNIX commands, and finally using
+/zathura[fn:4]/ as pdf viewer.
+
+I have a bind in the window Maker configuration file(i.e. i3 config file) like
+this :
+
+#+BEGIN_SRC bash
+bhaskar_13:13:50_Fri Apr 12: :~>grep manual .ithreeconfig | head -2
+# Open manual page as pdf
+bindsym $mod+grave exec manual_view_in_pdf
+#+END_SRC
+
+The /grave/ sign is on the same key where the /tilde/ sign is i.e. from the top
+second row leftmost key on the QWERTY keyboard.
+
+And I don't have to stretch much of my finger to use this key bind. YMMV.
+
+* From The Terminal aka Command Line And With The Help Of FZF[fn:5]
+
+I have a small snippet in my /.bashrc/ file which allows me to search and see the
+Linux Manual page on the terminal itself.
+
+Here is the code :
+
+#+BEGIN_SRC bash
+bhaskar_13:19:36_Fri Apr 12: :~>declare -f tm
+tm ()
+{
+    local man_page;
+    man_page=$(man -k . | sort | fzf --prompt='Man Pages> ' --preview='echo {} | awk "{print \$1}" | xargs man' --preview-window=right:60%:wrap);
+    man "$(echo "$man_page" | awk '{print $1}')"
+}
+
+#+END_SRC
+
+See! Nothing much. When I invoke *tm* on command line, it shows like this :
+
+[[~/Pictures/Screenshots/2024-04-12-132104_1920x1200_scrot.png]]
+
+* Accessing Linux Manual Pages Via Vim[fn:6]
+
+This is again a borrowed idea and because I use /Vim/ extensively, so thought to
+integrate with it for benefit.
+
+Here is what I have in my /.vimrc/
+
+#+BEGIN_SRC bash
+bhaskar_13:23:26_Fri Apr 12: :~>grep Man .vimrc
+" Man pages with fzf
+command! -nargs=? Man call fzf#run(fzf#wrap({'source': 'man -k -s 1 '.shellescape(<q-args>).' | cut -d " " -f 1', 'sink': 'tab Man', 'options': ['--preview', 'MANPAGER=bat MANWIDTH='.(&columns/2-4).' man {}']}))
+nnoremap <Leader>m :Man<CR>
+#+END_SRC
+
+As you can see, I have a key bind *;a* and if I invoke that *inside Vim*, then it
+will show like this:
+
+[[~/Pictures/Screenshots/2024-04-12-132809_1920x1200_scrot.png]]
+
+* Accessing Linux Manual Pages Via Emacs[fn:7]
+
+When I am inside the Emacs environment, then I try to use the wonderful
+facilities provided by that environment to enhance productivity. Emacs has a way
+of showing Linux manual pages,and once invoked via key cord or /M-x prompt/,it
+shows like this :
+
+
+[[~/Pictures/Screenshots/2024-04-12-133405_1920x1200_scrot.png]]
+
+* Footnotes
+
+[fn:1] [[https://www.gnu.org/software/bash/manual/bash.html][Bash Shell Reference Manual]]
+
+[fn:2] https://i3wm.org
+
+[fn:3] [[https://tools.suckless.org/dmenu/][Suckless Dmenu]]
+
+[fn:4] [[https://pwmt.org/projects/zathura/][Zathura A PDF Viewer]]
+
+[fn:5] [[https://github.com/junegunn/fzf][FZF A Command Line Fuzzy Finder]]
+
+[fn:6] [[https://www.vim.org/][Vim A Text Editor]]
+
+[fn:7] [[https://www.gnu.org/software/emacs/][GNU Emacs A Text Editor]]
+
+# /home/bhaskar/Pictures/Screenshots/2024-04-12-132104_1920x1200_scrot.png http://unixbhaskar.files.wordpress.com/2024/04/2024-04-12-132104_1920x1200_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2024-04-12-132809_1920x1200_scrot.png http://unixbhaskar.files.wordpress.com/2024/04/2024-04-12-132809_1920x1200_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2024-04-12-133405_1920x1200_scrot.png http://unixbhaskar.files.wordpress.com/2024/04/2024-04-12-133405_1920x1200_scrot.png
