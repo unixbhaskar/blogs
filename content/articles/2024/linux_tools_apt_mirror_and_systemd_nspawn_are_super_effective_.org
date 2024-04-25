@@ -1,0 +1,236 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1844
+#+title: Linux Tools Apt-Mirror And Systemd-nspawn Are Super Effective
+#+date: 2024-04-25
+#+tags: Technical Systemd Debian Linux Opensource Tools
+
+Alright, let's explore /two/ specific tools for productivity elevation. Namely,
+/systemd-nspawn[fn:1]/ and /apt-mirror[fn:2]/.
+
+I can show you the brief interactions I have had with these in recent times
+and how beneficial those could be in the general sense.
+
+* Apt-mirror is to creates local mirror of the upstream mirror
+
+What does that mean? Simple, something hosted remotely and publicly available
+that can be brought down to your local machine for your inspection and
+improvements et.al.
+
+Okay, a little demo won't hurt much :) , here are some ways:
+
+** Installation
+
+Oh, you are supposed to get it by the /debian package manager/ and it's darn simple.
+
+#+BEGIN_SRC sh
+apt-get install apt-mirror
+#+END_SRC
+
+Now, it brings down a few files with it, especially two files that should interest
+us for the usability of this tool. Which are =/etc/apt/mirror.list= and
+=/etc/cron.d/apt-mirror= . And we will tweak a little to fulfill our needs.
+
+#+BEGIN_SRC sh
+############# config ##################
+#
+ set base_path    /home/bhaskar/apt-mirrors
+#
+# set mirror_path  $base_path/mirror
+# set skel_path    $base_path/skel
+# set var_path     $base_path/var
+# set cleanscript $var_path/clean.sh
+# set defaultarch  <running host architecture>
+# set postmirror_script $var_path/postmirror.sh
+# set run_postmirror 0
+set nthreads     20
+set _tilde 0
+#
+############# end config ##############
+# deb http://ftp.us.debian.org/debian bookworm main contrib non-free
+# deb-src http://ftp.us.debian.org/debian bookworm main contrib non-free
+
+# mirror additional architectures
+#deb-alpha http://ftp.us.debian.org/debian unstable main contrib non-free
+deb-amd64 http://ftp.us.debian.org/debian unstable main contrib non-free
+#deb-armel http://ftp.us.debian.org/debian unstable main contrib non-free
+#deb-hppa http://ftp.us.debian.org/debian unstable main contrib non-free
+#deb-i386 http://ftp.us.debian.org/debian unstable main contrib non-free
+#deb-ia64 http://ftp.us.debian.org/debian unstable main contrib non-free
+#deb-m68k http://ftp.us.debian.org/debian unstable main contrib non-free
+#deb-mips http://ftp.us.debian.org/debian unstable main contrib non-free
+#deb-mipsel http://ftp.us.debian.org/debian unstable main contrib non-free
+#deb-powerpc http://ftp.us.debian.org/debian unstable main contrib non-free
+#deb-s390 http://ftp.us.debian.org/debian unstable main contrib non-free
+#deb-sparc http://ftp.us.debian.org/debian unstable main contrib non-free
+
+clean http://ftp.us.debian.org/debian
+
+#+END_SRC
+
+You see, I have changed three things in the above file. First , I created a
+directory under my home directory called *=apt-mirrors=* and fixed the /base_path/
+variable with it. Heads up! You are supposed to create the directory in places
+where some hefty amount of free space is available. Because this operation needs
+a placeholder big in some hundreds of Gibs, otherwise you might not accommodate
+it.
+
+Then I commented out the two lines right after the =end config= marker. You might
+keep that if you want to. Because those are defaults and it will certainly pull
+from there.
+
+Next,I uncommented one line specifically some /architecture-specific/
+i.e. an amd64 related line, so it pulls from that source.
+
+Once you made changes to the =mirror.list= file then you are supposed to run this
+command as a superuser,as the manual said to get sync.
+
+#+BEGIN_SRC sh
+sudo apt-mirror -c apt-mirror
+#+END_SRC
+
+Well, we are now all set. Let's see how it goes ...
+
+[[~/Pictures/Screenshots/2024-04-25-072311_1920x1200_scrot.png]]
+
+See! It is quite big, a whooping 143 gig, but that is okay to get the entire
+repo.
+
+And the last thing about this is that, once you get the content down to your
+*local machine* you probably want to have it frequently after certain intervals
+with the updates. Here comes the importance of having a /cron/ file attached to
+it. This software brings along a file with it and it looks like this :
+
+#+BEGIN_SRC bash
+#
+# Regular cron jobs for the apt-mirror package
+#
+#0 4	* * *	apt-mirror	/usr/bin/apt-mirror > /var/spool/apt-mirror/var/cron.log
+
+#+END_SRC
+
+You can change the value of this cron entry at your convenience, so you don't
+have to do it by hand when you need it.
+
+
+* Systemd-nspawn is more popular tool in modern era
+
+How so? Because distributions running(whether in enterprise or person) *Systemd*
+should take advantage of this tool. In crux, this is a /modern way of doing chroot/
+in /systemd specific/ systems.
+
+There are various use cases to use this tool and on top of my head, I could be
+using it to test some new stuff about some arcane thing in the /restricted/
+environment.So,it isolates /the host/ system from getting banged by some
+experimentation done in the confined area of your machine.(aka containerize way
+of doing things).
+
+Here I am showing you the abject ordinary thing this tool can help by running
+two different /Linux distributions/ in a confined area of the machine. I am
+sitting on *Debian[fn:3]*,i.e. the host system, and going to try our latest
+version of /fedora40[fn:4]/ and /openSUSE Tumbleweed[fn:5]/ , which is installed in
+different physical partitions in the same machine.
+
+First,take /openSUSE Tumbleweed,/ and this is how boots with the help of this
+tool :
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+if test $UID -ne 0;then
+	echo you are suppose to run this as superuser
+	exit 1
+fi
+
+if test ! -d /OpenSuseTW;then
+	mkdir -p /OpenSuseTW
+fi
+
+echo Mounting.....
+
+/bin/mount /dev/nvme0n1p8 /OpenSuseTW
+
+
+systemd-nspawn -bD /OpenSuseTW
+
+#+END_SRC
+
+Pretty simple! Right. I said in the above vignette that this particular
+distribution is already installed in other physical partitions.Just created a
+directory to hold the mounted partition and boot from it to provide the login
+prompt and you can use the normal login credential, which you probably created
+when installed it.
+
+The ~-b~ flag is for the *booting* and
+
+The ~-D~ flag is for providing the shell.
+
+
+Likewise, using this same tool i.e. systemd-nspawn ,I can spin up a minimal
+fedora version in a quick time. *The system-nspawn* man page clearly states how to
+do it.
+
+** Prerequisite :
+
+You are supposed to install *dnf* beforehand to make things easy to do this kind of
+stuff. Again the manual clearly states that.
+
+Here is how I put all those in an ordinary script to do the job for me:
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+# To get the cloud image
+
+# machinectl pull-raw --verify=no https://download.fedoraproject.org/pub/fedora/linux/releases/38/Cloud/x86_64/images/Fedora-Cloud-Base-38-1.6.x86_64.raw.xz fedora38
+
+# systemd-nspawn -M fedora38
+
+# Another way of getting minimal stuff
+
+# if test $(which dnf) == "";then
+# 	pkg_install dnf
+# fi
+# dnf -y --releasever=40 --installroot=/srv/fedora40 --disablerepo='*' --enablerepo=fedora --enablerepo=updates install systemd util-linux iputils passwd dnf fedora-release  vim-minimal
+# systemd-nspawn -D /srv/fedora40 ----> to set the root password
+#
+if test $UID -ne 0;then
+     echo you are suppose to run this as superuser
+     exit 1
+fi
+
+if test ! -d /srv/fedora40;then
+     mkdir -p /srv/fedora40
+fi
+
+unlink /srv/fedora40/etc/resolv.conf
+
+cp /etc/resolv.conf /srv/fedora40/etc/resolv.conf
+
+systemd-nspawn -bD /srv/fedora40
+
+#+END_SRC
+
+I have commented on the /dnf/ related lines, because I had it before I made the
+script. Oh, that /pkg_install/ is nothing but a wrapper over the underlying
+package manager used by the host distributions. I have made a few steps explicit,
+because it was hindering smooth operation, although you could ignore the
+/unlink/ and /cp/ steps. Those are ugly workaround in my convoluted environment. In
+your case, those are not necessary.
+
+Last,if you are the kind of person, who are getting excited by seeing in a
+different form than this writing, then I have at least a video about apt-mirror
+on [[https://youtu.be/ufveec4z6Q4 ][YouTube]].
+
+* Footnotes
+
+[fn:1] [[https://www.freedesktop.org/software/systemd/man/latest/systemd-nspawn.html][Systemd-nspawn]]
+
+[fn:2] [[https://apt-mirror.github.io/][Apt-Mirror]]
+
+[fn:3] [[https://www.debian.org/][Debian Linux]]
+
+[fn:4] [[https://fedoraproject.org/][Fedora Linux]]
+
+[fn:5] [[https://get.opensuse.org/tumbleweed/][openSUSE Tumbleweed]]
+
+# /home/bhaskar/Pictures/Screenshots/2024-04-25-072311_1920x1200_scrot.png http://unixbhaskar.files.wordpress.com/2024/04/2024-04-25-072311_1920x1200_scrot.png
