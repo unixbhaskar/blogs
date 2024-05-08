@@ -1,0 +1,170 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1851
+#+title: Emacs Org-Capture Templates And Their Benefits
+#+date: 2024-05-08
+#+tags: Technical Emacs Opensource OrgMode Tools Editor
+
+Alright, people who work with computers generally find a way to use it as per
+their liking and usability.It is also a trait to find the niche software to use
+for a specific purpose to elevate productivity with ease. See, I would like to
+emphasize on the words /"with ease"/ one more time, because the tool I am going to
+cover in this article,although briefly to the point of specific functionality
+that a bigger cog as software.
+
+I am delving into a functionality, called /org-capture templates[fn:1]/. That is a
+mechanism to capture, as the name implies, to some important information from
+any part of the system effortlessly with a few keystrokes. What it does,is it
+will present you the options to choose from the list, and the list would have
+been made by you with some trivial lisp code(I will show you in a moment).
+
+Okay, let's cut to the cheese, here is the block of code extracted out of my /dot
+emacs/ file to start with, and importantly this is the relevant part of it.
+
+#+BEGIN_SRC emacs-lisp
+(setq org-capture-templates
+      (quote (("t" "Todo" entry (file "~/.emacs.d/OrgFiles/task.org")
+               "* TODO %?\n%U\n%a\n" :clock-in t :clock-resume t)
+              ("r" "Respond" entry (file "~/.emacs.d/OrgFiles/refile.org")
+               "* Respond to %:from on %:subject\nSCHEDULED: %t\n%U\n%a\n" :clock-in t :clock-resume t :immediate-finish t)
+              ("n" "Note" entry (file "~/.emacs.d/OrgFiles/notes.org")
+               "* %? :NOTE:\n%U\n%a\n" :clock-in t :clock-resume t)
+              ("j" "Journal" entry (file+datetree "~/.emacs.d/OrgFiles/journal.org")
+               "* %?\n%U\n" :clock-in t :clock-resume t)
+              ("d" "Diary" entry (file+datetree "~/.emacs.d/OrgFiles/diary.org")
+               "* %?\n%U\n" :clock-in t :clock-resume t)
+              ("R" "Refile" entry (file+olp+datetree "~/.emacs.d/OrgFiles/refile.org")
+               "* TODO Review %A %^G\n%x\n%U\n" :immediate-finish t)
+              ("m" "Meeting" entry (file "~/.emacs.d/OrgFiles/refile.org")
+               "* MEETING with %? :MEETING:\n%U" :clock-in t :clock-resume t)
+              ;; ("p" "Phone call" entry (file "~/.emacs.d/OrgFiles/refile.org")
+              ;;  "* PHONE %? :PHONE:\n%U" :clock-in t :clock-resume t)
+              ("p" "PDF-Notes" entry (file "~/.emacs.d/OrgFiles/notes.org")
+                  "* %?\n%(org-capture-pdf-active-region)\n")
+              ("b" "Book" entry (file  "~/.emacs.d/OrgFiles/books.org")
+	       ;; "* %^{TITLE}\n:PROPERTIES:\n:ADDED: %<[%Y-%02m-%02d]>\n:END:%^{AUTHOR}p\n%?" :empty-lines 1)
+               "*  %(let* ((url (substring-no-properties (current-kill 0)))
+                  (details (org-books-get-details url)))
+                (when details (apply #'org-books-format 1 details)))")
+              ;;("l" "Book log" item (function org-books-visit-book-log)
+                 ;;"- %U %?" :prepend t))))
+             ("a" "Appointment" entry (file+olp+datetree "~/.emacs.d/OrgFiles/diary.org")
+               "* APPT %^{Description} %^g %?\n Added: %U")
+              ("c" "Contacts" entry (file+headline "~/.emacs.d/OrgFiles/contacts.org" "")
+               "* %^{Name} :CONTACT: %[~/.emacs.d/OrgFiles/contacts.txt]")
+
+              ("P" "Protocol" entry (concat org-directory ,(file+headline  "notes.org")
+                "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?"))
+
+             ("L" "Protocol Link" entry (concat org-directory ,(file+headline  "notes.org")
+               "* %? [[%:link][%(transform-square-brackets-to-round-ones \"%:description\")]]\n")))))
+
+#+END_SRC
+
+Whoa! That looks a bloody complicated stuff...scary? Okay, that was my
+impression while building(borrowing without knowing from others code) and then
+spending some time with it to figure out where the heck this shit is coming from
+and importantly how they are working. Once, get into the meat of it by spending
+hours with frustration(caused by my inability) to understand and find a way. But
+somehow I managed to figure out exactly how much I needed to know to get on with
+it.
+
+But wait, haven't you seen the pattern yet? It is darn vivid and extremely
+difficult to skip the eyes. Every template has two lines, the first one merely
+denotes a key, that has to be pressed when the list with be shown(more on that
+later). Then a lebel which distinguishes it from other labels and
+importantly,shows the purpose of the template. Then, the /entry/ keyword(which
+helps to enlist while invoking the list) and finally, the pointer to the file,
+where you want to keep the information.
+
+Now, the second line is a little tricky, I use the word tricky because those
+damn flags took me some time to figure out(although documented very well in the
+respective manual, it was the finding)and /Lisp[fn:2]/ language construct. These lines,
+the second one, instruct the first line on how it has to be measured, read
+stored, or formatted or presented in the file.So, that is crucial to know, how
+you want the information to be presented for future endeavors. Generally, Lisp
+codes are pretty readable, if the author has not lost mind.See [[https://orgmode.org/manual/Template-expansion.html][Org-Capture
+template expansion]] .
+
+Okay, how do you show or invoke the damn list inside Emacs? That is a question
+probably burning in your head(it is an inclination these days to bypass the
+important part and reach to end as quickly as possible...huh!). So, you could do
+various ways to invoke that /capture templates list/ and I am going to show you
+two of them here. One is from outside Emacs,which eventually causes the trigger
+inside Emacs and the other one is directly inside the Emacs.
+
+*Org-protocol[fn:3]* is a facility or functionality, that helps to accomplish a
+lot of stuff with /org-mode/ I have bound a small /one-liner/ script that basically
+prompts me to enter the URL of specific service I want induct in one of my
+targeted locations mentioned in the template, i.e. journal, notes et. al. Once I
+have put the *required* URL on the prompt it shows me the list inside the Emacs
+(You have to have Emacs activated in the system beforehand, whether you run it
+on daemon mode or directly and the Emacs client must be up and running). Why?
+Because the list has to show somewhere and it is an emacs software,The client is
+the place where the list should be showing the list.
+
+I am wildly hoping you are getting what I have written in the above vignette. If
+it skips you, try one more time read and understand. I have tried to be as
+explicit as possible and to the point without deviating.
+
+In the second instance I can call up that list of templates by a key invocation
+within Emacs and it is generally bound to *C-c c*.
+
+How does it look? Here is a glimpse of it :)
+
+[[~/Pictures/Screenshots/2024-05-08-071029_1920x1200_scrot.png]]
+
+See, look at the right-hand side buffer in the screenshot, and also see the
+prompt at the bottom of the screenshot, which is waiting for a key to be pressed
+to action the specific things mentioned beside it. The key is the one within the
+square bracket to be pressed, so the action can be performed.
+
+As I have mentioned various templates have different criteria or ways of
+capturing thing into the designated files.There could be many more such like
+this and that would be wholly on the workflow you might have.
+
+Here are a few examples of the various temples enlisted in the above screenshots.
+
+* To capture a book metadata
+
+First capture the URL of the book and I use this tool , /org-protocol/ to capture
+the url , which essentially binds with a keystroke in my window manager config,
+prompted for the URL, I have to provide the url on the prompt , and then this
+action pop up the buffer inside the Emacs client with template list, like the
+one shown in above screenshot,then I choose or press the letter *b* to retrieved
+or capture the books metadata and put to a designated file, in my case, it is
+names /books.org/ . The capture with template shows like this :
+
+[[~/Pictures/Screenshots/2024-05-08-074705_964x1158_scrot.png]]
+
+Now all I have to do is just press *C-c C-c,* and it will save the metadata in
+the designated file.
+
+* Take notes with the template
+
+Say, I have highlighted and copied some text and that wanted to be put in the
+designated file. Here is what it looks like while doing so ..again the list pops
+up in the Emacs client and I have to press *n* to be presented with the template
+of capturing notes in a separate buffer like this :
+
+[[~/Pictures/Screenshots/2024-05-08-075428_965x1157_scrot.png]]
+
+Now, all I have to do is press *C-c C-c* as suggested on top of the buffer to save
+the information to the /notes.org/ file.
+
+You can customize the capturing templates as per your need to capture the
+specific information from specific things.
+
+If you are inclined to know how these capture templates work live, you might
+take a peek at my [[https://youtu.be/2Wi-QhQa-xw][YouTube]] video.
+
+* Footnotes
+
+[fn:1] [[https://orgmode.org/manual/Capture-templates.html][Org-Capture Template]]
+
+[fn:2] [[https://en.wikipedia.org/wiki/Lisp_(programming_language)][Lisp Programming Language]]
+
+[fn:3] [[https://orgmode.org/worg/org-contrib/org-protocol.html][Org-Protocol]]
+
+# /home/bhaskar/Pictures/Screenshots/2024-05-08-071029_1920x1200_scrot.png http://unixbhaskar.files.wordpress.com/2024/05/2024-05-08-071029_1920x1200_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2024-05-08-074705_964x1158_scrot.png http://unixbhaskar.files.wordpress.com/2024/05/2024-05-08-074705_964x1158_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2024-05-08-075428_965x1157_scrot.png http://unixbhaskar.files.wordpress.com/2024/05/2024-05-08-075428_965x1157_scrot.png
