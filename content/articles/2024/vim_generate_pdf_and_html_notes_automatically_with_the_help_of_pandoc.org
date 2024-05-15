@@ -1,0 +1,71 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1860
+#+title: Vim Generate PDF and HTML Notes Automatically With The Help Of Pandoc
+#+date: 2024-05-15
+#+tags: Technical Vim Editor Opensource Tools Pandoc
+
+Alright, this post is all about showing you the trivialities with one of my
+editors i.e. *Vim*. Basically, to automate the entire process of building /PDF/ and
+/HTML/ notes via some rudimentary keystrokes.
+
+[[https://pandoc.org/][Pandoc]] is a damn good software for the heavy lifting behind the scene.
+
+Let me show little by little the process involved and of course, the code that
+generates those things.
+
+* Vimrc configuration, which helps to get it done via VIM
+
+[[~/Pictures/Screenshots/2024-05-15-125016_1920x169_scrot.png]]
+
+See! I have designated key binds to call up for generating specific things and that
+essentially call up the required script.
+
+* Generate PDF Notes
+
+[[~/Pictures/Screenshots/2024-05-15-125309_1916x321_scrot.png]]
+
+Bang! No fuss a simple /Pandoc/ call does the trick here.
+
+
+* Generate HTML Notes
+
+[[~/Pictures/Screenshots/2024-05-15-125511_1919x319_scrot.png]]
+
+Phew! No surprise here too..abject ordinary stuff to get the job done.
+
+* How To Extract The Latest PDF Build From The Designated Directory
+
+[[~/Pictures/Screenshots/2024-05-15-125740_1920x220_scrot.png]]
+
+
+* How To Extract The Latest HTML Build From The Designated Directory
+
+[[~/Pictures/Screenshots/2024-05-15-130049_1920x221_scrot.png]]
+
+I have stuck to the minimal tool to be used for this and it does the
+damn job.
+
+Okay, I have called a /*predefined template*/ file to insert specific values to
+the note taking file and a few /*predefined macros*/ to fill those fields.Here is
+the template file look:
+
+[[~/Pictures/Screenshots/2024-05-15-130422_1920x298_scrot.png]]
+
+Okay, if I put the cursor right next to the colon and press some keys(invoke
+macros) to fill in that field. For instance, if the cursor is on the /Author/
+filed and I press /au/ that fills the name of me.Likewise,on the /date/ field if I
+press *dst* it pastes the current date to that field.So, I don't have to manually
+fill in those fields,but rather press the keystrokes to do the job.
+
+Pretty ordinary, right? My requirements are minimal.However, you can extend the
+template file at any time wish to add more metadata to it.
+
+Finally, if you are inclined to see how things panned out visually with live
+action, then you might take a peek at my [[https://youtu.be/f2ii2twaQeE][YouTube]] video.
+
+# /home/bhaskar/Pictures/Screenshots/2024-05-15-125016_1920x169_scrot.png http://unixbhaskar.files.wordpress.com/2024/05/2024-05-15-125016_1920x169_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2024-05-15-125309_1916x321_scrot.png http://unixbhaskar.files.wordpress.com/2024/05/2024-05-15-125309_1916x321_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2024-05-15-125511_1919x319_scrot.png http://unixbhaskar.files.wordpress.com/2024/05/2024-05-15-125511_1919x319_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2024-05-15-125740_1920x220_scrot.png http://unixbhaskar.files.wordpress.com/2024/05/2024-05-15-125740_1920x220_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2024-05-15-130049_1920x221_scrot.png http://unixbhaskar.files.wordpress.com/2024/05/2024-05-15-130049_1920x221_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2024-05-15-130422_1920x298_scrot.png http://unixbhaskar.files.wordpress.com/2024/05/2024-05-15-130422_1920x298_scrot.png
