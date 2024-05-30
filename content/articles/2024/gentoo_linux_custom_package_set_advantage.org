@@ -1,0 +1,75 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1867
+#+title: Gentoo Linux Custom Package Set Advantage
+#+date: 2024-05-30
+#+tags: Technical Gentoo Linux Tools Opensource
+
+Alright, I am not sure about others who use this particular Linux distribution
+called /Gentoo[fn:1]/. I do and it is been ages since that it has been the primary
+choice of Linux distribution in my machines. Others are, namely, Debian and
+Slackware.
+
+This is a very distribution specific post,where I am going to show you the
+specific stuff I do to get with the system once freshly installed on a
+machine. The trick is to get a certain set of packages which helps me get along
+with my day to day work on it.
+
+Gentoo provides a facility called *package sets[fn:2]*, where you can enlist your
+/required/ packages, and you can get them at once invoking a single command.
+
+For this to work, you *have to have a directory name /sets*/ under ~/etc/portage/~
+and should contain a file having all the packages needed. So, you can call up
+that file like this:
+
+#+BEGIN_SRC sh
+emerge -av @must_have_packages
+#+END_SRC
+
+It will enlist the packages you mentioned in the file and ask for your consent
+to install them. My own /custom-set-packages/ file looks like this :
+
+[[~/Pictures/Screenshots/2024-05-30-062813_1920x1200_scrot.png]]
+
+And when I invoke to install all those after a fresh install or some other
+circumstances,then I do :
+
+[[~/Pictures/Screenshots/2024-05-30-063132_786x163_scrot.png]]
+
+..and the output would look like this :
+
+[[~/Pictures/Screenshots/2024-05-30-063142_1920x1200_scrot.png]]
+
+Cool! Right?
+
+Now, you can see what are the package sets provided by simply invoking this
+command on the shell :
+
+[[~/Pictures/Screenshots/2024-05-30-063807_1920x503_scrot.png]]
+
+You can query the set's content like this, for instance to find out what is in
+the set */system/* :
+
+#+BEGIN_SRC sh
+sudo emerge -av @system
+#+END_SRC
+
+You can individually query all the sets enlisted. You might be interested in
+what the */world/* set contains, as it is frequently use:
+
+#+BEGIN_SRC sh
+sudo emerge -av @world
+#+END_SRC
+
+You might create other package sets as per your requirement,so,it lessens roaming
+to find stuff.
+
+* Footnotes
+
+[fn:1] [[https://www.gentoo.org/][Gentoo Linux]]
+
+[fn:2] [[https://wiki.gentoo.org/wiki/Package_sets][Gentoo Package Sets]]
+
+# /home/bhaskar/Pictures/Screenshots/2024-05-30-062813_1920x1200_scrot.png http://unixbhaskar.files.wordpress.com/2024/05/2024-05-30-062813_1920x1200_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2024-05-30-063132_786x163_scrot.png http://unixbhaskar.files.wordpress.com/2024/05/2024-05-30-063132_786x163_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2024-05-30-063142_1920x1200_scrot.png http://unixbhaskar.files.wordpress.com/2024/05/2024-05-30-063142_1920x1200_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2024-05-30-063807_1920x503_scrot.png http://unixbhaskar.files.wordpress.com/2024/05/2024-05-30-063807_1920x503_scrot.png
