@@ -1,0 +1,76 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1870
+#+title: Linux Kernel Development Essence In Brief
+#+date: 2024-06-04
+#+tags: Technical Linux Kernel Development Opensource
+
+Alright, I am going to dish you out some of the nuance of /Linux Kernel
+Development/ in general. If you are not aware or familiar with those, then it
+might help you to map your mental state to approach it more concise way.
+
+Here are a few facts right off the bat, note it down:
+
+One, you are supposed to have or inculcate the patience about the proceedings(if
+you don't have, the process will teach you how to have some).
+
+Second, you have to have some evidence of your proposed work in the kernel. That
+means you need to furnish some sort of work/WIP in real form to get people to be
+interested in your proposal.
+
+Third, you are expected to give a clear cut(without deviating or derailing)
+explanation of the queries asked by other people in that parlance. That will
+eventually build up confidence in people about you.
+
+Fourth, adding /new features/ is very tempting to the kernel and the inclination
+of most of the people is very prominent. But, getting rid of the gotchas or /old
+bugs/ or /stale code/ from the kernel is valued more(take a note of it and print
+it, so you can stick it to the wall right in front of your workplace).
+
+Fifth, swearing doesn't help if your work is not in line with your
+swearing(overall it is a bad ploy and bats actual people away). So, put your head
+before you preach.
+
+Sixth,you should or must have(if you don't,again the process will teach you the
+lesson) to get stern feedback(and often right) from a lot of people(you consider
+yourself one lucky bastard, that people who matter putting attention to you).In
+stead of taking that as an emotional jolt, if you,again, put a little thinking
+cap and realize from their perspective, then you will be better off.
+
+Seven, mistakes happen and everyone does.You will not be an exception, that is
+written on the stone,don't try to defy it. I have seen best have fallen. But the
+smarter ones confess and move on. That will Phillip your chance to do more.
+
+Eight,nobody cares about your brilliance if that is not transferred to some
+tangible or vivid workable solution to a real life problem. No matter how arcane
+your solution would be. The effort might tick the people who decide to work with
+you in the future in this parlance.Period.
+
+Ninth,stick with what you could do best to help. We do not have place for heroes
+here in this project and I am not aware of any. Your work should speak louder
+than your mouth and that it is.
+
+Ten, don't try to be master of everything, it is not possible and the kernel is
+big. Nobody cares if you start to fiddle with everything. If you stick with your
+area of interest then you might (and I said , you might) win some favor to get
+your work to be merged and used for real life scenarios.
+
+Eleven, we have more failure in the kernel than success. Believe it or not, so
+don't lose heart, if your work is not fathomable to the real people(there are a
+handful and very prominent ones because of their long lasting associations and
+involvement with the project), who drive the project.
+
+Twelve,in kernel "low hanging fruits" are rare, and meritocracy defined
+differently than your academic way of thinking of it. Very important
+distinction, if you fail to get it, you might be living your entire life having
+a false notion of "correctness".
+
+Last, but certainly not the least, you are not that so important nor you are
+doing any favors other than yourself. How? Because you are getting a name by
+contributing to the /best and most successful software project on the earth/ and
+some other people getting the benefit of your knowledge to get better. If you
+don't do it, someone else will do that and you will be using their work to get
+better.
+
+Oh,it is very obvious, if you do not have the knack to do better for others in
+truest sense, then you are doomed in this parlance. In the long run, you might
+gain that realization.
