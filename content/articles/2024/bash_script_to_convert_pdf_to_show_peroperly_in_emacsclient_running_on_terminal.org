@@ -1,0 +1,114 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1873
+#+title: Bash Script To Convert PDF To Show Properly In Emacsclient Running On Terminal
+#+date: 2024-06-10
+#+tags: Technical Emacs Linux PDF Opensource Tools
+
+Okay, it is ugly, not elegant and easy,but the damn thing works well to fit my
+workflow.Period.
+
+What am I talking about?
+
+The backdrop is important to fathom. The kind of environment I operate in on a
+day to day basis,is purely in /command line interface aka CLI mode/ . So, I have
+to take some action to make things work or not available to that environment for
+my choice's sake.
+
+This is one of the cases out of many I did in the past.
+
+The context: I do run /Emacs/ in terminal mode(huh, what's the big deal?). But
+running in that mode not allow us to take full advantage of the power this damn
+tool brings onto the table. I run it this way because my entire workflow is bound
+with this echo system coherently. Hence, the ploy needs to be placed to get over
+the obstacle it provides to get on with a particular job. And that damn obstacle
+is Emacs running on terminal mode does not have the facility nor does it allow
+you to see PDF inside it.
+
+Oh, yes! I can see the damn PDF in some external tool, which is the default case
+and I do use it with my favorite PDF viewer i.e. /Zathura/.
+
+But, sometimes the situation demands other things, and essentially some sort of
+inexplicable urge to do things in /my way/ , damnit!
+
+So, here is what I opted for, wrote an abject ordinary shell script to do the job
+for me while sitting in that environment. This is for your viewing pleasure and
+if you are an "expert" in this field frown upon the flow, I won't stop you.
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+#===============================================================================
+#
+#          FILE: convert-pdf-to-org.sh
+#
+#         USAGE: ./convert-pdf-to-org.sh
+#
+#   DESCRIPTION:Simple pdf to org conversion to see it in Emacs runnig on terminal mode.
+#
+#       OPTIONS: ---
+#  REQUIREMENTS: Pandoc popplar-tools
+#          BUGS: ---
+#         NOTES:  A quick and dirty way to convert a pdf to org
+#        AUTHOR: Bhaskar Chowdhury (https://about.me/unixbhaskar), unixbhaskar@gmail.com
+#  ORGANIZATION: Independent
+#       CREATED: 05/24/24 02:01
+#      REVISION:  ---
+#===============================================================================
+
+# License (GPL v2.0)
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# set -o nounset                              # Treat unset variables as an error
+
+file=$1 # this suppose to be a pdf file
+file_name=${file%.*}
+
+if test ! $file;then
+	echo you are suppose to provide the pdf file
+	exit 1
+fi
+
+
+if test $(which pdftotext) != "";then
+      sh -c "pdftotext "$file" - > converted.txt"
+      sh -c "pandoc -t org converted.txt -o converted.org"
+      sh -c "tr -d '\f' < "converted.org"  > strip.org"
+      sh -c "sed -i '/^[0-9]/d' strip.org"
+      sh -c "sed -i '/^\*/d' strip.org"
+      mv "strip.org" "$file_name.org"
+      emacsclient --tty "$file_name.org"
+else
+	echo Oops! the required binary is missing.
+fi
+
+#+END_SRC
+
+Well, your taste would be quite different from mine and I just don't care about
+it. People can take a cue from it and implement it in their own way, most
+probably the better way. I haven't put enough time and energy into making it
+more "elegant and concise", because I couldn't.
+
+You have to have *popplar-tools* installed in the system beforehand and that is
+available from the core repositories of all the Linux distributions I have known
+of. So, not a deal-breaker.. *Pandoc* is too popular and available, so this is not
+also a showstopper either.
+
+I have called up several /sub-shells/ to perform steps, which were intentional. At
+this age, the performance of this kind of processing affects the system very
+minuscule or nothing at all.
+
+The /blemish/ the 'shell expert" might put on, I could have used pipes more
+vigorously, and they were probably right. I am not making a case for my
+reluctance to make it more elegant than this ugly-looking stuff. I have tried
+once during the build phase and it didn't turn out as I was expecting, and damn!
+Furthermore,I was in a hurry(for some unknown reason, think of it I am making an
+excuse :) ) to get it done and over with.
+
+So, here you go, a minimal way of seeing PDF in Emacs terminal mode.
