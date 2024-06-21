@@ -1,0 +1,99 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1878
+#+title: Opensource Tools Emacs And Vim Helps To Organize
+#+date: 2024-06-22
+#+tags: Technical Editor Emacs Vim Opensource Tools
+
+Well, the tools mentioned in the title are *cross platform tools[fn:1]*,which
+means,they can be used on various other platforms than on /Linux/. But I have been
+exclusively running /Linux/ on my machines for ages(what's the big deal??), so I
+better stick with that platform.
+
+HEADS UP! None of the tools are self-fulfilling, so these have dependencies on
+other tools too.
+
+Now,these editors have the capability beyond trivialities like organizing and
+reminding(which I have written about in other posts),but this feature is
+certainly highlighted for the NON-tech people as well as tech people.
+
+Let me show you the way I keep /reminding/ myself from time to time(and hopefully
+you have already seen this picture before somewhere else I might have shared,
+but for the sake of this post, one more time :) )
+
+While I am sitting on /Emacs/,I have an org file that keeps track of what I am up
+to and has /capture templates/ designed to capture with some keystrokes(again some
+other posts I have written have more details about that mechanism) to induct
+into the file and while looking at it,almost a ritual to do so, give me a sense
+to what to follow up.
+
+Here is what it looks like :
+
+[[~/Pictures/Screenshots/2024-06-22-025120_1920x1200_scrot.png]]
+
+See! Not many items bother me too much. That is because I have only inducted
+things that I can attend probably.Period.
+
+Likewise,while I am inside /Vim/, I keep my /knowledge base/ within it and keep
+induction if I find something interesting(the same mechanism applied in Emacs
+too, so it is redundant). I might look into these /offline/ and spend prolonged
+time on them to gain more insight into the topic.
+
+Here is what the KB looks like :
+
+[[~/Pictures/Screenshots/2024-06-22-025540_1920x1200_scrot.png]]
+
+That's a section shown in the above screenshots, there are more in that space,
+which is not showing. :)
+
+Again, there is an /easy method/ to induct in it and it should be, otherwise the
+purpose of having them will defeat the purpose. Essentially, I took advantage of
+the software package specifically made for those editors and used them as
+needfully as possible.
+
+But why do you need to be organized? (Please,don't overdo it.)
+
+To make sure the gray cells between the ears are aligned with the steps we have
+decided to follow. IOW, keep refraining from /distraction/ and noise.The more
+involved in the process of the unknown the more confusion arises. Mitigating
+that space is very essential to move forward in a journey. Importantly, it should
+solidify your understanding of the specifics, which interest you the most.
+
+Inside /Emacs/ I take advantage of /org mode/ to the fullest extent, this is such a
+beast to know and enhances productivity to some degree as well, while in /Vim/ I
+take advantage of /Vimwiki/ to lay the base for the note taking and knowledge base
+build.
+
+The invocation of the specific spice(the underlying software)
+customized[fn:2](out of need) to make these tools available with minimal
+effort. And I have a sincere allergy to make something more complicated than it
+requires. It also means, it is after all a piece of software and it is bound to
+misbehave sometime, so to /debug/ the damn thing, the implementations have to have
+some sort of easy interface to get on.
+
+Convenience doesn't mean one has to go overboard and make things happen for
+them. But it surely means, before stabbing at the things make sure what you
+expect out of it. This leads to a basic understanding of inspect what it can
+offer in general. *Knowing your requirements is a must*. Period.
+
+People generally tend to mold their favorite things to their liking and I am no
+exception to that rule.I do what I lean on every single day for
+productivity.Writing for the sake of writing and not following up stringently
+makes no sense. So, knowing the tool and not taking advantage of its offering is
+not so useful.
+
+There is an adage,"A fool with a tool is nothing but a fool, If he
+fails to tap the potential of it". Importantly, for your betterment.
+
+Oh, before I let you go, my /Vim/ and /Emacs/ dot files,are having a lot to do with
+this space. You might take a look at them at your leisure. They are both hosted
+on GITHUB in the [[https://github.com/unixbhaskar/dotfiles][*dotfiles*]] repository.
+
+* Footnotes
+
+[fn:1] That means these tools can be run on other platforms like Windows and Mac machines.
+
+[fn:2] You might read or think of it as automation. A kind of process to make things happen behind
+the scenes and present you with the effects or results.
+
+# /home/bhaskar/Pictures/Screenshots/2024-06-22-025120_1920x1200_scrot.png http://unixbhaskar.files.wordpress.com/2024/06/2024-06-22-025120_1920x1200_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2024-06-22-025540_1920x1200_scrot.png http://unixbhaskar.files.wordpress.com/2024/06/2024-06-22-025540_1920x1200_scrot.png
