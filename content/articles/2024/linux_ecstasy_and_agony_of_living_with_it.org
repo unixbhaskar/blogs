@@ -1,0 +1,164 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1882
+#+title: Linux Ecstasy and Agony Of Living With It
+#+date: 2024-07-04
+#+tags: Technical Opensource Linux
+
+
+
+TL;DR This is NOT a pure tech post nor I intended to.
+
+
+
+Well, /Linux/ has been in the mainstream for couple of decades,in case, if you
+failed to realized it. And *full time* living with it have some major
+consequences. I shall be pretty blunt about it(haven't I done so various other
+instances??). But to remind you the path chosen by me for my own sake and had
+nothing particular in mind.
+
+Am I the only one? What a vague query! When you see things people are flocking
+into it like fly on a honeypot,not everyone has the same intention and
+motivation to do with it. That is quite understandable, because we are different
+human beings and our gray cells between the ears have radical different thing in
+store. But, one common underlying thing that knit us together to use the damn
+same platform and probably the other offering (read as tools) on that
+space. Some people are even more courageous than most to put that invaluable and
+unbearable efforts to brings things from other platform to this one. So, the
+underlying ethos to do that kind stuff to see and explore the unknown and
+uncharted territory with the help of something known for ages. That is a good
+ploy and kudos to those upbeat folks.
+
+Now,while at it,some people believe that the decision to something good solely
+on their shoulder as it is often cited as "freedom to do whatever you like",
+that statement is sincerely is misleading one. You just can not airy-fairy way
+of doing thing which could be used in a real life scenarios, could you?
+Certainly NOT. Then,the crux is, it is always the case, whether you like it or
+not, that some people who are core to the project always have the say to get on
+with things with the project. Period. That is the harsh truth, the sooner you
+realize it the better for you. That certainly not stopping anyone to have their
+opinion and importantly work to force it in the other direction. We have had
+many over the decades, specifically on this space(real Linux and ecosystem) and
+its augers well for almost everybody.
+
+
+One, striking noticeable thing, if you are observant enough, is to see that we
+just don't care or entertained /special cases/ that much. In face, have strong
+opinion of eliminating that state to the early possible interaction. It is damn
+good thing, for the overall health of the project. Why? Because you have deal
+with less memory scathing stuff than to do work seamless with other part of the
+thing. Plus, generic implementation makes more sense in 90% of the cases or
+more, so people should be encourage to engage in it.Oh, I have forgotten to
+reminds you that, we just /don't care/ about the heroes of any sort.And it is
+pretty evident of people who drive the project , especially Linux kernel.
+
+While it brings all the *freedom* to express yourself and in a hope to make a mark
+on the world stage,oh yes, that is driving force a lot of people getting
+involved into the project. Alas, soon they find, it is not just what whisker to
+get on. You are supposed to have enormous amount to grit and perseverance to get
+with the damn thing. Otherwise, you are just a wondering walker and will be
+forgotten in a fizzy.Those who come and stick(yours truly) with it for a long
+time for the sake of pure enjoyment and certain sense of achievement(how small
+it is doesn't matter really). I have cherished every small bit I did with it,
+with all my miscreant and vigor. Moreover, I am kinda over the moon(and
+stringently NOT complacent) that I did myself, and it took way long time to do
+whatever little and less impactful work.
+
+Daily driving(that is a common jargon)we use in the tech world to say a simple
+real life thing is /"use it every walk of life"/. And that has serious kind of
+impact on our lives and people we live with get the consequence of our
+involvement with our beloved thing.Oh, it is certainly not a /hunky dory/
+situation to live with. Like life, it has certain amount of uncertainty around
+it. But most the kernel[fn:1]( read it as an important part, not just a
+software).
+
+So, adjusting to its vagaries is the /lingua franca/ of surviving with it.And I
+have seen people given up too early, especially these days with so much of
+distraction and ever growing crux of all /quick gratification/, meh, what a way to
+measure life events! But nonetheless,good work takes time and it is an
+undeniable truth that perseverance wins over mastery. Embracing the pain to
+evolve is more meaningful than to things given on a platter. Because it gives
+some sense of accomplishment,no matter what is scale. Provided, you are not
+bitten by the idiotic bug to compare yourself and your work to others for
+competitive sake. There will be always people who will supersedes you in many
+ways, and that certainly not meant you give on your beloved thing. I did't. In
+spite of being told and shown not having the metal to go any further than what I
+"deserved to". Now, I look back and wondered about that statement and found no
+logic and proper reasoning behind it. Empty words are easy to throw around and
+often done by the incompetent arseholes for their benefit.So, ignorance is
+bliss. Provided you are fully aware, what to ignore and when to pay attention.
+
+Staying on course is important act of your commitment towards it. I have seen
+stupid people come with bang and go with a bang and grab some limelight for them
+in forgettable minuscule time. Good for them with their short span in-vigorous
+vigil to seeing popular software. Also,,they come into limelight to /show their
+metal/ and /how others are fared to be in the project/. These subtleties often
+missed the naked eyes. But so very harmful and high recommended, if you discover
+such feat( yours truly discover some, unfortunately), stay away or ignore
+outright for your own sake.
+
+/I do what I love most/ is not a buzzword nor it was explicitly said two and half
+decades back( it might be now uproar in "unsocial media"),taking a decision it
+to embark wasn't that easy,considering the environment and kinda grown up I had
+had. Many have done better coming out of that similar environment. Every passing
+day of candor with my liking is kinda bliss to the life and every little piece
+take away the grim of /not good enough/ tag from my mind bit by bit. NO, I am not a
+person who delve in pessimism too long.The situation of the real life not allow
+me to stick linger in that mode, eject me out of it in a jiffy.
+
+I have put forward what I could have done best with my limitations and certainly
+not sitting on it. Linux has given me the wing to express my way of seeing life
+and live it in my way. Yes, there are still steps to be covered and I am well
+assisted by "real well-wishers by their act" to thrive.I am grateful for their
+consideration to my life input.One more thing paying important part, just not
+let it go easily if I cling onto something.
+
+The excruciating pain to gain some understanding in early years helps the system
+to stabilize to get on with Linux. The lack of formal academic training made the
+progress slower, and it still does in some occurrences.But, I have discovered the
+way to get over the obstacle provided by it doing so much trial and error and
+importantly not shy being ask help to people I felt( very important!) to
+provide that help. You can sense who can and can not in some sense when you are
+in it for little longer, so you use your time judiciously to get it. I have had
+always very particular, in life, about my choices. Good or bad that beholds to
+me.
+
+Bent on Linux was a damn good decision I made in the very first place in a very
+crucial juncture of life. And I put sincere deaf ears to people who I tagged as
+naysayers.It turns out boon for me. Gaining insight and living life with it
+certainly a fascination comes true in real life. I couldn't have dream or do
+better.
+
+Shortcoming! Who doesn't have or what don't have?? Getting over it and at least
+put an honest effort to get on with it is a bare minimal requirement, just like
+building a good long sustaining relationship with some of your choice.Aren't we
+all doing the same thing in life, knowingly or unknowingly? I have come to term
+that every good thing has some drawbacks and if you want be in long lasting
+relation with it, you have to ignore certain aspect of it. Oftentimes, the goods
+are much overweight than the downsides,when you realized some materialistic
+aspect takes backseat. So, hard earned horse is allowing me ride on it for the
+moment and I am doing my bit to get it feed properly.
+
+I never had nor I have any amount of inclination to compare with people who are
+good at on other platform. I have always said, /I feel home on Linux/ and that's
+my answer to their combative and competitive query. What's the point of engaging
+in babbling which not end in a fruitful result. I am more open to people who
+have the desire to understand and allow me to understand by their non-prejudice
+laden understanding to some common interesting stuff.
+
+My very strong and intentional avoidance to /politics of any sorts/ helps me to
+thrive to my eyes and understanding. When I sense some about it, I generally
+withdraw myself from it quietly. I am an *apolitical person* with serious lack of
+understanding what is achieved with it, when things are clear, but not
+always.Like life, tech world are prone to have some politics,after all humans
+are still running the show and it reflects people's choice about some technical
+things. But when the imposing takes precedence, then generally I take a call.
+
+I had my fair share of it what I wanted to do with Linux and hoping to give back
+more meaningful ways to it for the sake of my whole selfish reason.
+
+
+
+
+* Footnotes
+
+[fn:1] [[https://www.dictionary.com/browse/kernel][The important part of anything]]
