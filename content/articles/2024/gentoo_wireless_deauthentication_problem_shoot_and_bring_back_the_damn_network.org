@@ -1,0 +1,94 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1886
+#+title: Gentoo Wireless Deauthentication Problem Shoot And Bring Back The Damn Network
+#+date: 2024-07-17
+#+tags: Technical Gentoo Opensource Wireless Linux
+
+
+Damn! I have been bugged for quite some time with it and finally decided to take
+a call on it.
+
+Gentoo *deauthentication from wireless by choice(reason=3)* is/was a real
+problem. Oh, haven't you started googling fanatically the moment you saw the
+title?? :)
+
+Anyway, it has been discussed in an ancient thread in [[https://forums.gentoo.org/viewtopic-t-974414-start-0.html][gentoo forum]]. And I have
+curated a mundane script to deal with, every time it occurs. Here is the ugly
+script at your disposal:
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+vpnid=$(pidof pia-daemon)
+
+echo Checking the common cause....
+echo
+grep  "Gentoo kernel: wlo1: deauthenticating from" /var/log/messages | tail -n 2
+
+echo
+echo If anything blocking the connection devices....
+echo
+
+sh -c "rfkill list"
+
+print "Is it blocking anything??[Y/N]: %s"
+read -r provide
+
+if test $provide == "Y";then
+       sh -c "rfkill unblock all"
+
+print "Is it get back the network?[Y/N]: %s"
+read -r response
+
+elif test $response == "Y";then
+	echo Alright...
+	sh -c "ping -c 1 10 -i.2 google.com"
+	exit 1
+else
+
+echo Bouncing all network.....
+echo
+
+kill -9 $vpnid
+
+sudo /etc/init.d/net.lo restart
+
+sudo /etc/init.d/dhcpcd restart
+
+sudo /etc/init.d/wpa_supplicant restart
+
+printf "\n Bounced the entire network stack.... Done\n"
+
+sh -c "ping -c 1 10 -i.2 google.com"
+
+fi
+
+
+#+END_SRC
+
+Pretty ordinary. Basically to bounce the damn network after checking for
+blockage of any particular physical device, if so, then unblock it. And if it
+fails still to get back the network, go to the conventional way of bouncing the
+entire network stack.
+
+Now, when the /deauthentication/ happens, then in the log it shows like this :
+
+[[~/Pictures/Screenshots/2024-07-17-065002_1920x180_scrot.png]]
+
+So, I have checked that pattern very first thing in the above script. But wait,
+that could be happen for several other reasons too. One of them could be, when
+we close the lid of a laptop, it simply disassociates from the wireless to *save
+power* and that nice of it.
+
+But, it happened while in a working state and middle of something, so I was
+pissed. Most cases first part of the /if statement/ bring back the damn network on
+its feet,and very seldom the last part of the /if else/ part needs to get
+executed.
+
+I have also inducted the *bssid* value i.e. the *mac address* of access point wpa
+supplicant configuration for extra sure that it should not miss it by any means.
+
+Oh, I have *ignored* a large part of /internet search results/, because most of them
+were bogus and delved into something else.
+
+# /home/bhaskar/Pictures/Screenshots/2024-07-17-065002_1920x180_scrot.png http://unixbhaskar.files.wordpress.com/2024/07/2024-07-17-065002_1920x180_scrot.png
