@@ -1,0 +1,45 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1889
+#+title: Linux Kernel Understanding The Boiling Points
+#+date: 2024-07-24
+#+tags: Technical Linux Kernel Opensource
+
+Well, before you foray into the exciting venture of /Linux Kernel/ contribution,
+you are supposed to know little intricacies it imposes on you. It may sound
+trivial but plays a vital role to forge ahead with the contribution.
+
+All I am trying to suggest there are different places you should look and delve
+into related to different nuances of the /Linux Kernel/ development model.
+
+Here are the places you should follow :
+
+*Linux Next* : This is the place where you are suppose to bake your code for
+/reviews and improvements/. Be ready to receive some strong feedback. But if you
+don't take that into your heart and think of /constructive criticism/ of your
+work, then it will help you to get along. But how do you start with? Here is what
+you need to do to start with this phase:
+
+Follow this : [[https://www.kernel.org/doc/man-pages/linux-next.html][Working with linux-next]]
+
+
+*Linux Mainline* : Oh, this is a *hotbed*, where things are getting boiled. All the
+/-RC's/ aka /release candidates/ curated here and released.This is a good place to
+start with something very bleeding edge public exposure. You can play with
+it and provide your feedback to the maintainers about something /not normal or
+uncanny/ behavior of the tree.That will help the maintainer to correct it and
+provide the solutions to the next release candidate.
+
+Follow this : [[https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git][Working with Linux Mainline]]
+
+
+*Linux Stable* : You can think of it as *public testbed*. However,the /stable linux
+process/ makes sure that you get the stuff as solid as possible.But, if it fails
+somehow, somewhere(after all it is damn software, right?) then please provide
+your feedback to maintainer of stable tree. Also this tree will help you figure
+out, something called *backprorting* which essentially means to provide some
+facility to the older version of the kernel to be incorporated. Again, you have
+to on top your solution to let the maintainers know that why that is important
+to get it included in the previous versions of the kernel and not break anything
+else.
+
+Follow this : [[https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/tree/?h=v6.9.10][Working with Linux Stable]]
