@@ -1,0 +1,78 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1894
+#+title: Nope YouTube Doesn't Like Behind VPN; Automated Way Of Deactivate And Activate It
+#+date: 2024-08-11
+#+tags: Technical Linux Internet Youtube Opensource Bash Scripting Tools Opensource
+
+Hey....hey don't you know YouTube doesn't like to be accessed behind from the VPN or
+some other means of restriction you probably have put in place?
+
+In this post, I have my own way of doing while adhering to their /imposing/
+rule in place.
+
+I use a specific VPN for a long time, sheer choice in one fine day in the
+distant past and damn! I am sticking with it, till now.
+
+Now the trouble started surfacing a few months back when Google rolled out their
+forced rule to gain something they think is important of nature. Okay, I use it
+like everyone else in the wild and do stuff like others do. So, the impediment took
+me aback. Hence, to find a way to get on with it.
+
+Here are two little scripts with /identical nature to/ do the jobs for me. One is
+to get YouTube videos *downloaded and converted to mp3*, so I can listen to them
+with my local music player.
+
+The other one is to download YouTube videos without the distraction and
+best possible resolutions.
+
+I could have combined both of them in one single script, but I refrained for
+various reasons. One of the prime reasons is to maintain those damn things.
+
+These are abject ordinary stuff, so take it with a pinch of salt.
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+echo Disconnecting the vpn to use this facility....
+
+$(command -v piactl) disconnect
+youtube_url=$1
+
+dl="$(command -v yt-dlp)"
+holdsongs="$HOME/Music/downloaded_songs"
+
+cd $holdsongs
+
+$dl  --extract-audio --audio-format mp3  $youtube_url
+
+if test $? -eq 0;then
+	find "$holdsongs" -type f -print
+	sleep 10
+	echo Turn back the vpn on again!
+	$(command -v piactl) connect
+fi
+
+
+#+END_SRC
+
+Goodness graces me! What an ordinary way of accomplishing something even more
+simple!! You probably noticed, that the /piactl/ binary provided by the vpn I
+use,similar way you might induct your own vpn provided cli tool too. Oh,/yt-dlp/[fn:1]
+is the binary to use it in the command line.
+
+
+Alright, the only difference to /video download/ script to the above one is in
+single line and that too is like this :
+
+#+BEGIN_SRC bash
+$dl -f 18 $youtube_url
+#+END_SRC
+
+That's it! In terms of change.
+
+The crux of the matter is: *Turn off the damn VPN and once the job is done, turn it
+back on*. Period.
+
+* Footnotes
+
+[fn:1] [[https://github.com/yt-dlp/yt-dlp][yt-dlp GitHub Page]]
