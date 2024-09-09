@@ -1,0 +1,89 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1901
+#+title: Linux Readline Keybinds vs Window Manager Keybinds
+#+date: 2024-09-09
+#+tags: Technical Linux WindowManager Tools Opensource Readline GNU
+
+Well, Linux has spoiled people with options.Alas! The choices people are making
+is horrendous and oftentimes backfires them.But, why that is happening in the
+first place? Looking at the tip of the iceberg and imagining the size and shape
+of it is very common blunder,and that happens every walk of life nowadays.
+
+So,as the title suggested working on Linux system entice you to use the
+venerable command line sometimes, hopefully sooner in your endeavor.And you will
+find enthralling effect of it when a minimal key press can do a ton with massive
+impact.
+
+GNU Readline[fn:1] comes bundled with most if not all the Linux system out
+there. It is such an important /library/, wait, did I say library? And you read
+it right.
+
+Now it is coming with some predefined set of key maps, which could be used in
+the shell or in the terminal. By default, it is using Emacs's bindings, although
+you could have easily changed that to Vim's if you want to. How cool is that!
+Not only that if you are overly curious beyond usability of the key binds it
+provides, you can program[fn:2] with it too.
+
+Having several window manager[fn:3] has several key binds, because not everyone
+follows the same key presses.And the working internal are quite different from
+one another.So, in essence,it will simply overboard you mind with various
+different keys for various window manager you might have.Although, it is
+certainly not a bad thing to have single window manager across distribution and
+having similar key binds. Which is what I am used to and having it as my primary
+source of operation.
+
+But, having said that, the readline key maps are window manager agnostic and
+work similarly with various window managers without any change.Importantly, they
+can coexist.
+
+Okay, the million dollar question is, how the heck I know when to use what? The
+answer is not that simple.Sometimes,you have ride on your gut feeling for
+specific action to be performed or access specific things,in the most convenient
+way possible. And the end user have to put their head to find out what would
+work best for them. There is no hard and fast rule defined by anything or
+anybody.
+
+* How to see and set the readline command bindings in your system
+
+Do this:
+
+Open a terminal/shell and type at the prompt, this :
+
+/bind -P/ ......that is capital P. And you will see something like this on your
+terminal/shell:
+
+[[~/Pictures/Screenshots/2024-09-09-142259_1920x1200_scrot.png]]
+
+You can notice on the output, that do *not start with #* are active readline
+keybinds in your system. Here are the options you might need to know, when
+using the /bind/ command on the terminal:
+
+[[~/Pictures/Screenshots/2024-09-09-142726_1075x507_scrot.png]]
+
+Okay, every Linux have a file */etc/inputrc* and the content of the file somewhat
+look like this :
+
+[[~/Pictures/Screenshots/2024-09-09-143521_1920x1200_scrot.png]]
+
+If you want to *override* the system inputrc file with your own, you might create
+a file under your home directory i.e. *.inputrc* and put your bindings in it, as I
+did for a few.
+
+[[~/Pictures/Screenshots/2024-09-09-143915_1920x221_scrot.png]]
+
+
+The last word of caution is, please do not overburden your dot inputrc file with loads
+of key binds.
+
+* Footnotes
+
+[fn:1] [[https://tiswww.cwru.edu/php/chet/readline/rltop.html][GNU Readline]]
+
+[fn:2] [[https://web.mit.edu/gnu/doc/html/rlman_2.html][Programming with GNU Readline]]
+
+[fn:3] [[https://en.wikipedia.org/wiki/Window_manager][Window Manager]]
+
+# /home/bhaskar/Pictures/Screenshots/2024-09-09-142259_1920x1200_scrot.png http://unixbhaskar.files.wordpress.com/2024/09/2024-09-09-142259_1920x1200_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2024-09-09-142726_1075x507_scrot.png http://unixbhaskar.files.wordpress.com/2024/09/2024-09-09-142726_1075x507_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2024-09-09-143521_1920x1200_scrot.png http://unixbhaskar.files.wordpress.com/2024/09/2024-09-09-143521_1920x1200_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2024-09-09-143915_1920x221_scrot.png http://unixbhaskar.files.wordpress.com/2024/09/2024-09-09-143915_1920x221_scrot.png
