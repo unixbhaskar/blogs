@@ -1,3 +1,5 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1904
 #+title: Arch Linux Kernel Package Build From Upstream Kernel Source
 #+date: 2024-09-17
 #+tags: Technical Arch Linux Tools Opensource Package
