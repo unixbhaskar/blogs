@@ -1,0 +1,118 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1911
+#+title: Linux Editors Keyboard Macros Are Cool And Can Save You Some Time
+#+date: 2024-12-03
+#+tags: Technical Emacs Vim Tools Automation Macros Opensource
+
+Well, my repertoire of tools is very limited and it was/is a conscious decision
+to avoid unnecessary overhead of maintaining them. In this post, I am briefly
+going over a feature provided by both of my daily driver editors i.e. [[https://www.gnu.org/software/emacs/][Emacs]] and
+[[https://www.vim.org/][Vim]] and that is called *Keyboard Macros*.
+
+What is keyboard macros? It is a mechanism to establish a specific set of rules
+to be invoked via a set of keyboard key press or single key press. That means,
+this damn thing once created and saved can assist you to do some job with little
+keypress.
+
+Fortunately, both of my editors(mentioned before) have that capability
+/built-in/. So, people only have to remember little thing to invoke it as
+ease. And if you use it extensible way, then you might use another macros to use
+that macros, see you can nested it. But please do refrain to use it like that,
+it will make thing unnecessarily complicated.
+
+Ideally, one job dedicated to one macro and that is how it works better for
+human and should be practiced.
+
+You can do hell lot of things accomplished with the power of it. Namely, your
+favorite functionality of that the editors to be called at once with a little
+keypress or perform a particular work inside the editors at whisk.
+
+I have made some videos about them, if you are inclined to look at them, then
+they are [[https://youtu.be/AFkXLmega8E ][Emacs Keyboard Macro]] and [[https://youtu.be/yRQuWWSjkfM][Vim Keyboard Macro]].
+
+Now, I am going to outline the macros how it look like in different
+editors(mentioned before) language and how to invoke it specifically.
+
+* Emacs way of invoking keyboard macros
+
+Pretty darn simple, all you have to do , while you are inside Emacs, press the
+key =C-x )= to start the macro or =F3= to do the same thing. It will notifies you
+that it started to recording(see, it is capturing everything now on, whatever
+you do) and you need to specify exact steps to accomplished specific you are
+suppose to get with a specific key strokes(you need to bind this macros with a
+keybind once you are done with it to recall later to perform the operation you
+are recording. To END the macros either press =C-x (= or =F4=. Now you are suppose
+to invoke it, here are few options you might get if you invoke from the =M-x=
+prompt,
+
+[[~/Pictures/Screenshots/2024-12-03-040849_1913x206_scrot.png]]
+
+There are more and the above picture not capture all of them,but show you, how
+you could get it.
+
+The key stroke to bind with a key, just recorded macro is : =C-x C-k b= .
+
+Although, I have something like below function mentioned in my dot emacs file
+for convenience.
+
+#+BEGIN_SRC emacs-lisp
+;; Save a macro for future sessions
+
+(defun save-macro (name)
+    "save a macro. Take a name as argument
+     and save the last defined macro under
+     this name at the end of your .emacs"
+     (interactive "SName of the macro: ")  ;; ask for the name of the macro
+     (kmacro-name-last-macro name)         ;; use this name for the macro
+     (find-file user-init-file)            ;; open ~/.emacs or other user init file
+     (goto-char (point-max))               ;; go to the end of the .emacs
+     (newline)                             ;; insert a newline
+     (insert-kbd-macro name)               ;; copy the macro
+     (newline)                             ;; insert a newline
+     (switch-to-buffer nil))               ;; return to the initial buffer
+
+(global-set-key (kbd "C-c m") 'save-macro
+#+END_SRC
+
+All you have to do is just call =C-c m= and it will prompt you for the macro you
+want save with a key bind.
+
+* Vim way of invoking keyboard macros
+
+Again, it is has got /built-in/ capability which can be invoked via the keystroke
+=q= with a register latter(a-z) i.e.qm and it precisely record the macro in
+register m. To end the macro recording,use keystroke =q=. Once recorded you can
+play the macros by pressing the key =@= and you might add numbers to apply that
+recorded macro like this for =5@= . So that mean, that macro will play /five times/
+in consecutive manner.
+
+Now how do you save the macros in Vim? I have something in my dot vimrc to
+invoked to give the recorded macros a name.
+
+#+BEGIN_SRC sh
+" Perform a macro and save the last macro to g:LastMacro.
+        let g:LastMacro = ''
+        function! DoMacroSave()
+            let l:macro = getchar()
+            if l:macro =~ '^\d\+$'
+                let l:macro = nr2char(l:macro)
+            endif
+            if l:macro != '@'
+                let g:LastMacro = '@' .l:macro
+            endif
+            exec 'normal! @' . l:macro
+        endfunction
+        nnoremap <silent> @ :call DoMacroSave()<CR>
+
+#+END_SRC
+
+Oh, there are plugin for macros and I have tried one of them before,called
+[[https://vimawesome.com/plugin/vim-macrobatics][Vim-macrobatics]].
+
+Okay, I will leave you with some pointers for your own validation, go check out them:
+
+[[https://www.emacswiki.org/emacs/KeyboardMacros][Emacs Keyboard Macros Documentation]]
+
+[[https://vim.fandom.com/wiki/Macros][Vim Macro Documentation]]
+
+# /home/bhaskar/Pictures/Screenshots/2024-12-03-040849_1913x206_scrot.png http://unixbhaskar.files.wordpress.com/2024/12/2024-12-03-040849_1913x206_scrot.png
