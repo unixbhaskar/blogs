@@ -1,0 +1,125 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1919
+#+title: Linux Package Information Viewing on Terminal Via Fzf
+#+date: 2024-12-24
+#+tags: Technical Tools Terminal CommandLine Opensource fzf
+
+
+Alright,here is a rudimentary piece that helps to get thing done in a
+whisk. Namely, viewing package information on the terminal with the help of a
+tool, called [[https://github.com/fuzzy-finder/fzf][Fzf]].
+
+This damn thing helps you in many ways, and I have got several other binding
+with various things to get with a daily basis. By the way, I have written a
+piece about it in the past, curious readers might take a look at [[https://unixbhaskar.wordpress.com/2023/08/19/fzf-is-a-well-known-tool-now/][Fzf is a well
+known tool now]] .
+
+In this post, I will dish out an abject ordinary script, which helps to show the
+package information on the terminal with a little key strokes.
+
+Here it is :
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+#===============================================================================
+#
+#          FILE: pkg_view.sh
+#
+#         USAGE: ./pkg_view.sh
+#
+#   DESCRIPTION: Show package preview with Fzf ,irrespective of OS.
+#
+#       OPTIONS: ---
+#  REQUIREMENTS: Fzf
+#          BUGS: ---
+#         NOTES: Convenience for seeing packages in the system.
+#        AUTHOR: Bhaskar Chowdhury (https://about.me/unixbhaskar), unixbhaskar@gmail.com
+#  ORGANIZATION: Independent
+#       CREATED: 09/01/2023 04:33
+#      REVISION:  ---
+#===============================================================================
+
+set -o nounset                              # Treat unset variables as an error
+
+
+# if [[ $UID -ne 0 ]];then
+# 	echo Nope,you are suppose to have superuser privilege.
+# 	exit 1
+# fi
+
+
+package_browse() {
+	if [[ $(uname -n) == "Gentoo" ]];then
+	 gentoo_package_browse
+       elif [[ $(uname -n) == "debian" ]];then
+	debian_package_browse
+       elif [[ $(uname -n) == "Slackware" ]];then
+	slackware_package_browse
+       elif [[ $(uname -n) == "ArchLinux" ]];then
+	archlinux_package_browse
+       elif [[ $(uname -n) == "OpenSuse" ]];then
+	opensuse_package_browse
+else
+        echo Could not find the package manager.
+fi
+}
+
+archlinux_package_browse() {
+pacman -Qq | fzf --preview 'pacman -Qil {}' --layout=reverse --bind 'enter:execute(pacman -Qil {} | less)'
+}
+
+debian_package_browse(){
+dpkg-query -l | gawk '{ print $2 }'| grep -v "Err" | grep -v "Status" | fzf --preview 'dpkg-query --status {} && apt-cache showsrc {}' --layout=reverse
+}
+
+gentoo_package_browse(){
+# eix -c --pure-packages | grep I | grep -v N | gawk '{ print $2  }' | fzf --preview='eix -F {}' --layout=reverse
+eix -c --pure-packages | grep I | grep -v N | gawk '{ print $2  }' | fzf --preview='equery m {} &&  printf "Packages Directly Depends On:\n" &&  equery d {}' --layout=reverse
+}
+
+
+slackware_package_browse(){
+basedir=/var/lib/pkgtools/packages/
+
+cd "$basedir" || exit 1
+ls | gawk '{print $1 }' | fzf --preview='slackpkg info {}' --layout=reverse
+}
+
+opensuse_package_browse(){
+zypper se -i | gawk '{ print $3  }'| grep -v data | grep -v packages | fzf --preview 'zypper info {}' --layout=reverse
+}
+package_browse
+#+END_SRC
+
+See! Pretty boring and importantly not complicated.
+
+But, wait, those of you started to frowning about the /package_browse()/ function,
+you have reason to do so. I could have done better,by looking for other
+criteria to fulfill that quest. But, why I haven't done so? Here is my
+rationale,take it with a pinch of salt.
+
+The OSes are pretty static to my machines, the distributions I have mentioned
+and they are having a physical slice in my machine. So, basically it is easy to
+find out that way. Is it fragile? Probably. Had I have to write it for public
+consumption, I would have written out with more check, of course make sure not
+to bring in stuff which overly complicate the matter.(Which most of you probably
+started to thinking about it, so, the heads up!). Making thing complicated for
+the sake of achieve something as trivial as this,make not much sense.
+
+Then why the heck I am writing it on public platform? Because, some of you might
+get it and implement it better way than I did. And wildly hoping, share with
+wider population for their consumption.
+
+Do I need to explain the script itself? What's in it, all comes with default
+package manager's tools and variants of the respective Linux distributions,
+combined with standard tools like /grep and awk, piping to /fzf/ .
+
+How do I call it? I have an entry in my /.inputrc/ which is the place, where you put
+your readline key to access some of the functions on the terminal, and do I have
+=C-x p=, this key strokes shows me this:
+
+[[~/Pictures/Screenshots/2024-12-24-035612_1920x1200_scrot.png]]
+
+Okay, this is enough for some trivialities.
+
+# /home/bhaskar/Pictures/Screenshots/2024-12-24-035612_1920x1200_scrot.png http://unixbhaskar.files.wordpress.com/2024/12/2024-12-24-035612_1920x1200_scrot.png
