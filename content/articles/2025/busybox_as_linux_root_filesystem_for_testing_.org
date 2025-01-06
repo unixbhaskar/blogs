@@ -1,0 +1,207 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1922
+#+title: Busybox As Linux Root Filesystem For Testing
+#+date: 2025-01-06
+#+tags: Technical Linux RootFilesystem Opensource Tools
+
+Well, feeding too much information at one go is certainly not the way one should
+disseminate information. In other words, giving it in a chunk helps people to
+grasp it more quickly and conveniently.
+
+Here in this post, I will precisely show you exactly two scripts, those are
+coupled to *test the RC kernel in Qemu[fn:1]*. Sounds familiar? Using Busybox[fn:2] as
+rootfs is quite a popular activity, especially in embedded world.
+
+Here is the first script is to create /rootfs/ out of busybox :
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+# This is create quick rootfs filesystem for kernel testing
+
+basepath=/home/bhaskar/git-linux/
+
+cd $basepath  || exit 1
+
+ git clone --depth=1 https://github.com/mirror/busybox.git && cd "$(basename busybox .git)"
+# git clone git://busybox.net/busybox.git && cd "$(basename busybox .git)"
+
+make defconfig # if you need to add more specific option then run menuconfig
+
+# Checking out wheather the static is set or not , we don't need dynamic stuff
+
+grep CONFIG_STATIC .config
+
+echo Setting the static stuff.........
+echo
+
+# echo "CONFIG_STATIC=y" >> .config
+
+
+sed -i 's/# CONFIG_STATIC is not set/CONFIG_STATIC=y/' .config
+sed -i 's/CONFIG_TC=y/# CONFIG_TC is not set/' .config
+
+grep CONFIG_STATIC .config
+
+# Lets build it with the option set
+
+make -j$(nproc)
+
+# Install binaries in specific directory, so, it wont mess up system
+
+make CONFIG_PREFIX=$PWD/busybox_rootfs install
+
+# Create some necessary directories
+pushd busybox_rootfs
+mkdir -p dev etc proc sys
+mknod -m 622 ./dev/console c 5 1
+mknod -m 666 ./dev/null c 1 3
+
+popd
+
+sh -c "find busybox_rootfs -type d -exec ls -al {} \;"
+#+END_SRC
+
+I have commented out heavily the commands it runs, so people can understand what it
+does.
+
+Now, the second one would be test the damn RC kernel with above script's created rootfs,
+here it is entirety:
+
+#+BEGIN_SRC bash
+#!/bin/bash -
+#===============================================================================
+#
+#          FILE: rc-kernel-pull-build-boot.sh
+#
+#         USAGE: ./rc-kernel-pull-build-boot.sh
+#
+#   DESCRIPTION: This is automated script to check RC kernel ,build, compile,boot
+#
+#       OPTIONS: ---
+#  REQUIREMENTS: qemu
+#          BUGS: ---
+#         NOTES: mutt integration for sending mail of the result
+#        AUTHOR: Bhaskar Chowdhury (https://about.me/unixbhaskar), unixbhaskar@gmail.com
+#  ORGANIZATION: Independent
+#       CREATED: 03/17/2020 15:42
+#      REVISION: As per this : https://www.reddit.com/r/bash/comments/ry6u3d/how_to_fetchbuild_and_boot_rckernel_with_qemu/?utm_source=share&utm_medium=web2x&context=3
+#===============================================================================
+
+#set -o nounset                              # Treat unset variables as an error
+ker_source="/home/bhaskar/git-linux/linux"
+bzimage="$ker_source/arch/x86/boot/bzImage"
+rootfs="/home/bhaskar/git-linux/busybox/busybox_rootfs"
+
+for cmd in qemu-system-x86_64 make zcat curl git notify-send; do
+  if ! command -v "${cmd}" >/dev/null 2>&1; then
+    failed_cmds="${failed_cmds},${cmd}"
+  fi
+done
+
+if (( "${#failed_cmds}" > 0 )); then
+  printf -- '%s\n' "The following required commands were not found:" "${failed_cmds/,/}" >&2
+  exit 1
+fi
+
+qemu() { qemu-system-x86 "${@}"; }
+
+get_mainline_kernel() {
+  curl -s https://www.kernel.org/ | grep -A1 'mainline:' | grep -oP '(?<=strong>).*(?=</strong.*)'
+}
+
+mainline_kernel=$(get_mainline_kernel)
+
+
+get_current_kernel() { uname -r; }
+
+current_kernel=$(get_current_kernel)
+
+if (( "${#mainline_kernel}" == 0 )); then
+  printf -- '%s\n' "Mainline kernel could not be determined" >&2
+  exit 1
+elif [[ "${mainline_kernel}" = "${current_kernel}" ]]; then
+  printf -- '%s\n' "No newer kernel found..." >&2
+  exit 1
+else
+    #notify-send --expire-time=5000 "New RC kernel available:" "${mainline_kernel}"
+    printf -- '%s\n' "We have a new RC kernel"
+fi
+
+
+# (
+#   cd "${ker_source}" || exit 1
+#   if ! git pull; then
+#     printf -- '%s\n' "Attemping 'git pull' again..."
+#     if ! git pull; then
+#       printf -- '%s\n' "Failure calling 'git pull'" >&2
+#       exit 1
+#     fi
+#   fi
+#   printf -- '%s\n' "We are fine, please proceed..."
+#   build_kernel_and_boot_with_qemu
+# )
+
+
+git_pull_retries() {
+  local retries
+  retries="${1:-3}"
+
+  for (( i=1; i<retries; ++i )); do
+    tput sc
+    printf -- '%s ' "'git pull' attempt [${i}/${retries}]"
+    if git pull; then
+      printf -- '%s\n' "suceeded!"
+      return 0
+    else
+      tput rc
+      printf -- '%s\n' "'git pull' failed [${i}/${retries}], retrying..."
+      sleep 1
+    fi
+  done
+  return 1
+}
+
+build_kernel_and_boot_with_qemu(){
+
+	make clean && make mrproper
+        zcat /proc/config.gz > .config
+	make olddefconfig
+	make V=1 ARCH=x86_64 -j$(getconf _NPROCESSORS_ONLN) LOCALVERSION=-$(hostname) | tee kernel_build.log
+	make modules
+	qemu-system-x86_64 -boot c -m 2049M -kernel $bzimage  -hda $rootfs -nographic -append "root=/dev/sda rw console=ttyS0"
+        return 0
+}
+
+
+main()
+{
+  cd "${ker_source}" || exit 1
+  git_pull_retries 2 || exit 1
+  printf -- '%s\n' "We are fine, please proceed..."
+  build_kernel_and_boot_with_qemu
+}
+
+main
+
+
+#boot_with_initrd(){
+
+#	$dracut -l -o $initrd
+#	$qemu -boot c -m 2049M -kernel $bzimage -initrd $initrd  -hda $rootfs -nographic -append "root=/dev/sda rw console=ttyS0"
+#        return 0
+#}
+
+#+END_SRC
+
+Again! I am expecting people who are looking at it have done thing
+previously, the kernel build.
+
+If you ever stuck at any place, let me know in the comments, so I might give you
+the answer.
+
+* Footnotes
+
+[fn:1] [[https://www.qemu.org/][QEMU website]]
+
+[fn:2] [[https://www.busybox.net/][Busybox Web Site.]]
