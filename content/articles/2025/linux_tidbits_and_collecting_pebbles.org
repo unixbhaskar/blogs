@@ -1,0 +1,211 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1939
+#+title: Linux Tidbits And Collecting Pebbles
+#+date: 2025-03-02
+#+tags: Technical Linux Opensource
+
+Well, my journey with Linux[fn:1] and Open source[fn:2] becoming quite astonish
+way of moving forward in life. I have been hugely influence by the UNIX[fn:3]
+luminaries work and try to *follow* the principles they have established for the
+betterment. Sometimes, in fact, to follow that path requires pushing the limit
+of my everything(you guess the shortcoming in me, right?). But, I have realized,
+if I don't do, I can not thrive as per /my liking/. So, I had to have the tenacity
+to get along with it.
+
+
+Because I have attached with a particular platform for so long, it bound to be
+something in your kitty to show the world that you have come across. In this
+post, I will dish out some information I have gathered from various
+people and places (this is an absolute fraction and rudimentary, but it helps
+me), so it might hook you and to your journey with the echo system.
+
+These are in no particular order, and I am giving a glance at my note file and
+writing it out for you. Try to connect these information, you need to put a lot
+of work to find out, which I intentionally left for you to get accustomed.
+
+1) In file system, the =/dev= partition[fn:4] is build in the fly, when kernel boots. And
+   in that place, there resides so many files gather by the kernel. One of them
+   is =/dev/ttyS= , which is needed for the serialized terminal consoles. This
+   file gets created by the /kernel config/ option
+   *CONFIG_SERIAL_8259_RUNTIME_UARTS*.Well, you can told the kernel not to create
+   it by passing a command line argument to the bootloader parameter
+   *8250.nr_uarts=n*
+
+2) Also, =/dev= is a /special tmpfs/  as *devtmpfs*, that means it is on tmpfs , which
+   doesn't resides on any physical storage.
+
+3) There is a stark difference between /initrd[fn:5]/ and /initramfs/ . Which is, a
+   initrd is a *real filesystem* and that is compressed. While /initramfs/ is a
+   *cpio[fn:6] archive* which is also compressed. Both of them, while in use, inflated
+   inside RAM to assist kernel to get on with the booting.
+
+4) Logical working directory is a *shell specific thing[fn:7]*. This is especially used
+   to reached the /current directory/ via *symlnk[fn:8]*. Running =cd..= removes the last
+   component of the /logical working directory/. This is tricky and I encourage
+   you to investigate further.[fn:9]
+
+5) Big gotcha, use judiciously, aliases[fn:10] are process as shell input is read NOT as
+   shell command executed.
+
+
+6) C[fn:11] strings are arrays of char, NOT arrays of unsigned char.
+
+
+7) /unsigned char array/ .... *strcpy[fn:12]* requires a char pointer.Unsigned char and
+   char are not the same thing.
+
+
+8)The primary name of the zone is Etc/UTC. UTC[fn:13] is included in the timezone
+database for compatibility.
+
+9) /getchar[fn:14]/ only ever reads one character at a time, /putchar[fn:15]/ only ever writes one
+   character at a time.
+
+
+10) GNU grep[fn:16] doesn't use Perl[fn:17], it uses PCRE[fn:18].
+
+
+11) Grep used Gnulib[fn:19]'s RE library.
+
+
+12) X[fn:20] program receive events in order.It shouldn't matter how much time elapses
+    between the events.
+
+
+13) Rsync[fn:21] only consider *the last modification timestamp* while checking
+    destination, not last /metadata/ change timestamp.
+
+
+14) *VFS[fn:22]* is abstraction layer for all the filesystem in the Linux kernel.
+
+
+15) Kernel tasks always are forked off PID[fn:23] 2, *kthreadd[fn:24]*
+
+
+16) =*ls*= [fn:25]shows length of the file in size, whereas =*du*= [fn:26]shows the actual byte it
+    took to reside there.
+
+
+17) Signal[fn:27] number only go up to 64.
+
+
+18) Assembly[fn:28] is really just about making machine code easier to read the write
+    for human.
+
+
+19) Your CPU is running program, it is reading *machine code*[fn:29], which is produced
+    by human crafted assembly.
+
+
+20) When you use[fn:30] =bash -c= the first argument after the command is assigned to $0
+    NOT S1.
+
+
+21) *Cron[fn:31]* changes between UNIX system III[fn:32] and UNIX system V[fn:33]
+
+
+22) A mouse device reports /relative positioning information/ whereas a touchscreen
+or touchpad might report absolute positioning information.
+
+23) POSIX[fn:34] doesn't care how the system is implemented. It merely specifies a C
+    API.
+
+
+24) *File creation time* usually *cannot be changed* from userspace.[fn:35]
+
+
+25 ) When you press Ctrl+C, the terminal line discipline[fn:36] sends SIGINT to all
+    processes in the terminal's foreground process group that do not have the
+    signal ignored. It is sent to processes where it is blocked, but it won't do
+    anything to that process unless and until that process unblocks it.
+
+
+26) When you are raising your privileges to the superuser, su will always add
+    SIGINT and SIGQUIT to its blocked signal mask. With that in place you don't have
+    to worry about them killing the su process itself.
+
+The only time su[fn:37] keeps SIGINT[fn:38] and SIGQUIT[fn:39] unblocked are when you are
+dropping to an unprivileged user and using --command= (not
+--session-command=). That is when su uses the setsid(2) syscall, running the
+child process in a new session, and so it now has to propagate terminal signals
+into that session.
+
+* Footnotes
+
+[fn:1] [[https://en.wikipedia.org/wiki/Linux][What is Linux?]]
+
+[fn:2][[https://en.wikipedia.org/wiki/Open_source][What is Open Source?]]
+
+[fn:3][[https://en.wikipedia.org/wiki/Unix][What is UNIX?]]
+
+[fn:4][[https://en.wikipedia.org/wiki/Device_file][What is device file?]]
+
+[fn:5][[https://en.wikipedia.org/wiki/Initial_ramdisk][What is initrd?]]
+
+[fn:6][[https://en.wikipedia.org/wiki/Cpio][What is cpio archive?]]
+
+[fn:7] [[https://en.wikipedia.org/wiki/Unix_shell][UNIX shell]]
+
+[fn:8][[https://en.wikipedia.org/wiki/Symbolic_link][What is symbolic link?]]
+
+[fn:9][[https://en.wikipedia.org/wiki/Bash_(Unix_shell)][What is UNIX shell?]]
+
+[fn:10][[https://en.wikipedia.org/wiki/Alias_(command)][What is alias?]]
+
+[fn:11] [[https://en.wikipedia.org/wiki/C_(programming_language)][What is C?]]
+
+[fn:12][[https://en.wikipedia.org/wiki/C_string_handling][C string handling library]]
+
+[fn:13][[https://en.wikipedia.org/wiki/Coordinated_Universal_Time][What is UTC?]]
+
+[fn:14][[https://en.wikipedia.org/wiki/C_file_input/output#getchar][C file input]]
+
+[fn:15] [[https://en.wikipedia.org/wiki/C_file_input/output#putchar][C file output aka putchar]]
+
+[fn:16] [[https://en.wikipedia.org/wiki/Grep][UNIX Grep]]
+
+[fn:17] [[https://en.wikipedia.org/wiki/Perl][Perl Programming Language]]
+
+[fn:18] [[https://en.wikipedia.org/wiki/Perl_Compatible_Regular_Expressions][PCRE aka Perl Compatible Regular Expressions]]
+
+[fn:19] [[https://en.wikipedia.org/wiki/Gnulib][Gnulib aka GNU implementation of the C standard library]]
+
+[fn:20] [[https://en.wikipedia.org/wiki/X_Window_System][X window System]]
+
+[fn:21] [[https://en.wikipedia.org/wiki/Rsync][Rsync command utillity]]
+
+[fn:22] [[https://en.wikipedia.org/wiki/Virtual_file_system][what is VFS?]]
+
+[fn:23] [[https://en.wikipedia.org/wiki/Process_identifier][Process Identifies aka PID]]
+
+[fn:24] [[https://en.wikipedia.org/wiki/Thread_(computing)#kernel_thread][Kernel thread]]
+
+[fn:25] [[https://en.wikipedia.org/wiki/Ls][ls command]]
+
+[fn:26] [[https://en.wikipedia.org/wiki/Du_(Unix)][du command]]
+
+[fn:27] [[https://en.wikipedia.org/wiki/Signal_(IPC)][Signal in UNIX]]
+
+[fn:28] [[https://en.wikipedia.org/wiki/Assembly_language][Assembly Language]]
+
+[fn:29] [[https://en.wikipedia.org/wiki/Machine_code][Machine code]]
+
+[fn:30] [[https://en.wikipedia.org/wiki/Bash_(Unix_shell)][Bash shell UNIX]]
+
+[fn:31] [[https://en.wikipedia.org/wiki/Cron][Cron tool]]
+
+[fn:32] [[https://en.wikipedia.org/wiki/UNIX_System_III][UNIX system III]]
+
+[fn:33] [[https://en.wikipedia.org/wiki/UNIX_System_V][UNIX system V]]
+
+[fn:34] [[https://en.wikipedia.org/wiki/POSIX][POSIX]]
+
+[fn:35] [[https://en.wikipedia.org/wiki/User_space_and_kernel_space][User space and Kernel space distinctions]]
+
+[fn:36] [[https://en.wikipedia.org/wiki/Line_discipline][Terminal Line discipline]]
+
+[fn:37] [[https://en.wikipedia.org/wiki/Su_(Unix)][Su aka substitute user command]]
+
+[fn:38] [[https://en.wikipedia.org/wiki/C_signal_handling][C signal handling]]
+
+[fn:39] [[https://en.wikipedia.org/wiki/C_signal_handling][C signal handling]]
