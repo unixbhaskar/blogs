@@ -1,0 +1,168 @@
+i#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1949
+#+title: Slackware Linux Custom Kernel Package Automated Way
+#+date: 2025-03-04
+#+tags: Technical Linux Opensource Slackware Bash Scripts Automation
+
+To mitigate the inquisitiveness of certain things, it is always better to stab
+at it. Provided it is not bring something really bad at you or others. In this
+post, I will show you the way you can /build a custom kernel package on
+Slackware[fn:1]/ with some trivial scripting.
+
+I was curious, so I poke little with already well written scripts by other able
+people, and modified to those script to my taste. On top of that, I wrote a few
+to wrap around those, just to make go /at once/, so I can concentrate on other
+things.
+
+Darn simple and easy to consume, the original scripts, as it takes little time
+to gloss over those just to understand what they are targeted to perform.
+
+So, without much ado, here is my version :
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+# This script build the slackware kernel package from upstream kernel source.
+
+
+# License (GPL v2.0)
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+basedir=/home/bhaskar/k
+kern_version=$(uname -r | tr -d "\-Slackware") # This could be simple "uname -r", but my system ....
+source_tarball_download=/home/bhaskar/Adm_scripts/secure_kernel_tarball
+
+# To get the secure_kernel_tarball script, get it from here https://www.kernel.org/category/signatures.html
+
+# Change all "defconfig" to "localmodconfig" in generic-kernel script, which will speed up the build process
+
+if test ! -d $basedir;then
+
+# Download the kernel source tree from mirror
+#
+sh -c "lftp https://mirrors.slackware.com -e "mirror -v -X *xz -X *sign  /slackware/slackware64-current/source/k""
+
+sh -c "chmod +x $basedir/build-all-kernels.sh"
+
+sh -c "chmod +x $basedir/kernel-generic.SlackBuild"
+
+sh -c "chmod +x $basedit/kernel-headers.SlackBuild"
+
+sh -c "chmod +x $basedit/kernel-source.SlackBuild"
+
+fi
+
+which_kernel() {
+ printf "\n\n Which kernel would be your base? Stable or Mainline or Longterm? [S/M/L]: %s"
+ read response
+
+ if [[ $response == "S" ]];then
+ #Get the stable kernel from kernel.org
+ kernel=$(curl -s https://www.kernel.org/ | grep -A1 'stable:' | grep -oP '(?<=strong>).*(?=</strong.*)' | grep 6.13)
+ elif [[ $response == "M" ]];then
+ #Get the mainline kernel from kernel.org
+ kernel=$(curl -s https://www.kernel.org/ | grep -A1 'mainline:' | grep -oP '(?<=strong>).*(?=</strong.*)')
+ elif [[ $response == "L" ]];then
+ #Get the longterm kernel from kernel.org
+ kernel=$(curl -s https://www.kernel.org/ | grep -A1 'longterm:' | grep -oP '(?<=strong>).*(?=</strong.*)')
+ fi
+ }
+
+
+pushd $basedir
+
+# Downlod the kernel source tarball and verify
+
+which_kernel
+
+$source_tarball_download $kernel
+
+# Untaring the kernel source
+
+tar -xJvf linux-$kernel.tar.xz
+
+ln -s linux-$kernel linux
+
+# Copying the existing config to the package build directory
+
+cp /boot/config-${kern_version}.x64 /home/bhaskar/k/kernel-configs/config-${kern_version}.x64
+cp /boot/config-${kern_version}.x64 /home/bhaskar/k/config-${kern_version}.x64
+
+# Get it rolling to build the package.
+
+./build-all-kernels.sh
+
+if test $? -eq 0;then
+
+popd
+
+fi
+
+
+#+END_SRC
+
+If you are kind of person,looking for complexity to judge the merit of it, you
+will highly disappoint by looking at it. I can't help much about that, think
+of it as my shortcoming.
+
+Anyway, the script start with checking the /build directory/, if that is missing,
+then get the stuff from upstream via *lftp*, oh, you could use other protocol too,
+i.e. wget[fn:2], curl[fn:3] whatever you like to comfortable with.
+
+Once it established, that basic scripts are there in that downloaded directory,
+the *first thing* you have to do is, change the permission of the precisely four
+scripts, i.e.
+
+#+BEGIN_SRC bash
+bhaskar_11:08:22_Tue Mar 04: :~/k>ls
+build-all-kernels.sh  doinst.sh       kernel-generic.SlackBuild  kernel-source.SlackBuild  linux-6.13.5         patches-revert-i686
+config-6.13.5.x64     kernel-configs  kernel-headers.SlackBuild  linux                     linux-6.13.5.tar.xz  slack-desc
+
+#+END_SRC
+
+Look at the /lftp[fn:4]/ command, the downloaded stuffs are dumped in the *k* directory
+inside your home directory. Although, you could change that as per your will, I
+haven't bother to do so.
+
+Also, I have made change into /kernel-generic.Slackbuild/ script change /defconfig/
+to /localmodconfig/ to speed up the build process.
+
+Then, it simply copies the running kernel config to the designated directories, so
+the scripts can pick it up properly.
+
+The thing is that, they upstream had an old kernel source included discarded via
+the lftp command option and get the others necessary scripts from it.
+
+Next, the kernel I get it via some simple prompting mechanism, which is filter
+out from the =kernel.org= website. Also, downloaded the kernel via a utility
+script[fn:5] also posted in the same website.It basically, download the tarball
+and verify the GPG signature of the on it. Good for sanity.
+
+Then there is a /master script/ which basically call all other script in turn to
+get it work together to build the package.Most of the work regarding that built
+into as template way, the extra stuff could be infused by the end user trying
+that stuff, which is what I did, somewhat. The build process cycle through the
+designated scripts and producing what is required to be used. It created three
+things, as the you can see in the directory listing, creates *a generic kernel*
+package, a *source kernel package* and the *header file package*.
+
+* Footnotes
+
+[fn:1] [[https://en.wikipedia.org/wiki/Slackware][Slackware Linux]]
+
+[fn:2] [[https://en.wikipedia.org/wiki/Wget][wget protocol]]
+
+[fn:3] [[https://en.wikipedia.org/wiki/CURL][cURL protocol]]
+
+[fn:4] [[https://en.wikipedia.org/wiki/Lftp][lftp protocol]]
+
+[fn:5] [[https://git.kernel.org/pub/scm/linux/kernel/git/mricon/korg-helpers.git/tree/get-verified-tarball][secure_kernel_tarball script]]
