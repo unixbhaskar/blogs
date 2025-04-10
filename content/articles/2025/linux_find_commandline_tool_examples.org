@@ -1,0 +1,199 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1956
+#+title: Linux Find Commandline Tool Examples
+#+date: 2025-04-10
+#+tags: Technical Commandline Tools Terminal Linux Opensource
+
+Well, *find[fn:1]* is considered /Swiss Army Knife/ of system administration. So, sooner
+you get yourself familiarize the better you will be. It is blazing fast and
+precise.
+
+Here in this post, I will show you a few more examples, which might come in
+handy in your day-to-day activity.
+
+* Search file for NO User, that means Orphan File
+
+#+BEGIN_SRC bash
+find . -nouser -ls
+#+END_SRC
+
+* Search for Duplicate Words
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+folder=$1
+
+printf " Printing out all duplicate files by on the basis of sha512sum...wait \n\n"
+
+find $folder -type f -exec sha512sum '{}' ';' | sort | uniq --all-repeated=separate -w 33
+
+#+END_SRC
+
+* Find Executable Files
+
+#+BEGIN_SRC bash
+find . -maxdepth 1 -type f -executable -print
+#+END_SRC
+
+
+* Find INODE of filesystem
+
+#+BEGIN_SRC bash
+#find . -xdev -type d -exec /bin/echo -n {} \; -exec sh -c "ls {} | wc -l" \;
+
+find . -xdev -type d -exec /bin/echo -n {} \; -exec sh -c "ls -i {}" \;
+
+#+END_SRC
+
+
+* Find DOT files and open with Vim
+
+#+BEGIN_SRC bash
+#!/bin/bash
+
+dir=$1
+
+find $dir -maxdepth 1 -name ".*" -type f | fzf | xargs -I {} vim {}
+
+#+END_SRC
+
+
+* Find Debian Package Dependency
+
+#+BEGIN_SRC bash
+#!/bin/bash
+
+base=$1
+
+printf " USAGE: please provide the search directory as an parameter \n "
+
+find $base -name "*deb" -print0 -exec dpkg -f {} Depends \;
+
+#+END_SRC
+
+
+* Find HARD links
+
+#+BEGIN_SRC bash
+#!/bin/bash
+
+find / -links +2 -type f -exec ls -li {} \;
+
+#+END_SRC
+
+* Remove specific file from specific location
+
+#+BEGIN_SRC bash
+find /boot/efi/ -maxdepth 1 -name "*Gentoo*" -type f -exec rm -f {} \;
+#+END_SRC
+
+* Copy file to specific directory
+
+#+BEGIN_SRC bash
+find /boot/ -maxdepth 1 -type f -name "vmlinuz-${kernel}-Gentoo" -exec cp {}  /boot/efi/ \;
+find /boot/ -maxdepth 1 -type f -name "initramfs-${kernel}-Gentoo.img" -exec cp {} /boot/efi/ \;
+#+END_SRC
+
+* Clean specific files EXCEPT a specific day's backup, means, excluding that day
+
+#+BEGIN_SRC bash
+find ${backup_dir} -maxdepth 1 -name "home-backup-*" -type f -not \( -path "${backup_dir}/home-backup-$date_and_time.tar.gz" -prune \) -exec rm -f {} \;
+#+END_SRC
+
+* Search multiple file extensions
+
+#+BEGIN_SRC bash
+find . -type f -name "*.c" -o -name "*.h
+#+END_SRC
+
+
+* Searching system wide and detect if it the search is performing in git repo or outside of it
+
+#+BEGIN_SRC bash
+search ()
+{
+    if test ! -d ".git"; then
+        sudo find / -name "*$1*" -ls 2> /dev/null;
+    else
+        if test $(git rev-parse --git-dir 2> /dev/null); then
+            git grep -n "$1";
+        fi;
+    fi
+}
+
+#+END_SRC
+
+* Ctags and Etags little script using find
+
+#+BEGIN_SRC bash
+#!/bin/bash -
+#===============================================================================
+#
+#          FILE: cscope_database_create.sh
+#
+#         USAGE: ./cscope_database_create.sh
+#
+#   DESCRIPTION: Search and build cscope database for linux kernel
+#       OPTIONS: ---
+#  REQUIREMENTS: ---
+#          BUGS: ---
+#         NOTES: Found it here : https://courses.cs.washington.edu/courses/cse451/12sp/tutorials/tutorial_cscope.html
+#        AUTHOR: Bhaskar Chowdhury (https://about.me/unixbhaskar), unixbhaskar@gmail.com
+#  ORGANIZATION: Independent
+#       CREATED: 03/02/2023 17:32
+#      REVISION:  ---
+#===============================================================================
+
+set -o nounset                              # Treat unset variables as an error
+
+LNX="."
+
+echo "Finding relevant source files..."
+find $LNX                                                                \
+    -path "$LNX/arch/*" ! -path "$LNX/arch/x86*" -prune -o               \
+    -path "$LNX/include/asm-*" ! -path "$LNX/include/asm-generic*"       \
+                               ! -path "$LNX/include/asm-x86*" -prune -o \
+    -path "$LNX/tmp*" -prune -o                                          \
+    -path "$LNX/Documentation*" -prune -o                                \
+    -path "$LNX/scripts*" -prune -o                                      \
+    -path "$LNX/tools/testing/selftests*" -prune -o                      \
+    -name "*.[chxsS]" -print > $LNX/cscope.files
+
+
+echo "Building cscope database..."
+time cscope -q -k -b -c -i cscope.files >/dev/null 2>&1
+
+echo "Building Emacs tags....."
+find . -type f -iname "*.[chS]" | xargs etags -a
+
+exit 0
+
+#+END_SRC
+
+
+* Find by SIZE
+
+#+BEGIN_SRC bash
+find . -size +100M -size -2G
+#+END_SRC
+
+* Find out the latest files in specific directory and open with zathura pdf viewer
+
+#+BEGIN_SRC bash
+latest_file=$(find $HOME/bibliography/pdf_docs/ -maxdepth 1 -type f -newermt $(date '+%F') -ls | gawk '{ print $11}' | sort -f -i -r | head -1)
+$(command -v zathura) "$latest_file" >/dev/null 2>&1
+#+END_SRC
+
+* Search file based on permission
+
+#+BEGIN_SRC bash
+find -perm mode
+#+END_SRC
+
+
+Enough!
+
+* Footnotes
+
+[fn:1] [[https://www.man7.org/linux/man-pages/man1/find.1.html][Find Manual Page]]
