@@ -1,0 +1,78 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1965
+#+title: Debian Way Of Doing Little Things
+#+date: 2025-06-22
+#+tags: Technical Opensource OperatingSystem Debian Linux Tools ShellScripts
+
+Alrighto! Here I am gonna show you two little pieces of /hand made/ utility to do
+something very specific to *Debian Linux Operating System[fn:1]*.
+
+One:
+
+* How to show installed packages WITH TIME
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+pkglist() {
+	dpkg-query -W -f='${Package} ${db-fsys:Last-Modified}\n' | sort -k2,2nr | awk '{printf("%-32s %s\n", $1,strftime("%c",$2))}'
+}
+
+pkglist
+#+END_SRC
+
+Darn simple! Right? It simply calling /dpkg-query/ with various flags and
+importantly getting the information from variables.Look at the AWK[fn:2] part, you see
+it is calling /strftime/ , that damn thing helps to get the time.
+
+Oh, here is the /dpkg-query/[fn:3] options means, if you are lazy enough :)
+
+[[/home/bhaskar/Pictures/Screenshots/2025-06-22-034538_1920x107_scrot.png]]
+
+The /%c/ options of the /strftime/[fn:4] function has the description like this:
+
+[[/home/bhaskar/Pictures/Screenshots/2025-06-22-035014_1920x105_scrot.png]]
+
+
+Second:
+
+* How to fix the BROKEN package configuration
+
+Say, something has broken, in terms of package installation in Debian, then one
+of the way to fix the damn thing might be this :
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+reconfig() {
+    if [[ -z "$1" ]]; then
+        echo "Usage: reconfig <package-name>"
+        return 1
+    fi
+     sudo apt-get -o Dpkg::Options::='--force-confnew' install --reinstall "$1"
+}
+#+END_SRC
+
+A simple script like this might come in handy. Let me distill the specific
+command parts, that /-o/ option of /apt-get[fn:5]/
+
+[[/home/bhaskar/Pictures/Screenshots/2025-06-22-040126_1920x115_scrot.png]]
+
+and the rest of the options are common options people also use for various other
+reasons. This script needs the /package-name/ as an argument to work with.
+
+* Footnotes
+
+[fn:1] [[https://www.debian.org/][Debian Linux Operating System Website]]
+
+[fn:2] [[https://www.man7.org/linux/man-pages/man1/awk.1p.html][AWK Manual Page]]
+
+[fn:3] [[https://www.man7.org/linux/man-pages/man1/dpkg-query.1.html][dpkg-query Manual Page]]
+
+[fn:4] [[https://www.man7.org/linux/man-pages/man3/strftime.3.html][strftime Manual Page]]
+
+[fn:5] [[https://linux.die.net/man/8/apt-get][apt-get Manual Page]]
+
+# /home/bhaskar/Pictures/Screenshots/2025-06-22-034538_1920x107_scrot.png http://unixbhaskar.files.wordpress.com/2025/06/2025-06-22-034538_1920x107_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2025-06-22-035014_1920x105_scrot.png http://unixbhaskar.files.wordpress.com/2025/06/2025-06-22-035014_1920x105_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2025-06-22-040126_1920x115_scrot.png http://unixbhaskar.files.wordpress.com/2025/06/2025-06-22-040126_1920x115_scrot.png
