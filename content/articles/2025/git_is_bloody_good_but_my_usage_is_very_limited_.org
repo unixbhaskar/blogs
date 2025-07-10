@@ -1,0 +1,122 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1969
+#+title: Git Is Bloody Good But My Usage Is Very Limited
+#+date: 2025-07-10
+#+tags: Technical Opensource Tools Linux Git
+
+So,am I handicapped by those limitations? Nope, certainly not. I am using it to
+the best of my knowledge and importantly, to where it needed most.No, fancy
+fluff or over-reaching stuff with it.
+
+Here in this post, I will show you a few of those actions with it, which almost
+becomes part and parcel of daily life using this damn very tool.
+
+Linux kernel is the project where I spend most of time figuring out things,
+which become difficult for me, because of lackluster academics( you see the
+shortcoming! Right?). Never mind, I will go the merry way to accomplish some
+task with my limited ability to use it.
+
+Now, some complexity of Git stumped me when I started with it, and still
+bothers me beyond certain points of use. Mostly the reason being lackluster
+understanding  putting that damn thing work. Anyway, I am somehow scratching the
+surface to it to get the tool do the job I wanted to do with it.
+
+But apart from spending majority of time with the /Linux Kernel/ repository and it
+has various others too, means it has several other projects associated with it,
+that too gobbles up time, worth it for me.
+
+A few of the open source projects interest me and those projects also have
+their source code kept with git. So, I had to have them to look through to
+quench my thirst to know.
+
+My *git home* directory looks like this:
+
+#+BEGIN_SRC bash
+ls ~/git-linux/
+#+END_SRC
+#+BEGIN_SRC bash
+#+RESULTS:
+| AdminScripts                            |
+| Collected_Notes                         |
+| Debian_Custom_Kernel_Packages           |
+| Distro_Kernel_Compile_Scripts           |
+| FlameGraph                              |
+| amazon-kindle-bulk-downloader           |
+| asm                                     |
+| busybox                                 |
+| coreboot                                |
+| curl                                    |
+| debian_kernel_build                     |
+| debootstrap                             |
+| dotfiles                                |
+| emacs                                   |
+| flocc                                   |
+| gcc                                     |
+| git-cinnabar                            |
+| git_github_fork                         |
+| linux                                   |
+| linux-history                           |
+| linux-kbuild                            |
+| linux-next                              |
+| linux-stable                            |
+| linux_github_fork                       |
+| llvm-project                            |
+| mwm                                     |
+| pahole                                  |
+| smatch                                  |
+| sotrace                                 |
+| sourcehut-adminscript                   |
+| sourcehut-distribution-specific-scripts |
+| sourcehut-dotfiles                      |
+| sparse                                  |
+| util-linux                              |
+| vim                                     |
+#+END_SRC
+
+You see, nothing exciting keeps there, only a handful of stuff that interests
+me. And a few of them I haven't evicted out, because the purpose was done, and I
+couldn't find a time to do the cleanup. Someday .....
+
+I have written about my [[https://github.com/unixbhaskar/dotfiles/blob/master/.gitconfig][gitconfig]] and some tools I have used with it for the
+convenience.So, not going to repeat that stuff.
+
+The only downside of using Git is that the more I read about it, the more I get
+confused. You see the pattern?? All stem from the reason, which I have mentioned
+above. Especially, when people draw CDAG with a picture, it confuses me even
+more. Textual stuff somehow consumable but graphical shit are most of the time
+unfathomable. Nope, it is my lacuna to get those fancy and well explained things
+via graphics.
+
+While using it for some time,it gave me an insight into using it the way I want
+to use it. So, the usage of the /sub-commands/ is very limited. And handful of
+/Aliases/ see me through the day. The trouble is that having *too many* aliases in
+shell and git creates a problem of forgetting them quickly. Despite being given
+the human-understandable and readable names. So, keeping those to a minimum is a
+challenge in itself.
+
+But, my workflow and usage of tools are limited and I have written about
+them in the past. So, the activity will limited too, just cut for *my need*,
+period.
+
+I have made close integration with a tool, named /fzf/, so I can conveniently use
+some functionality. Git brings the power of doing things way specific to the
+source control way. Online hosting sites (i.e.  Github,Gitlab and Bitbucket, and
+Sourcehut) all of them have their place in that parlance and I do use all of
+them. Basically, to replicate my repositories across them.
+
+*Conflicting* stuff in Git, takes some taking to mitigate. And that endeavor
+gobbles up some of the people's time including mine. Not git fault though, my
+inability get it overtook me some taking. I still fumble with it, time to time
+just like other part of it. It is a damn steep learning curve and the damn curve
+get over me time to time.
+
+The most /easiest/ part of it write */pre and post/ automation* script. But, wait,
+it depends on how badly you are screwed up in the repo and when something beyond
+your control use it. I have written the word /easiest/ in a sense that some of
+git's operations are bloody complicated, at least to me. And those need way more
+understanding than other thing in git. To give you an example of complexity,
+that every damn commit have three entry in the internal database. Phew! Knowing
+how to get them is an art.
+
+So, knowing the internal might help in the long run. And to this date I have
+covered very little ground with it.
