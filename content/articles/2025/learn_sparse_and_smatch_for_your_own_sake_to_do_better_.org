@@ -1,0 +1,118 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1974
+#+title: Learn Sparse and Smatch For Your Own Sake To Do Better
+#+date: 2025-09-19
+#+tags: Technical Tools Opensource Linux
+
+
+Well, a stern heads up to make things clear in the very first place, i.e. it is
+not for everyone to acquire the skill to use these tools, but for the people who
+are fiddling with the /Linux Kernel/ for their bread and butter's sake. Clear??
+
+Now, the picture is cleared up,jump into the next topic, what's the point of
+deepening your feet into these? The short answer will be that you will be better
+equipped with tools that are heavily used in the /Linux Kernel Development/
+parlance to make things better and easier and sometimes stop things from being
+done crazily.
+
+First, *Sparse* was written by Linus Torvalds, just to justify to his /very own
+needs/ and then the damn thing proliferates to bring benefit to others over time.
+
+It is essentially a /Static Analysis/ tool, and you are inclined enough to know
+and use it with the /Linux Kernel/ build process, then you might take a peek at
+this doc[fn:1] pages for the mortals.
+
+Okay, I am not gonna repeat the steps to get the damn thing and build, which are
+clearly mentioned in the footnote link, click on it and read the damn thing,
+pretty darn simple.
+
+But....but I must show you, how you could use it to build the /Linux Kernel/ via
+make flag...
+
+Here is the /Linux Kernel/ specific /Sparse/ documentation[fn:2] page, which might
+give you more detailed stuff you should know.
+
+While building the /Linux Kernel/ pass a =C=1= as an argument to /make/ to get all the
+C files recompiled OR pass a =C=2= to run Sparse on files whether they need to
+recompiled or not.
+
+Here is even more simpler use scenario straight from the /Linux Kernel Newbies Website/ [fn:3]
+page.
+
+[[~/Pictures/Screenshots/2025-09-19-025058_1017x412_scrot.png]]
+
+
+Alright, now onto our second tool, that is /Smatch/, which is maintained by *Dan
+Carpenter,* and you could get the damn software from the Smatch Repo[fn:4].
+
+Now, how do you use it while building the kernel or individually on a specific
+piece you are interested in? Here is how..
+
+Once you have downloaded the stuff, then you focus on this specific directory in
+the repo and scripts/programs and inspect them to understand
+
+#+BEGIN_SRC bash
+ls ~/git-linux/smatch/smatch_scripts/
+#+END_SRC
+
+#+BEGIN_SRC bash
+#+RESULTS:
+| add_gfp_to_allocations.sh    |
+| build_generic_data.sh        |
+| build_kernel_data.sh         |
+| call_tree.pl                 |
+| filter_kernel_deref_check.sh |
+| find_expanded_holes.pl       |
+| find_null_params.sh          |
+| follow_params.pl             |
+| gen_allocation_list.sh       |
+| gen_bit_shifters.sh          |
+| gen_dma_funcs.sh             |
+| gen_err_ptr_list.sh          |
+| gen_expects_err_ptr.sh       |
+| gen_frees_list.sh            |
+| gen_gfp_flags.sh             |
+| gen_implicit_dependencies.sh |
+| gen_no_return_funcs.sh       |
+| gen_puts_list.sh             |
+| gen_rosenberg_funcs.sh       |
+| gen_sizeof_param.sh          |
+| gen_unwind_functions.sh      |
+| generisize.pl                |
+| implicit_dependencies        |
+| kchecker                     |
+| kpatch.sh                    |
+| new_bugs.pl                  |
+| show_errs.sh                 |
+| show_ifs.sh                  |
+| show_unreachable.sh          |
+| strip_whitespace.pl          |
+| summarize_errs.sh            |
+| test_generic.sh              |
+| test_kernel.sh               |
+| trace_params.pl              |
+| unlocked_paths.pl            |
+| whitespace_only.sh           |
+| wine_checker.sh              |
+#+END_SRC
+
+This is a good source, straight from the horse's mouth, Oracle's Blog about /Smatch/[fn:5]
+
+[[~/Pictures/Screenshots/2025-09-19-031442_713x569_scrot.png]]
+
+
+
+* Footnotes
+
+[fn:1] [[https://sparse.docs.kernel.org/en/latest/][Sparse Web Page]]
+
+[fn:2] [[https://cdn.kernel.org/doc/html/latest/dev-tools/sparse.html][Linux Kernel Sparse Documentation]]
+
+[fn:3] [[https://kernelnewbies.org/Sparse][Linux Kernel Newbies Sparse Documentation]]
+
+[fn:4]  [[https://repo.or.cz/w/smatch.git][Smatch Website]]
+
+[fn:5] [[https://blogs.oracle.com/linux/post/smatch-static-analysis-tool-overview-by-dan-carpenter][Oracle's Blog Written By Dan Carpenter about Smatch]]
+
+# /home/bhaskar/Pictures/Screenshots/2025-09-19-025058_1017x412_scrot.png http://unixbhaskar.files.wordpress.com/2025/09/2025-09-19-025058_1017x412_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2025-09-19-031442_713x569_scrot.png http://unixbhaskar.files.wordpress.com/2025/09/2025-09-19-031442_713x569_scrot.png
