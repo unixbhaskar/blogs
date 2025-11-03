@@ -1,0 +1,42 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1978
+#+title: Fedora DNF Toml Files Corruption Problem And Dirty Fix
+#+date: 2025-11-03
+#+tags: Technical OperatingSystem Fedora DNF Redhat IBM Opensource
+
+Bloody hell .....irks....son of a gun has corrupted files stopping the damn OS
+update...sigh
+
+Here is the problem :
+
+#+BEGIN_SRC bash
+[root@fedora43 ~]# dnf update
+Updating and loading repositories:
+Loading system state TOML file /usr/lib/sysimage/libdnf5/nevras.toml failed (see dnf5-system-state(7)): [error] toml::value::at: key "version" not found
+ --> /usr/lib/sysimage/libdnf5/nevras.toml
+  |
+ 0 |
+  | -- in this table
+#+END_SRC
+
+Now, if you backup that file and re-run the update command it will prompt for
+another file under that specific directory and with /toml/ file extension has
+problem.
+
+So, you have to backup all the /toml/ file and re-run the update command, and it
+will generated the required files.
+
+I have bumped on to this page on [[https://github.com/rpm-software-management/dnf5/issues/2157][GITHUB DNF5 ISSUE DISCUSSION]] .
+
+Oh, I was experimenting the /Fedora Server Image of release 43/ and got the *qcow2* image
+from their designated site. Essentially running under *qemu* on /Gentoo/ .
+
+This is how I launch the damn thing :
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+sudo qemu-system-x86_64 -m 4096 -smp 5 -bios /usr/share/edk2-ovmf/OVMF_CODE.fd -serial mon:stdio -nographic -drive file=Fedora-Server-Guest-Generic-43-1.6.x86_64.qcow2 -enable-kvm
+#+END_SRC
+
+You see....pretty simple.
