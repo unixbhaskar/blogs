@@ -1,0 +1,313 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1981
+#+title: Linux Firmware Update Send To Upstream
+#+date: 2025-12-17
+#+tags: Technical Linux Firmware Opensource
+
+
+Well, from time to time, we need to update the system *firmware* for the sake of
+system stability and usability in a smooth way. And doing so was quite an
+involved process back in the days. I used to get the damn update from their
+website and install/flash it by hand( purely sitting on Linux ), and it worked
+all the time due to some good fortune and the meticulous way it had been
+designed.
+
+Now,you could do so with even more /ease/ and precision to not only update the
+damn machine but also send the stuff to the /well-maintained/ upstream places for
+better manageability.
+
+So, in this post, I will gloss over what I have used of late to make my system
+firmware updated with a series of mundane command-line options put together in a
+shell script file to do it all at once.
+
+Here it is for your perusal for the entirety ...darn simple
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+printf "Updating firmware of the system ...wait ... \n\n"
+
+#This will display all devices detected by fwupd.
+ fwupdmgr get-devices
+
+#This will download the latest metadata from LVFS.
+ fwupdmgr refresh
+
+#If updates are available for any devices on the system, they'll be displayed.
+ fwupdmgr get-updates
+
+#To report the status of an update run:
+ fwupdmgr update
+
+# This will report the history of update run previously
+ fwupdmgr report-history
+
+# To clear the local history of updates:
+
+# fwupdmgr clear-history
+
+#+END_SRC
+
+Oh, you have to have the /fwupdmgr/ thing to installed in the system. No big deal,
+all the major OS repos have it in their arsenal. It's just a matter of getting it
+through your OS package manager.
+
+If you give it a glance at the above series of commands and especially the
+second last command, i.e. /fwupdmgr report-history/ will ask you to upload your
+system updated information to be inducted into the global database it maintains
+online.
+
+Here is an interaction :
+
+#+BEGIN_SRC bash
+fwupdmgr report-history
+#+END_SRC
+
+#+BEGIN_SRC
+
+#+RESULTS:
+| Target:                                   | https://fwupd.org/lvfs/firmware/report |                                                                     |         |          |              |          |        |            |
+| Payload:                                  | {                                      |                                                                     |         |          |              |          |        |            |
+| ReportType                                | :                                      | "history",                                                          |         |          |              |          |        |            |
+| ReportVersion                             | :                                      | 2,                                                                  |         |          |              |          |        |            |
+| MachineId                                 | :                                      | "2febc73dda5ac1c9e564cf48c95e50620fe161f2499247b2fd378de441042b8e", |         |          |              |          |        |            |
+| Metadata                                  | :                                      | {                                                                   |         |          |              |          |        |            |
+| CompileVersion(info.libusb)               | :                                      | "1.0.29",                                                           |         |          |              |          |        |            |
+| HostBiosMinorRelease                      | :                                      | "0b",                                                               |         |          |              |          |        |            |
+| HostFirmwareMinorRelease                  | :                                      | "0b",                                                               |         |          |              |          |        |            |
+| DisplayState                              | :                                      | "connected",                                                        |         |          |              |          |        |            |
+| DistroId                                  | :                                      | "gentoo",                                                           |         |          |              |          |        |            |
+| HostBaseboardProduct                      | :                                      | "LNVNB161216",                                                      |         |          |              |          |        |            |
+| CompileVersion(com.hughsie.libxmlb)       | :                                      | "0.3.21",                                                           |         |          |              |          |        |            |
+| CompileVersion(com.hughsie.libjcat)       | :                                      | "0.2.3",                                                            |         |          |              |          |        |            |
+| EfivarsNvramUsed                          | :                                      | "49546",                                                            |         |          |              |          |        |            |
+| HostBiosVendor                            | :                                      | "LENOVO",                                                           |         |          |              |          |        |            |
+| PlatformArchitecture                      | :                                      | "x86_64",                                                           |         |          |              |          |        |            |
+| HostBiosMajorRelease                      | :                                      | "01",                                                               |         |          |              |          |        |            |
+| CompileVersion(org.freedesktop.fwupd)     | :                                      | "2.0.16",                                                           |         |          |              |          |        |            |
+| HostBaseboardManufacturer                 | :                                      | "LENOVO",                                                           |         |          |              |          |        |            |
+| EfivarsNvramFree                          | :                                      | "106907",                                                           |         |          |              |          |        |            |
+| CpuModel                                  | :                                      | "AMD                                                                | Ryzen   | 7        | 5700U        | with     | Radeon | Graphics", |
+| KernelName                                | :                                      | "Linux",                                                            |         |          |              |          |        |            |
+| BootTime                                  | :                                      | "1765785696",                                                       |         |          |              |          |        |            |
+| HostProduct                               | :                                      | "82UD",                                                             |         |          |              |          |        |            |
+| HostFirmwareMajorRelease                  | :                                      | "01",                                                               |         |          |              |          |        |            |
+| RuntimeVersion(org.freedesktop.fwupd-efi) | :                                      | "1.7",                                                              |         |          |              |          |        |            |
+| BatteryThreshold                          | :                                      | "25",                                                               |         |          |              |          |        |            |
+| RuntimeVersion(com.hughsie.libxmlb)       | :                                      | "0.3.21",                                                           |         |          |              |          |        |            |
+| LidState                                  | :                                      | "unknown",                                                          |         |          |              |          |        |            |
+| DistroName                                | :                                      | "Gentoo",                                                           |         |          |              |          |        |            |
+| RuntimeVersion(com.hughsie.libjcat)       | :                                      | "0.2.3",                                                            |         |          |              |          |        |            |
+| FwupdSupported                            | :                                      | "True",                                                             |         |          |              |          |        |            |
+| DistroPrettyName                          | :                                      | "Gentoo                                                             | Linux", |          |              |          |        |            |
+| PowerState                                | :                                      | "unknown",                                                          |         |          |              |          |        |            |
+| KernelVersion                             | :                                      | "6.18.1-Gentoo",                                                    |         |          |              |          |        |            |
+| HostVendor                                | :                                      | "LENOVO",                                                           |         |          |              |          |        |            |
+| HostBiosVersion                           | :                                      | "JECN11WW(V1.04)",                                                  |         |          |              |          |        |            |
+| HostFamily                                | :                                      | "Yoga                                                               | 6       | 13ALC7", |              |          |        |            |
+| BatteryLevel                              | :                                      | "101",                                                              |         |          |              |          |        |            |
+| CpuArchitecture                           | :                                      | "x86_64",                                                           |         |          |              |          |        |            |
+| RuntimeVersion(org.kernel)                | :                                      | "6.18.1-Gentoo",                                                    |         |          |              |          |        |            |
+| RuntimeVersion(org.freedesktop.fwupd)     | :                                      | "2.0.16",                                                           |         |          |              |          |        |            |
+| DistroVersion                             | :                                      | "2.18",                                                             |         |          |              |          |        |            |
+| HostSku                                   | :                                      | "LENOVO_MT_82UD_BU_idea_FM_Yoga                                     | 6       | 13ALC7", |              |          |        |            |
+| HostEnclosureKind                         | :                                      | 1f                                                                  |         |          |              |          |        |            |
+| },                                        |                                        |                                                                     |         |          |              |          |        |            |
+| Reports                                   | :                                      | [                                                                   |         |          |              |          |        |            |
+| {                                         |                                        |                                                                     |         |          |              |          |        |            |
+| Checksum                                  | :                                      | "168b8c108e18a0b61ff8228d56d28d4739eff055ef26022c64c9335e78a2dc33", |         |          |              |          |        |            |
+| ReleaseId                                 | :                                      | "114097",                                                           |         |          |              |          |        |            |
+| Protocol                                  | :                                      | "org.uefi.dbx2",                                                    |         |          |              |          |        |            |
+| UpdateState                               | :                                      | 2,                                                                  |         |          |              |          |        |            |
+| Guid                                      | :                                      | [                                                                   |         |          |              |          |        |            |
+| 814e950f-1449-566a-a190-42c9d3a3a2df      |                                        |                                                                     |         |          |              |          |        |            |
+| ],                                        |                                        |                                                                     |         |          |              |          |        |            |
+| Plugin                                    | :                                      | "uefi_kek",                                                         |         |          |              |          |        |            |
+| VersionOld                                | :                                      | "2011",                                                             |         |          |              |          |        |            |
+| VersionNew                                | :                                      | "2023",                                                             |         |          |              |          |        |            |
+| Flags                                     | :                                      | 4644337656791331,                                                   |         |          |              |          |        |            |
+| Created                                   | :                                      | 1765784803,                                                         |         |          |              |          |        |            |
+| Modified                                  | :                                      | 1765784848,                                                         |         |          |              |          |        |            |
+| Metadata                                  | :                                      | {                                                                   |         |          |              |          |        |            |
+| CompileVersion(info.libusb)               | :                                      | "1.0.29",                                                           |         |          |              |          |        |            |
+| HostBiosMinorRelease                      | :                                      | "0b",                                                               |         |          |              |          |        |            |
+| HostFirmwareMinorRelease                  | :                                      | "0b",                                                               |         |          |              |          |        |            |
+| CompileVersion(org.freedesktop.fwupd)     | :                                      | "2.0.16",                                                           |         |          |              |          |        |            |
+| DistroId                                  | :                                      | "gentoo",                                                           |         |          |              |          |        |            |
+| HostBaseboardProduct                      | :                                      | "LNVNB161216",                                                      |         |          |              |          |        |            |
+| CompileVersion(com.hughsie.libxmlb)       | :                                      | "0.3.21",                                                           |         |          |              |          |        |            |
+| CompileVersion(com.hughsie.libjcat)       | :                                      | "0.2.3",                                                            |         |          |              |          |        |            |
+| EfivarsNvramUsed                          | :                                      | "42169",                                                            |         |          |              |          |        |            |
+| HostBiosVendor                            | :                                      | "LENOVO",                                                           |         |          |              |          |        |            |
+| PlatformArchitecture                      | :                                      | "x86_64",                                                           |         |          |              |          |        |            |
+| HostBiosMajorRelease                      | :                                      | "01",                                                               |         |          |              |          |        |            |
+| DisplayState                              | :                                      | "connected",                                                        |         |          |              |          |        |            |
+| HostBaseboardManufacturer                 | :                                      | "LENOVO",                                                           |         |          |              |          |        |            |
+| EfivarsNvramFree                          | :                                      | "25140",                                                            |         |          |              |          |        |            |
+| RuntimeVersion(org.freedesktop.fwupd-efi) | :                                      | "1.7",                                                              |         |          |              |          |        |            |
+| KernelName                                | :                                      | "Linux",                                                            |         |          |              |          |        |            |
+| BatteryThreshold                          | :                                      | "25",                                                               |         |          |              |          |        |            |
+| HostProduct                               | :                                      | "82UD",                                                             |         |          |              |          |        |            |
+| HostFirmwareMajorRelease                  | :                                      | "01",                                                               |         |          |              |          |        |            |
+| BootTime                                  | :                                      | "1765751272",                                                       |         |          |              |          |        |            |
+| CpuModel                                  | :                                      | "AMD                                                                | Ryzen   | 7        | 5700U        | with     | Radeon | Graphics", |
+| KernelVersion                             | :                                      | "6.18.1-Gentoo",                                                    |         |          |              |          |        |            |
+| FwupdSupported                            | :                                      | "True",                                                             |         |          |              |          |        |            |
+| LidState                                  | :                                      | "unknown",                                                          |         |          |              |          |        |            |
+| RuntimeVersion(com.hughsie.libxmlb)       | :                                      | "0.3.21",                                                           |         |          |              |          |        |            |
+| DistroName                                | :                                      | "Gentoo",                                                           |         |          |              |          |        |            |
+| UefiPkKeyId                               | :                                      | "ae3bb84d4581781587a40e4315b48df56938ff6c",                         |         |          |              |          |        |            |
+| BatteryLevel                              | :                                      | "101",                                                              |         |          |              |          |        |            |
+| DistroPrettyName                          | :                                      | "Gentoo                                                             | Linux", |          |              |          |        |            |
+| PowerState                                | :                                      | "unknown",                                                          |         |          |              |          |        |            |
+| HostVendor                                | :                                      | "LENOVO",                                                           |         |          |              |          |        |            |
+| HostBiosVersion                           | :                                      | "JECN11WW(V1.04)",                                                  |         |          |              |          |        |            |
+| HostFamily                                | :                                      | "Yoga                                                               | 6       | 13ALC7", |              |          |        |            |
+| CpuArchitecture                           | :                                      | "x86_64",                                                           |         |          |              |          |        |            |
+| RuntimeVersion(com.hughsie.libjcat)       | :                                      | "0.2.3",                                                            |         |          |              |          |        |            |
+| RuntimeVersion(org.kernel)                | :                                      | "6.18.1-Gentoo",                                                    |         |          |              |          |        |            |
+| RuntimeVersion(org.freedesktop.fwupd)     | :                                      | "2.0.16",                                                           |         |          |              |          |        |            |
+| DistroVersion                             | :                                      | "2.18",                                                             |         |          |              |          |        |            |
+| HostSku                                   | :                                      | "LENOVO_MT_82UD_BU_idea_FM_Yoga                                     | 6       | 13ALC7", |              |          |        |            |
+| HostEnclosureKind                         | :                                      | 1f                                                                  |         |          |              |          |        |            |
+| }                                         |                                        |                                                                     |         |          |              |          |        |            |
+| },                                        |                                        |                                                                     |         |          |              |          |        |            |
+| {                                         |                                        |                                                                     |         |          |              |          |        |            |
+| Checksum                                  | :                                      | "6819c8098f09f4332a102194df6a033563aa288073b16315c5b88860fefb7e74", |         |          |              |          |        |            |
+| ReleaseId                                 | :                                      | "116503",                                                           |         |          |              |          |        |            |
+| Protocol                                  | :                                      | "org.uefi.dbx2",                                                    |         |          |              |          |        |            |
+| UpdateState                               | :                                      | 2,                                                                  |         |          |              |          |        |            |
+| Guid                                      | :                                      | [                                                                   |         |          |              |          |        |            |
+| 26f42cba-9bf6-5365-802b-e250eb757e96      |                                        |                                                                     |         |          |              |          |        |            |
+| ],                                        |                                        |                                                                     |         |          |              |          |        |            |
+| Plugin                                    | :                                      | "uefi_db",                                                          |         |          |              |          |        |            |
+| VersionOld                                | :                                      | "2011",                                                             |         |          |              |          |        |            |
+| VersionNew                                | :                                      | "2023",                                                             |         |          |              |          |        |            |
+| Flags                                     | :                                      | 4644337119920419,                                                   |         |          |              |          |        |            |
+| Created                                   | :                                      | 1765784803,                                                         |         |          |              |          |        |            |
+| Modified                                  | :                                      | 1765784870,                                                         |         |          |              |          |        |            |
+| Metadata                                  | :                                      | {                                                                   |         |          |              |          |        |            |
+| CompileVersion(info.libusb)               | :                                      | "1.0.29",                                                           |         |          |              |          |        |            |
+| HostBiosMinorRelease                      | :                                      | "0b",                                                               |         |          |              |          |        |            |
+| HostFirmwareMinorRelease                  | :                                      | "0b",                                                               |         |          |              |          |        |            |
+| CompileVersion(org.freedesktop.fwupd)     | :                                      | "2.0.16",                                                           |         |          |              |          |        |            |
+| DistroId                                  | :                                      | "gentoo",                                                           |         |          |              |          |        |            |
+| HostBaseboardProduct                      | :                                      | "LNVNB161216",                                                      |         |          |              |          |        |            |
+| CompileVersion(com.hughsie.libxmlb)       | :                                      | "0.3.21",                                                           |         |          |              |          |        |            |
+| CompileVersion(com.hughsie.libjcat)       | :                                      | "0.2.3",                                                            |         |          |              |          |        |            |
+| EfivarsNvramUsed                          | :                                      | "43675",                                                            |         |          |              |          |        |            |
+| HostBiosVendor                            | :                                      | "LENOVO",                                                           |         |          |              |          |        |            |
+| PlatformArchitecture                      | :                                      | "x86_64",                                                           |         |          |              |          |        |            |
+| HostBiosMajorRelease                      | :                                      | "01",                                                               |         |          |              |          |        |            |
+| DisplayState                              | :                                      | "connected",                                                        |         |          |              |          |        |            |
+| HostBaseboardManufacturer                 | :                                      | "LENOVO",                                                           |         |          |              |          |        |            |
+| EfivarsNvramFree                          | :                                      | "22006",                                                            |         |          |              |          |        |            |
+| RuntimeVersion(org.freedesktop.fwupd-efi) | :                                      | "1.7",                                                              |         |          |              |          |        |            |
+| KernelName                                | :                                      | "Linux",                                                            |         |          |              |          |        |            |
+| BatteryThreshold                          | :                                      | "25",                                                               |         |          |              |          |        |            |
+| HostProduct                               | :                                      | "82UD",                                                             |         |          |              |          |        |            |
+| HostFirmwareMajorRelease                  | :                                      | "01",                                                               |         |          |              |          |        |            |
+| BootTime                                  | :                                      | "1765751272",                                                       |         |          |              |          |        |            |
+| CpuModel                                  | :                                      | "AMD                                                                | Ryzen   | 7        | 5700U        | with     | Radeon | Graphics", |
+| KernelVersion                             | :                                      | "6.18.1-Gentoo",                                                    |         |          |              |          |        |            |
+| FwupdSupported                            | :                                      | "True",                                                             |         |          |              |          |        |            |
+| LidState                                  | :                                      | "unknown",                                                          |         |          |              |          |        |            |
+| RuntimeVersion(com.hughsie.libxmlb)       | :                                      | "0.3.21",                                                           |         |          |              |          |        |            |
+| DistroName                                | :                                      | "Gentoo",                                                           |         |          |              |          |        |            |
+| UefiPkKeyId                               | :                                      | "ae3bb84d4581781587a40e4315b48df56938ff6c",                         |         |          |              |          |        |            |
+| BatteryLevel                              | :                                      | "101",                                                              |         |          |              |          |        |            |
+| DistroPrettyName                          | :                                      | "Gentoo                                                             | Linux", |          |              |          |        |            |
+| PowerState                                | :                                      | "unknown",                                                          |         |          |              |          |        |            |
+| HostVendor                                | :                                      | "LENOVO",                                                           |         |          |              |          |        |            |
+| HostBiosVersion                           | :                                      | "JECN11WW(V1.04)",                                                  |         |          |              |          |        |            |
+| HostFamily                                | :                                      | "Yoga                                                               | 6       | 13ALC7", |              |          |        |            |
+| CpuArchitecture                           | :                                      | "x86_64",                                                           |         |          |              |          |        |            |
+| RuntimeVersion(com.hughsie.libjcat)       | :                                      | "0.2.3",                                                            |         |          |              |          |        |            |
+| RuntimeVersion(org.kernel)                | :                                      | "6.18.1-Gentoo",                                                    |         |          |              |          |        |            |
+| RuntimeVersion(org.freedesktop.fwupd)     | :                                      | "2.0.16",                                                           |         |          |              |          |        |            |
+| DistroVersion                             | :                                      | "2.18",                                                             |         |          |              |          |        |            |
+| HostSku                                   | :                                      | "LENOVO_MT_82UD_BU_idea_FM_Yoga                                     | 6       | 13ALC7", |              |          |        |            |
+| HostEnclosureKind                         | :                                      | 1f                                                                  |         |          |              |          |        |            |
+| }                                         |                                        |                                                                     |         |          |              |          |        |            |
+| },                                        |                                        |                                                                     |         |          |              |          |        |            |
+| {                                         |                                        |                                                                     |         |          |              |          |        |            |
+| Checksum                                  | :                                      | "7178302fa23fcb875e7540900e299fb30a76758663efb7e1c56edc25cd3f316a", |         |          |              |          |        |            |
+| ReleaseId                                 | :                                      | "130035",                                                           |         |          |              |          |        |            |
+| Protocol                                  | :                                      | "org.uefi.dbx2",                                                    |         |          |              |          |        |            |
+| UpdateState                               | :                                      | 2,                                                                  |         |          |              |          |        |            |
+| InstallDuration                           | :                                      | 7,                                                                  |         |          |              |          |        |            |
+| Guid                                      | :                                      | [                                                                   |         |          |              |          |        |            |
+| f8ba2887-9411-5c36-9cee-88995bb39731      |                                        |                                                                     |         |          |              |          |        |            |
+| ],                                        |                                        |                                                                     |         |          |              |          |        |            |
+| Plugin                                    | :                                      | "uefi_dbx",                                                         |         |          |              |          |        |            |
+| VersionOld                                | :                                      | "20230501",                                                         |         |          |              |          |        |            |
+| VersionNew                                | :                                      | "20250902",                                                         |         |          |              |          |        |            |
+| Flags                                     | :                                      | 4653133749813539,                                                   |         |          |              |          |        |            |
+| Created                                   | :                                      | 1765784803,                                                         |         |          |              |          |        |            |
+| Modified                                  | :                                      | 1765784897,                                                         |         |          |              |          |        |            |
+| Metadata                                  | :                                      | {                                                                   |         |          |              |          |        |            |
+| CompileVersion(info.libusb)               | :                                      | "1.0.29",                                                           |         |          |              |          |        |            |
+| HostBiosMinorRelease                      | :                                      | "0b",                                                               |         |          |              |          |        |            |
+| HostFirmwareMinorRelease                  | :                                      | "0b",                                                               |         |          |              |          |        |            |
+| CompileVersion(org.freedesktop.fwupd)     | :                                      | "2.0.16",                                                           |         |          |              |          |        |            |
+| DistroId                                  | :                                      | "gentoo",                                                           |         |          |              |          |        |            |
+| HostBaseboardProduct                      | :                                      | "LNVNB161216",                                                      |         |          |              |          |        |            |
+| CompileVersion(com.hughsie.libxmlb)       | :                                      | "0.3.21",                                                           |         |          |              |          |        |            |
+| CompileVersion(com.hughsie.libjcat)       | :                                      | "0.2.3",                                                            |         |          |              |          |        |            |
+| EfivarsNvramUsed                          | :                                      | "46670",                                                            |         |          |              |          |        |            |
+| HostBiosVendor                            | :                                      | "LENOVO",                                                           |         |          |              |          |        |            |
+| HostBiosMajorRelease                      | :                                      | "01",                                                               |         |          |              |          |        |            |
+| PlatformArchitecture                      | :                                      | "x86_64",                                                           |         |          |              |          |        |            |
+| DisplayState                              | :                                      | "connected",                                                        |         |          |              |          |        |            |
+| BootloaderSupportsFwupd                   | :                                      | "False",                                                            |         |          |              |          |        |            |
+| EfivarsNvramFree                          | :                                      | "9449",                                                             |         |          |              |          |        |            |
+| CpuModel                                  | :                                      | "AMD                                                                | Ryzen   | 7        | 5700U        | with     | Radeon | Graphics", |
+| KernelName                                | :                                      | "Linux",                                                            |         |          |              |          |        |            |
+| BatteryThreshold                          | :                                      | "25",                                                               |         |          |              |          |        |            |
+| HostProduct                               | :                                      | "82UD",                                                             |         |          |              |          |        |            |
+| HostFirmwareMajorRelease                  | :                                      | "01",                                                               |         |          |              |          |        |            |
+| BootTime                                  | :                                      | "1765751272",                                                       |         |          |              |          |        |            |
+| RuntimeVersion(org.freedesktop.fwupd-efi) | :                                      | "1.7",                                                              |         |          |              |          |        |            |
+| KernelVersion                             | :                                      | "6.18.1-Gentoo",                                                    |         |          |              |          |        |            |
+| RuntimeVersion(com.hughsie.libxmlb)       | :                                      | "0.3.21",                                                           |         |          |              |          |        |            |
+| LidState                                  | :                                      | "unknown",                                                          |         |          |              |          |        |            |
+| DistroName                                | :                                      | "Gentoo",                                                           |         |          |              |          |        |            |
+| RuntimeVersion(com.hughsie.libjcat)       | :                                      | "0.2.3",                                                            |         |          |              |          |        |            |
+| UefiPkKeyId                               | :                                      | "ae3bb84d4581781587a40e4315b48df56938ff6c",                         |         |          |              |          |        |            |
+| FwupdSupported                            | :                                      | "True",                                                             |         |          |              |          |        |            |
+| DistroPrettyName                          | :                                      | "Gentoo                                                             | Linux", |          |              |          |        |            |
+| PowerState                                | :                                      | "unknown",                                                          |         |          |              |          |        |            |
+| HostVendor                                | :                                      | "LENOVO",                                                           |         |          |              |          |        |            |
+| HostBiosVersion                           | :                                      | "JECN11WW(V1.04)",                                                  |         |          |              |          |        |            |
+| HostFamily                                | :                                      | "Yoga                                                               | 6       | 13ALC7", |              |          |        |            |
+| BatteryLevel                              | :                                      | "101",                                                              |         |          |              |          |        |            |
+| SecureBoot                                | :                                      | "Disabled",                                                         |         |          |              |          |        |            |
+| CpuArchitecture                           | :                                      | "x86_64",                                                           |         |          |              |          |        |            |
+| UEFIUXCapsule                             | :                                      | "Enabled",                                                          |         |          |              |          |        |            |
+| BootMgrDesc                               | :                                      | "legacy",                                                           |         |          |              |          |        |            |
+| RuntimeVersion(org.kernel)                | :                                      | "6.18.1-Gentoo",                                                    |         |          |              |          |        |            |
+| RuntimeVersion(org.freedesktop.fwupd)     | :                                      | "2.0.16",                                                           |         |          |              |          |        |            |
+| DistroVersion                             | :                                      | "2.18",                                                             |         |          |              |          |        |            |
+| HostBaseboardManufacturer                 | :                                      | "LENOVO",                                                           |         |          |              |          |        |            |
+| HostSku                                   | :                                      | "LENOVO_MT_82UD_BU_idea_FM_Yoga                                     | 6       | 13ALC7", |              |          |        |            |
+| HostEnclosureKind                         | :                                      | 1f                                                                  |         |          |              |          |        |            |
+| }                                         |                                        |                                                                     |         |          |              |          |        |            |
+| }                                         |                                        |                                                                     |         |          |              |          |        |            |
+| ]                                         |                                        |                                                                     |         |          |              |          |        |            |
+| }                                         |                                        |                                                                     |         |          |              |          |        |            |
+
+
+
+
+
+Procee with upload?   [Y | n]:
+
+#+END_SRC
+
+Now it is prompting me to agree to /upload/ the information to the upstream. And I
+did.
+
+But, where is it maintained? You should be looking at this website : [[https://fwupd.org/][Linux
+Vendor Firmware Service]]
+
+And this was initiated and maintained by a person named Richard Hughes.
