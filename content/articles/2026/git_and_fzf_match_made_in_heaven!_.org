@@ -1,0 +1,91 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1988
+#+title: Git and Fzf Match Made In Heaven!
+#+date: 2026-04-02
+#+tags: Technical Git Tools Opensoure Linux
+
+
+Well, both the tools are amazing to say the least. While combining them gives a
+stunning effect of productivity. I have written about /Fzf[fn:1]/ and /Git[fn:2]/ many times on
+this blog(go and find out).
+
+In this specific post, I shall be revealing my little *hand-crafted* tool for
+exploring the /git repo/. But wait, am I not aware of the [[https://github.com/junegunn/fzf-git.sh][beautiful thing]] ?? In fact,
+I am very much.
+
+But this is another take on simply combining my need to dispose of it, when I need
+them most.
+
+I have written an /abject ordinary and almost laughable/ shell script to achieve
+combining these two tools to show something useful .
+
+So, without further ado, here is the damn piece...
+
+#+BEGIN_SRC bash
+#!/bin/bash -
+#===============================================================================
+#
+#          FILE: find_git_repos.sh
+#
+#         USAGE: ./find_git_repos.sh
+#
+#   DESCRIPTION: Finding all the git repos in the system via fzf
+#
+#       OPTIONS: ---
+#  REQUIREMENTS: --- fzf git
+#          BUGS: ---
+#         NOTES: --- Convenience and easy interface
+#        AUTHOR: Bhaskar Chowdhury (https://about.me/unixbhaskar), unixbhaskar@gmail.com
+#  ORGANIZATION: Independent
+#       CREATED: 04/11/25 11:30
+#      REVISION:  ---
+#===============================================================================
+
+#set -o nounset                              # Treat unset variables as an error
+
+basedir=/home/bhaskar/git-linux
+
+git_repos=$(find "$basedir" -maxdepth 1 -type d,l -exec basename {} \; | grep -v git-linux | grep -v grep | fzf --multi --prompt "Select Git Repo:")
+
+for repos in "$git_repos";do
+       cd  "$basedir/$repos" && echo Pulling in $repos .... && git pull &&  git-search-log
+done
+
+#+END_SRC
+
+..and the outcome is this :
+
+[[/home/bhaskar/Pictures/Screenshots/2026-04-02-032352_1920x1200_scrot.png]]
+
+[[/home/bhaskar/Pictures/Screenshots/2026-04-02-032426_1920x1200_scrot.png]]
+
+You can queries various parameters at the bottom of the screen prompt
+i.e. author, file etcetera etcetera
+
+By the way, one last piece, that damn *git-search-log* script is this :
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+
+gitlog | fzf --prompt "$(basename $(git rev-parse --show-toplevel)):" --preview-window=right:50%  --preview "echo {} | sed 's/ .*//g' | xargs git show --color" --bind 'enter:execute(commit=$(echo {} | sed "s/ .*//g") && git diff-tree --no-commit-id --name-only $commit -r | fzf --preview-window=right:50% --preview "git show --color $commit -- $(git rev-parse --show-toplevel)/\{}")'
+#+END_SRC
+
+That /gitlog/ is a function declared in my /.bashrc/ and the content is this:
+
+[[/home/bhaskar/Pictures/Screenshots/2026-04-02-032957_1918x285_scrot.png]]
+
+
+That's how the entire thing is panned out.
+
+* Footnotes
+
+[fn:1] https://github.com/junegunn/fzf
+
+[fn:2] https://github.com/git/git
+
+# /home/bhaskar/Pictures/Screenshots/2026-04-02-032352_1920x1200_scrot.png http://unixbhaskar.files.wordpress.com/2026/04/2026-04-02-032352_1920x1200_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2026-04-02-032426_1920x1200_scrot.png http://unixbhaskar.files.wordpress.com/2026/04/2026-04-02-032426_1920x1200_scrot.png
+# /home/bhaskar/Pictures/Screenshots/2026-04-02-032957_1918x285_scrot.png http://unixbhaskar.files.wordpress.com/2026/04/2026-04-02-032957_1918x285_scrot.png
