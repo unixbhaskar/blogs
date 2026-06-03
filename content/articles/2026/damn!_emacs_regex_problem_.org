@@ -1,0 +1,48 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1994
+#+title: Damn! Emacs Regex problem
+#+date: 2026-06-03
+#+tags: Technical Emacs Tools Opensource Gnu Linux
+
+Well, I have said it my other blogs that I have the habit of building
+*Emacs from source* and I did it recently.
+
+Bam! While trying to open one of the operations inside it, I encountered an
+error, explicitly saying...
+
+#+BEGIN_SRC emacs-lisp
+Debugger entered--Lisp error: (error "Stack overflow in regexp matcher")
+  looking-at("^[ \11]*#\\+begin_?\\([^ \n]+\\)\\(\\([^\n]+\\)\\)?\n\\(\\(?:.\\|\n\\)+?\\)#\\+end_?\\1[ \11]*$")
+  org-at-block-p()
+  org-block-map(#f(compiled-function (&rest args2) #<bytecode 0x1e86246f026af784>))
+  org-fold-hide-block-all()
+  org-cycle-set-startup-visibility()
+  org-mode()
+  set-auto-mode-0(org-mode nil)
+#+END_SRC
+
+Now, while building the editor from source, I have explicitly /disabled/ the
+Emacs's internal regex and opted for *system regex*. That could be the reason,
+because I didn't have this trouble while it was enable.
+
+Something fishy is going on with that part. While hovering over the internet, I
+have come across some links delving into the exact trouble...but the solutions
+are looking very far-fetched.
+
+Here are they :
+
+https://www.gnu.org/software/emacs/manual/html_node/elisp/Regexp-Problems.html
+
+and
+
+Mailing list thread of it :
+
+https://lists.gnu.org/archive/html/bug-gnu-emacs/2020-03/msg00611.html
+
+
+As someone pointed out on the internet, /tweaking/ two specific files, namely,
+
+*emacs.c* and *regex.c* in the Emacs source tree might help. And I haven't yet give
+it a shot.
+
+Still wondering, why the heck does it become so fragile to turn this off??
