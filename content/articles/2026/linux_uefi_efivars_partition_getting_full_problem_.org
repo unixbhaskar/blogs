@@ -1,0 +1,176 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 1997
+#+title: Linux UEFI efivars Partition Getting Full Problem
+#+date: 2026-07-03
+#+tags: Technical Linux UEFI EFI Opensource OperatingSystem Firmware
+
+Well, I have been kinda stuck on this for a long time, and the suggested solutions to the
+exact problem is not resolvable yet.
+
+The root cause of the *upcoming problem* is that I don't do anything about it. It
+might start to misbehave, and I can not wait for that to happen.
+
+To start with
+
+#+BEGIN_SRC bash
+ls /sys/firmware/efi/efivars
+
+
+#+RESULTS:
+| AMD_PBS_SETUP-a339d746-f678-49b3-9fc7-54ce0f9df226                     |
+| AMD_RAID-fe26a894-d199-47d4-8afa-070e3d54ba86                          |
+| AOD_SETUP-5ed15dc0-edef-4161-9151-6014c4cc630c                         |
+| AcpiGlobalVariable-c020489e-6db2-4ef2-9aa5-ca06fc11d36a                |
+| ActiveVgaDev-59d1c24f-50f1-401a-b101-f33e0daed443                      |
+| AdministerSecureBoot-59d1c24f-50f1-401a-b101-f33e0daed443              |
+| AmdAcpiVar-79941ecd-ed36-49d0-8124-e4c31ac75cd4                        |
+| AmdSetup-3a997502-647a-4c82-998e-52ef9486a247                          |
+| ApSyncFlagNv-ad3f6761-f0a3-46c8-a4cb-19b70ffdb305                      |
+| Boot0000-8be4df61-93ca-11d2-aa0d-00e098032b8c                          |
+| Boot0002-8be4df61-93ca-11d2-aa0d-00e098032b8c                          |
+| Boot2001-8be4df61-93ca-11d2-aa0d-00e098032b8c                          |
+| Boot2002-8be4df61-93ca-11d2-aa0d-00e098032b8c                          |
+| Boot2003-8be4df61-93ca-11d2-aa0d-00e098032b8c                          |
+| BootCurrent-8be4df61-93ca-11d2-aa0d-00e098032b8c                       |
+| BootOrder-8be4df61-93ca-11d2-aa0d-00e098032b8c                         |
+| COMPAL-b697de83-1ab6-42c4-9dee-a806c637818b                            |
+| ConIn-8be4df61-93ca-11d2-aa0d-00e098032b8c                             |
+| ConInCandidateDev-59d1c24f-50f1-401a-b101-f33e0daed443                 |
+| ConInDev-8be4df61-93ca-11d2-aa0d-00e098032b8c                          |
+| ConOut-8be4df61-93ca-11d2-aa0d-00e098032b8c                            |
+| ConOutCandidateDev-59d1c24f-50f1-401a-b101-f33e0daed443                |
+| ConOutDev-8be4df61-93ca-11d2-aa0d-00e098032b8c                         |
+| CurrentPolicy-77fa9abd-0359-4d32-bd60-28f4e78f784b                     |
+| Custom-a04a27f4-df00-4d42-b552-39511302113d                            |
+| CustomPlatformLang-59d1c24f-50f1-401a-b101-f33e0daed443                |
+| CustomSecurity-59d1c24f-50f1-401a-b101-f33e0daed443                    |
+| DownCoreStatus-29749bad-401b-4f6d-b124-cece8c590c48                    |
+| ErrOutDev-8be4df61-93ca-11d2-aa0d-00e098032b8c                         |
+| FBSWIF-d743491e-f484-4952-a87d-8d5dd189b70c                            |
+| FeData-1f2d63e1-febd-4dc7-9cc5-ba2b1cef9c5b                            |
+| H2OFormDialogConfig-98ae8272-ce5a-46be-9f5d-d9f9cbbb99f2               |
+| IP6_CONFIG_IFR_NVDATA-02eea107-98db-400e-9830-460a1542d799             |
+| KEK-8be4df61-93ca-11d2-aa0d-00e098032b8c                               |
+| KEKDefault-8be4df61-93ca-11d2-aa0d-00e098032b8c                        |
+| L05ConfigVar-74d69abb-57c3-4d7f-bfb4-26a2549610f1                      |
+| L05OkrData-9669e125-fedf-43f7-891a-5af85efcdefc                        |
+| LBLDESP-871455d0-5576-4fb8-9865-af0824463b9e                           |
+| LBLDVC-871455d1-5576-4fb8-9865-af0824463c9f                            |
+| Lang-8be4df61-93ca-11d2-aa0d-00e098032b8c                              |
+| LangCodes-8be4df61-93ca-11d2-aa0d-00e098032b8c                         |
+| LoaderDevicePartUUID-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f              |
+| LoaderEntries-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f                     |
+| LoaderEntrySelected-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f               |
+| LoaderFeatures-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f                    |
+| LoaderFirmwareInfo-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f                |
+| LoaderFirmwareType-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f                |
+| LoaderImageIdentifier-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f             |
+| LoaderInfo-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f                        |
+| LoaderSystemToken-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f                 |
+| LoaderTimeExecUSec-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f                |
+| LoaderTimeInitUSec-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f                |
+| LoaderTimeMenuUSec-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f                |
+| MTC-eb704011-1402-11d3-8e77-00a0c969723b                               |
+| MemCeil.-ad22518b-450a-4857-96c3-d1e22f206129                          |
+| MemoryOverwriteRequestControl-e20939be-32d4-41be-a150-897f85d49829     |
+| MemoryOverwriteRequestControlLock-bb983ccf-151d-40e1-a07b-4a17be168292 |
+| MemoryTypeInformation-4c19049f-4137-4dd3-9c10-8b97a83ffdfa             |
+| MsdmAddress-fd21bf2b-f5d1-46c5-aee3-c60158339239                       |
+| OfflineUniqueIDEKPub-eaec226f-c9a3-477a-a826-ddc716cdc0e3              |
+| OfflineUniqueIDEKPubCRC-eaec226f-c9a3-477a-a826-ddc716cdc0e3           |
+| OsIndications-8be4df61-93ca-11d2-aa0d-00e098032b8c                     |
+| OsIndicationsSupported-8be4df61-93ca-11d2-aa0d-00e098032b8c            |
+| PK-8be4df61-93ca-11d2-aa0d-00e098032b8c                                |
+| PKDefault-8be4df61-93ca-11d2-aa0d-00e098032b8c                         |
+| PhysicalBootOrder-59d1c24f-50f1-401a-b101-f33e0daed443                 |
+| PlatformLang-8be4df61-93ca-11d2-aa0d-00e098032b8c                      |
+| PlatformLangCodes-8be4df61-93ca-11d2-aa0d-00e098032b8c                 |
+| PlugInVgaHandles-59d1c24f-50f1-401a-b101-f33e0daed443                  |
+| ResourceDistribution-0ce40a5f-153a-4462-a429-4098e0e13cac              |
+| ResourceSizeForEachRb-542b8f2f-bd52-4233-8c3d-66530de8a369             |
+| RestoreFactoryDefault-59d1c24f-50f1-401a-b101-f33e0daed443             |
+| SecureBoot-8be4df61-93ca-11d2-aa0d-00e098032b8c                        |
+| SecureBootData-aa1305b9-01f3-4afb-920e-c9b979a852fd                    |
+| SecureBootEnforce-59d1c24f-50f1-401a-b101-f33e0daed443                 |
+| SecureFlashInfo-382af2bb-ffff-abcd-aaee-cce099338877                   |
+| SetPcrBanks-8376bdca-5e03-4735-951a-4a74141e5886                       |
+| Setup-a04a27f4-df00-4d42-b552-39511302113d                             |
+| SetupMode-8be4df61-93ca-11d2-aa0d-00e098032b8c                         |
+| ShimRetainProtocol-605dab50-e046-4300-abb6-3dd810dd8b23                |
+| SignatureSupport-8be4df61-93ca-11d2-aa0d-00e098032b8c                  |
+| Tcg2ConfigInfo-07a66697-d400-4903-b3da-67a61d2b7058                    |
+| Tcg2PhysicalPresence-aeb9c5c1-94f1-4d02-bfd9-4602db2d3c54              |
+| Tcg2PhysicalPresenceFlags-aeb9c5c1-94f1-4d02-bfd9-4602db2d3c54         |
+| Timeout-8be4df61-93ca-11d2-aa0d-00e098032b8c                           |
+| TrEEPhysicalPresence-f24643c2-c622-494e-8a0d-4632579c2d5b              |
+| TrEEPhysicalPresenceFlags-f24643c2-c622-494e-8a0d-4632579c2d5b         |
+| UnlockIDCopy-eaec226f-c9a3-477a-a826-ddc716cdc0e3                      |
+| UserVgaSelection-59d1c24f-50f1-401a-b101-f33e0daed443                  |
+| VarErrorFlag-04b37fe8-f6ae-480b-bdd5-37d98c5e89aa                      |
+| VendorKeys-8be4df61-93ca-11d2-aa0d-00e098032b8c                        |
+| certdb-59d1c24f-50f1-401a-b101-f33e0daed443                            |
+| certdbv-59d1c24f-50f1-401a-b101-f33e0daed443                           |
+| db-d719b2cb-3d3a-4596-a3bc-dad00e67656f                                |
+| dbDefault-8be4df61-93ca-11d2-aa0d-00e098032b8c                         |
+| dbx-d719b2cb-3d3a-4596-a3bc-dad00e67656f                               |
+| dbxDefault-8be4df61-93ca-11d2-aa0d-00e098032b8c                        |
+| lBoot0000-146b234d-4052-4e07-b326-11220f8e1fe8                         |
+| lvar-64448f46-6e23-4288-9349-fdd887c40de1                              |
+#+END_SRC
+
+.....and the damn partition is *FULL* .....irks
+
+#+BEGIN_SRC bash
+df -h | grep efivars
+
+#+RESULTS:
+: efivarfs                   148K  144K     0 100% /sys/firmware/efi/efivars
+#+END_SRC
+
+Now, I have been roaming around on the internet and reading stuff about it from
+place, which claims to have "solutions" ...but I am getting a little perplexed
+by opting for those solutions because of my lack of understanding.
+
+It all *started* when I tried to update the firmware with the help of *fwupd[fn:1]*
+as usual, and it started to complain about the /lack of space/ ....irks.
+
+I have visited and read these below links :
+
+Kernel Documentation about it :
+https://docs.kernel.org/6.1/filesystems/efivarfs.html
+
+GITHUB post about it :
+https://github.com/FrameworkComputer/SoftwareFirmwareIssueTracker/issues/90
+
+
+FWUPD issue:
+https://github.com/fwupd/fwupd/issues/9483
+
+Gosh! BIOS reset.....wooooo..that's too drastic...it seems
+
+I am a bit apprehensive about the solutions suggested,as I mentioned before. To be
+clear, I haven't opted for /secure boot/ in any stretch of imagination.
+
+And the *DBX* entries are for /revoked stuff/ ....and it is getting swollen
+over time...it is /the biggest file/ in that directory.
+
+Now, my system is booting fine without any hitch, but I somehow see that things
+are coming and I am not able to comprehend the solution.
+
+Oh, I have also tried the suggested stuff like /ignoring the dbx update/, while
+doing firmware update(that is where it all shows out of space), but to no
+avail. It is still complaining about the space.
+
+The two most suggested solutions are:
+
+Getting rid of the dump-* files. But I am not running with systemd, which used to
+create those files if the option chosen for. Which clearly I haven't.
+
+Getting rid of the /pstore/ files content, and I have none under
+/proc/fs/pstore/ !!
+
+Wondering what could prevent me from bricking my system if the time comes??
+
+* Footnotes
+
+[fn:1] https://fwupd.org/
