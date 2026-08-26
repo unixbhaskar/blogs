@@ -1,0 +1,269 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 2000
+#+title: Linux Tidbits And Collecting Pebbles Part-II
+#+date: 2026-08-26
+#+tags: Technical Linux Opensource OperatingSystem
+
+Alright, I have written about some of this in [[https://unixbhaskar.wordpress.com/2025/03/02/linux-tidbits-and-collecting-pebbles/][Part-I]] and you should be
+reading that to get some understanding.
+
+Now the heads-up is done, here I will show you some more of my work on how to
+deal with the ordeal of living with an open system. You might like it or might
+not. But these provide me rich benefits to my workflow for sometimes now.
+
+To start with, I absolutely loathe the fact that most packages are customized to
+get scattered all over the system for no reason(if it had, I will keep them in
+place); otherwise, I make sure that, and when I need them, they should be under
+my finger at ease.
+
+To keep effort minimal, I have started to categorize my /handwritten/ scripts into
+their own directory, with directory names that are explicit enough to let me
+know by looking at them, what they contain. The same goes for my files and
+executables too.
+
+Let me give you some examples of those inclinations .....
+
+
+#+BEGIN_SRC bash
+bhaskar_03:54:04_Wed Aug 26: :~>scripts
+drwxr-xr-x 4 bhaskar bhaskar 8192 May 24 04:00 Adm_scripts
+drwxr-xr-x 2 bhaskar bhaskar 4096 Jun 25  2025 arch-scripts
+drwxr-xr-x 2 bhaskar bhaskar 4096 Jul 30  2025 check-scripts
+drwxr-xr-x 2 bhaskar bhaskar 4096 May  6 02:58 clean_scripts
+drwxr-xr-x 2 bhaskar bhaskar 4096 May 11  2025 debian-scripts
+drwxr-xr-x 2 bhaskar bhaskar 4096 May 31 03:48 emacs-scripts
+drwxr-xr-x 2 bhaskar bhaskar 4096 Oct 11  2023 ffmpeg-scripts
+drwxr-xr-x 2 bhaskar bhaskar 4096 May 19  2025 find-scripts
+drwxr-xr-x 2 bhaskar bhaskar 4096 Jan  1  2026 firefox-scripts
+drwxr-xr-x 2 bhaskar bhaskar 4096 Jul 28 11:21 gentoo-scripts
+drwxr-xr-x 2 bhaskar bhaskar 4096 Jul 10  2025 git-scripts
+drwxr-xr-x 2 bhaskar bhaskar 4096 Oct 28  2025 kernel-scripts
+drwxr-xr-x 2 bhaskar bhaskar 4096 Feb 15  2024 mutt-scripts
+drwxr-xr-x 2 bhaskar bhaskar   96 Oct 11  2023 notmuch-scripts
+drwxr-xr-x 2 bhaskar bhaskar 4096 Oct 11  2023 open-scripts
+drwxr-xr-x 2 bhaskar bhaskar  162 May  9  2025 search_scripts
+drwxr-xr-x 2 bhaskar bhaskar 4096 Aug 20 12:12 slackware-scripts
+drwxr-xr-x 2 bhaskar bhaskar  231 Feb 29  2024 sync_scripts
+drwxr-xr-x 2 bhaskar bhaskar 4096 Oct 11  2023 vim-scripts
+drwxr-xr-x 2 bhaskar bhaskar 4096 Aug 25 12:46 youtube-scripts
+#+END_SRC
+
+By simply running an alias give me this enlisting and you see the names,
+explicit enough to give me a sense of what it contains.
+
+Likewise, if I wanted to see my /dotfiles/, I would have to invoke this to show me
+those :
+
+#+BEGIN_SRC bash
+cat ~/bin/enlist_dotfiles
+ 1 │ #!/bin/bash
+   2 │
+   3 │ list_dot_files() {
+   4 │     # find ${PWD} -maxdepth 1 -name ".*"  -type f  -ls
+   5 │     # find ${PWD} -maxdepth 1 -name ".*" -type f -ls | gawk '{ print $11  }' | sed 's#^\.\/##' | fzf --prompt "Select File To Open:" | xargs -I {} -o vim {}
+   6 │     find . -maxdepth 1 -name ".*" -not -path "${PWD}" -type f | sed 's#^\.\/##' | fzf --prompt "Select File To Open:" | xargs -I {} -o vim {}
+   7 │
+   8 │ }
+   9 │ list_dot_files
+#+END_SRC
+
+A little function to show me with /fzf,/ or you can use another app you are
+convenient with to deal with that. Once I select the file from enlisting, a
+simply press /enter/ open it in /vim/ (it could be emacs, or another editor too).
+
+Sometimes I need to invoke certain keystrokes in my terminal(Ah, I spend most of
+my time on it...sigh), so /readline/ keys and their customization become a great
+help to navigate.
+
+Here is a little glimpse of my /.inputrc/ file ....
+
+#+BEGIN_SRC bash
+bhaskar_04:06:49_Wed Aug 26: :~>cat .inputrc
+─────┬────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+     │ File: .inputrc
+─────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+   1 │ set bell-style none
+   2 │  "\em":"show-manpage-on-terminal\n"
+   3 │  "\C-x;":"mail_open\n"
+   4 │  "\C-xl":"linuxsrc\ngit-show-new\n"
+   5 │  "\elu":"linux_next_update\n"
+   6 │  "\C-xp":"pkgview\n"
+   7 │  "\ell":"cd /home/bhaskar/git-linux/linux\ngit-search-log\ncd ~\nclear\n"
+   8 │  "\enl":"cd /home/bhaskar/git-linux/linux-next\ngit-search-log\ncd ~\nclear\n"
+   9 │  "\esl":"cd /home/bhaskar/git-linux/linux-stable\ngit-search-log\ncd ~\nclear\n"
+  10 │  "\elr":"linux_release\n"
+  11 │  "\C-xf":"vifm\ncd ~\nclear\n"
+  12 │  "\ep":"play_latest_recorded_screencast\n"
+  13 │  "\egp":"find_git_repos.sh\ncd ~\nclear\n"
+  14 │  "\eip":"imp_scripts\nclear\n"
+  15 │  "\eu":"menu_dialog.sh\nclear\n"
+  16 │  "\ekp":"kill_process\nclear\n"
+#+END_SRC
+
+Abject ordinary, but it does help along.
+
+So,basically, I have distributed my keypresses between my beloved and only
+/window manager/ (sigh...I have been using this damn thing for 10 years without a
+break!!)  and shell facilities.
+
+Now, like everyone else living with an open system like Linux has its /shortcuts
+aka aliases/ and curated commands, which do a specific task on call. One task at
+a time is a better call and adheres to the *UNIX philosophy*. And that helps
+immensely in everyday work.
+
+Moreover, it is easier to /debug/ if something goes wrong(it's bound to be sooner
+or later, due to my lack of farsightedness,so..) that helps too.
+
+I have the knack of learning from better people in various spaces because their
+approach to the same thing varies greatly by their implementation. I have always
+picked up the /easiest/ one to deal with. Complex thinking is not necessary
+entails to producing complex and unreadable, and,importantly difficult pieces of
+codes.
+
+I automate stuff to run on a specific thing on a specific time, via
+cronjob. Here is a trivial example of it....
+
+
+#+BEGIN_SRC bash
+bhaskar_04:19:45_Wed Aug 26: :~>crontab -l
+0 0 * * * find ~/.rm_archive -type f -mtime +30 -delete
+*/30 * * * * export DISPLAY=:0; export XAUTHORITY=~/.Xauthority; /home/bhaskar/bin/latest_kernel_versions
+*/40 * * * * /home/bhaskar/bin/clean_backup_dot_files
+#+END_SRC
+
+You see! Not much but required stuff.
+
+Oh, another trivialities....the script in cronjob is pretty mundane, but to
+show...
+
+#+BEGIN_SRC bash
+bhaskar_04:54:18_Wed Aug 26: :~>cat bin/clean_backup_dot_files
+─────┬────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+     │ File: bin/clean_backup_dot_files
+─────┼────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+   1 │ #!/usr/bin/env bash
+   2 │
+   3 │
+   4 │ find $HOME -maxdepth 1 \( -name ".bashrc.*" -o -name ".emacs.*" -o  -name ".ithreeconfig.*" -o -name ".procmailrc.*" -o -name ".ithreeblocksconfig.*" -o -name ".gitcon
+     │ fig.*" -o -name ".mbsyncrc.*" -o -name ".muttrc.*" -o -name ".vimrc.*" \) -type f  -exec  rm -f {} +
+   5 │
+   6 │
+   7 │ find . -type f  \( -iname "..*.~undo-tree~" -o -iname ".*.~undo-tree~" \) -exec  rm -f {} +
+#+END_SRC
+
+Phew! Mediocrity reached its highest level...if it frustrates ya, then it is
+your fault :)
+
+Another one for your laughter ....
+
+#+BEGIN_SRC bash
+#!/bin/bash -
+#===============================================================================
+#
+#          FILE: clean_old_backup.sh
+#
+#         USAGE: ./clean_old_backup.sh
+#
+#   DESCRIPTION: Cleaning old backup files to gain some disk space
+#
+#       OPTIONS: ---
+#  REQUIREMENTS:
+#          BUGS: ---
+#         NOTES: Clearing out the old backup to gain disk space
+#        AUTHOR: Bhaskar Chowdhury (https://about.me/unixbhaskar), unixbhaskar@gmail.com
+#  ORGANIZATION: Independent
+#       CREATED: 03/14/25 17:00
+#      REVISION:  ---
+#===============================================================================
+
+#set -o nounset                              # Treat unset variables as an error
+
+backup_dir=/data
+date_and_time=$(date +'%F')
+
+
+if test $UID -ne 0;then
+	echo You are not permitted to do this. Run with sudo.
+	exit 1
+fi
+
+# Home old backup clean
+if test "$(find ${backup_dir} -name "home-backup-*" -type f | sort -nr | wc -l)" -ge 3;then
+
+	# find ${backup_dir} -name "home-backup-*" -type f -not \( -path "${backup_dir}/home-backup-$date_and_time.tar.gz" -prune \) -print | sort -n
+
+	# printf "\n Really want to delete all these old HOME directory backup files? [YN]: %s"
+	# read -r response
+
+   # if test "$response" == "Y";then
+	find ${backup_dir} -maxdepth 1 -name "home-backup-*" -type f -not \( -path "${backup_dir}/home-backup-$date_and_time.tar.gz" -prune \) -exec rm -f {} \;
+# else
+# 	echo You decided not to delete those files.
+#    fi
+fi
+
+# Etc directory old backup clean
+if test "$(find ${backup_dir} -name "etc-backup-*" -type f | sort -nr | wc -l)" -ge 3;then
+
+	# find ${backup_dir} -name "etc-backup-*" -type f -not \( -path "${backup_dir}/etc-backup-$(uname -n)-$date_and_time.tar.gz" -prune \) -print | sort -n
+
+	# printf "\n Really want to delete all these old ETC directory backup files? [YN]: %s"
+	# read -r response
+
+   # if test "$response" == "Y";then
+	   find ${backup_dir} -maxdepth 1  -ctime +1 -name "etc-backup-*" -type f -not \( -path "${backup_dir}/etc-backup-$(uname -n)-$date_and_time.tar.gz" -prune \) -exec rm -f {} \;
+# else
+# 	echo You decided not to delete those files.
+#    fi
+fi
+
+#+END_SRC
+
+If it doesn't make sense, it is certainly not your fault. I failed to write it
+more elegantly in the first place and never went back to amend it.
+
+
+Connecting my bluetooth earphone automatically via this mundane script :
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+# Check if Bluetooth service is up or not
+
+if test $(find_init) == "SYSVINIT";then
+	sudo /etc/init.d/bluetooth start
+
+elif test $(find_init) == "SYSTEMD";then
+	sudo systemctl start bluetooth.service
+fi
+
+# The MAC address of the Bluetooth device to pair
+device="42:43:6A:36:AC:6E"
+
+# Start the process
+sh -c "echo -e \"power on\nagent on\ndefault-agent\npair $device\nconnect $device\nquit\" | bluetoothctl"
+
+sleep 5
+
+notify-send "Connected To : $(bluetoothctl devices Connected)"
+
+#+END_SRC
+
+Last, but not the least, /local search/ in a directory ...
+
+#+BEGIN_SRC bash
+#!/usr/bin/env bash
+
+local_search ()
+{
+	    if test ! -d ".git"; then
+	   find $PWD -name "*$1*" -ls 2> /dev/null;
+           fi
+}
+
+local_search $@
+#+END_SRC
+
+Phew! Enough of these trivialities. I am so sorry, can't show you something
+"substantial" and "real" useful ...may be some other time with more of "better"
+stuffs ...
