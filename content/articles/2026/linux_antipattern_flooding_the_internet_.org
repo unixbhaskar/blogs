@@ -1,0 +1,82 @@
+#+BLOG: Unixbhaskar's Blog
+#+POSTID: 2002
+#+title: Linux Antipattern Flooding The Internet
+#+date: 2026-10-08
+#+tags: Technical Opensource Linux OperatingSytem
+
+
+Alright, am I not pissed off? I am very much.
+
+Why?
+
+The internet decided to answer the /obvious/ and leave the *hard* one alone.
+
+Such a nonsensical way to move ahead, and it is long now, sigh.
+
+My sincere reluctance(based on my little time with this damn thing called an
+abject misnomer, AI) and seeing garbage spit out to grab people's time to
+verify the result. So, I refrained from using it as far as I can, in fact I
+don't consider it 99 percent of the time.
+
+I was stuck with some problem directly related to Linux and ran out of my options
+and blatant workarounds, still no avail. So, I went and used the damn internet
+/search engine/ to assist me find the solutions(oh, this damn thing saves mine and
+many others' arse, time and time in the past, not anymore) and it disappoints me
+to the highest level by providing me the result bypassing the /actual query/
+directed at it....sigh.
+
+How come it became so futile all of a sudden?? Because it is being fed utter
+garbage and nonsense to get other benefits.
+
+Due to my sincere misfortune, I have always ended up in a place where the
+"solutions" are either not viable or not make sense. The internet is great
+protocol for replicating the BAD thing at scale. In every possible department it
+touches on.....HUH!
+
+So, annoying that I have wasted my time doing my own and giving a sincere fuck
+about the so-called assistive technology. Am I doing well with that strategy??
+NO, I am not, due to sheer lack of a bend of mind. So, things are getting very
+aggravated.
+
+It seems we are going downhill, and the ending is not so near.
+
+About Linux specifically, the queries are rigged and twisted, and the answers
+are blatant *copy and paste* from one place to another, like every other field on
+the internet.
+
+Now, the question is, did I direct the damn search to point it in the right
+directions?? I believe I did to the best of my ability. The search stuff needs,
+a short and precise string to provide you the /closely matched/ results. And,
+despite that pattern, it consistently deviates and provides results *not asked
+for*. What a bummer!!
+
+The internet doesn't help, if you don't know the subject well enough. It might
+provide you with information and but you are certainly not sure whether the
+information is correct or not. It is picking stuff based on phonetics and
+grossly failing to get the context. Kinda, human error too, dictation is all
+that it needs. But, of late, that is also not obeying.
+
+I do remember there was a dedicated subdomain of Linux with a popular search
+engine(aha! they are famous for pulling the plug in the wrong time and products
+of their own, hopefully this product strategy providing them rich
+benefits)...sigh.
+
+The answer related to Linux is getting way over the top, too much unnecessary
+explanation, and deviating from the topic and asking people to do a lot more
+stuff by themselves.
+
+The thing it missed is that if the people looking for assistance have that much
+exposure, then they will not even bother to consider it. So, it ends up
+confusing people with /overloaded information/ and you end up having absolutely
+"Nothing" in the kitty.....heck
+
+Most Linux related answers are /shallow/ and filled with a lot of /preconceived
+dogma/ that reflects no value either. What a time-grabbing machine!!....meh.
+
+So, what do you do??
+
+Your luck is as good as you. Period.
+
+
+Phew, enough spewing!! If none of the above paragraphs make any sense to you, it
+is certainly not your fault.
